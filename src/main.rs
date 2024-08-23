@@ -11,6 +11,14 @@ fn main() {
 }
 
 // systems
+fn setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn(Camera2dBundle::default());
+    commands.spawn(SpriteBundle {
+        texture: asset_server.load("branding/logo.png"),
+        ..default()
+    });
+}
+
 fn print_hello_world_system() {
     println!("Hello 'Rusty Lander' World!");
 }
@@ -48,7 +56,7 @@ pub struct HelloPlugin;
 impl Plugin for HelloPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(GreetTimer(Timer::from_seconds(3.0, TimerMode::Repeating)));
-        app.add_systems(Startup, (add_people_system, print_hello_world_system));
+        app.add_systems(Startup, (add_people_system, print_hello_world_system, setup_system));
         app.add_systems(Update, greet_people_system);
     }
 }
