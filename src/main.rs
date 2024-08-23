@@ -4,8 +4,8 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugins(HelloPlugin)
-        .add_systems(Startup, add_people_system)
-        .add_systems(Update, (print_hello_world_system, greet_people_system))
+//        .add_systems(Startup, add_people_system) // only run once
+//        .add_systems(Update, (print_hello_world_system, greet_people_system)) // looper
         .run()
     ;
 }
@@ -39,6 +39,7 @@ pub struct HelloPlugin;
 
 impl Plugin for HelloPlugin {
     fn build(&self, app: &mut App) {
-        // add things to your app here
+        app.add_systems(Startup, add_people_system);
+        app.add_systems(Update, (print_hello_world_system, greet_people_system));
     }
 }
