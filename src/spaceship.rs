@@ -58,11 +58,11 @@ fn spaceship_movement_controls_system(
         info!("W");
     }
     // debug key
-    if keyboard_input.pressed(KeyCode::Space) {
+    if keyboard_input.just_released(KeyCode::Space) {
         info!("Transform {:?} · Velocity {:?}", transform, velocity);
     }
 
-    velocity.value.x = movement * time.delta_seconds();
+    velocity.value.x = movement;
 }
 
 // Components
