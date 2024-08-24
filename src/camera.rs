@@ -15,16 +15,11 @@ impl Plugin for CameraPlugin {
 
 fn spawm_camera_system(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-    // Instead of using `PerfUiCompleteBundle`,
-    // spawn an entity with `PerfUiRoot` + whatever entries you want!
     commands.spawn((
         PerfUiRoot {
-            // set a fixed width to make all the bars line up
             values_col_width: Some(160.0),
             ..Default::default()
         },
-        // when we have lots of entries, we have to group them
-        // into tuples, because of Bevy Rust syntax limitations
         (
             PerfUiWidgetBar::new(PerfUiEntryFPS::default()),
             PerfUiWidgetBar::new(PerfUiEntryFPSWorst::default()),
