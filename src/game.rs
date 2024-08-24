@@ -21,7 +21,7 @@ fn setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
-// Resources
+// Resources (global scope allocated data)
 #[derive(Resource, Debug)]
 pub struct GameState {
     pub is_playing: bool,
