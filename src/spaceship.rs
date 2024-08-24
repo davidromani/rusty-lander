@@ -41,28 +41,29 @@ fn spaceship_movement_controls_system(
     time: Res<Time>,
 ) {
     let (transform, mut velocity) = query.single_mut();
-    let mut movement = 0.0;
+    let mut movement = Vec3::ZERO;
 
     // left key
     if keyboard_input.pressed(KeyCode::KeyA) {
         info!("A");
-        movement = -200.0;
+        movement.x = -200.0;
     }
     // right key
     if keyboard_input.pressed(KeyCode::KeyD) {
         info!("D");
-        movement = 200.0;
+        movement.x = 200.0;
     }
     // up key
     if keyboard_input.pressed(KeyCode::KeyW) {
         info!("W");
+        movement.y = 200.0;
     }
     // debug key
     if keyboard_input.just_released(KeyCode::Space) {
         info!("Transform {:?} · Velocity {:?}", transform, velocity);
     }
 
-    velocity.value.x = movement;
+    velocity.value = movement;
 }
 
 // Components
