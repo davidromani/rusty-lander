@@ -14,9 +14,8 @@ impl Plugin for GamePlugin {
     }
 }
 
-// systems
+// Systems
 fn setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(Camera2dBundle::default());
     commands.spawn(SpriteBundle {
         texture: asset_server.load("branding/logo.png"),
         ..default()
@@ -43,14 +42,14 @@ fn greet_people_system(time: Res<Time>, mut timer: ResMut<GreetTimer>, query: Qu
     }
 }
 
-// components
+// Components
 #[derive(Component)]
 struct Person;
 
 #[derive(Component)]
 struct Name(String);
 
-// resources
+// Resources
 #[derive(Resource)]
 struct GreetTimer(Timer);
 
