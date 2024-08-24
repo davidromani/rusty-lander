@@ -10,23 +10,53 @@ pub struct SpaceshipPlugin;
 
 impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(PostStartup, spawn_spaceship_system);
+        app
+            .add_systems(PostStartup, spawn_spaceship_system)
+            .add_systems(Update, spaceship_movement_controls_system)
+        ;
     }
 }
 
 // Systems
 fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>) {
-    commands.spawn(SpaceshipBundle {
-        marker: Player,
-        velocity: Velocity {
-            value: STARTING_VELOCITY,
+    commands.spawn((
+        SpaceshipBundle {
+            velocity: Velocity {
+                value: STARTING_VELOCITY,
+            },
+            sprite: SpriteBundle {
+                texture: scene_assets.spaceship.clone(),
+                transform: Transform::from_translation(STARTING_TRANSLATION),
+                ..default()
+            },
         },
-        sprite: SpriteBundle {
-            texture: scene_assets.spaceship.clone(),
-            transform: Transform::from_translation(STARTING_TRANSLATION),
-            ..default()
-        },
-    });
+        Player
+    ));
+}
+
+fn spaceship_movement_controls_system(
+    mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    //time: Res<Time>,
+) {
+    let (transform, mut velocity) = query.single_mut();
+    let mut movement = 0.0;
+
+    // left key
+    if keyboard_input.pressed(KeyCode::KeyA) {
+        info!("A");
+        movement = -2.0;
+    }
+    // right key
+    if keyboard_input.pressed(KeyCode::KeyD) {
+        info!("D");
+        movement = 2.0;
+    }
+    // up key
+    if keyboard_input.pressed(KeyCode::KeyW) {
+        info!("W");
+    }
+    velocity.value = -transform.forward() * movement;
 }
 
 // Components
@@ -36,7 +66,6 @@ struct Player;
 // Bundles
 #[derive(Bundle)]
 struct SpaceshipBundle {
-    marker: Player,
     velocity: Velocity,
     sprite: SpriteBundle,
 }
