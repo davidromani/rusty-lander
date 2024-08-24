@@ -9,7 +9,7 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(GreetTimer(Timer::from_seconds(4.0, TimerMode::Once)));
         app.insert_resource(GameState { is_playing: IS_PLAYING });
-        app.add_systems(Startup, (add_people_system, print_hello_world_system, setup_system)); // runs only once at Startup sequence
+        app.add_systems(Startup, (add_people_system, setup_system)); // runs only once at Startup sequence
         app.add_systems(Update, greet_people_system); // main App looper
     }
 }
@@ -20,10 +20,6 @@ fn setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
         texture: asset_server.load("background_space.png"),
         ..default()
     });
-}
-
-fn print_hello_world_system() {
-    println!("Hello 'Rusty Lander' World!");
 }
 
 fn add_people_system(mut commands: Commands) {
@@ -53,7 +49,7 @@ struct Name(String);
 #[derive(Resource)]
 struct GreetTimer(Timer);
 
-#[derive(Resource)] //, Debug)]
+#[derive(Resource, Debug)]
 pub struct GameState {
     pub is_playing: bool,
 }
