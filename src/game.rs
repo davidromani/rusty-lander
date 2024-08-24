@@ -10,8 +10,10 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         //app.insert_resource(GameState { is_playing: IS_PLAYING });
-        app.add_systems(Startup, setup_system); // runs only once at Startup sequence
-        app.add_systems(Update, handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape))); // main App looper
+        app
+            .add_systems(Startup, setup_system) // runs only once at Startup sequence
+            .add_systems(Update, handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape))) // main App looper
+        ; 
     }
 }
 

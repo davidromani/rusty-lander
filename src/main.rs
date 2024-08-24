@@ -1,3 +1,4 @@
+mod asset_loader;
 mod game;
 mod camera;
 mod movement;
@@ -5,6 +6,7 @@ mod spaceship;
 mod debug;
 
 use bevy::prelude::*;
+use asset_loader::AssetsLoaderPlugin;
 use game::GamePlugin;
 use camera::CameraPlugin;
 use movement::MovementPlugin;
@@ -15,6 +17,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         // custom plugins
+        .add_plugins(AssetsLoaderPlugin)
         .add_plugins(DebugPlugin)
         .add_plugins(GamePlugin)
         .add_plugins(CameraPlugin)
