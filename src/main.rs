@@ -6,6 +6,7 @@ mod spaceship;
 mod debug;
 
 use bevy::prelude::*;
+
 use asset_loader::AssetsLoaderPlugin;
 use game::GamePlugin;
 use camera::CameraPlugin;
