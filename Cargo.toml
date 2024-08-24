@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 bevy = "0.14.1"
+iyes_perf_ui = "0.3.0"
 
 [workspace]
 resolver = "2" # Important! wgpu/Bevy needs this!
