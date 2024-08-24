@@ -10,5 +10,6 @@ impl Plugin for DebugPlugin {
 
 // Systems
 fn print_hello_world_system() {
-    println!("Hello 'Rusty Lander' World! from DebugPlugin");
+    info!("Hello 'Rusty Lander' World!");
+    // info!("Entity {:?} · Component {:?}", entity, component);
 }
