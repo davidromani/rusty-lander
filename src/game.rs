@@ -1,13 +1,13 @@
 use bevy::prelude::*;
 
-const DEBUG_MODE: bool = true;
+// const DEBUG_MODE: bool = true;
 const IS_PLAYING: bool = true;
 
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(GreetTimer(Timer::from_seconds(3.0, TimerMode::Repeating)));
+        app.insert_resource(GreetTimer(Timer::from_seconds(4.0, TimerMode::Once)));
         app.insert_resource(GameState { is_playing: IS_PLAYING });
         app.add_systems(Startup, (add_people_system, print_hello_world_system, setup_system)); // runs only once at Startup sequence
         app.add_systems(Update, greet_people_system); // main App looper
@@ -53,7 +53,7 @@ struct Name(String);
 #[derive(Resource)]
 struct GreetTimer(Timer);
 
-#[derive(Resource, Debug)]
+#[derive(Resource)] //, Debug)]
 pub struct GameState {
     pub is_playing: bool,
 }
