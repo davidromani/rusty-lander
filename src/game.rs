@@ -17,7 +17,7 @@ impl Plugin for GamePlugin {
 // Systems
 fn setup_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(SpriteBundle {
-        texture: asset_server.load("branding/logo.png"),
+        texture: asset_server.load("background_space.png"),
         ..default()
     });
 }

@@ -43,3 +43,11 @@ impl Acceleration {
         Self { value }
     }
 }
+
+// Bundles
+#[derive(Bundle)]
+pub struct MovingObjectBundle {
+    pub velocity: Velocity,
+    pub acceleration: Acceleration,
+    pub model: SceneBundle,
+}
