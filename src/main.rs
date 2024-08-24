@@ -3,7 +3,7 @@ use bevy::prelude::*;
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(HelloPlugin)
+        .add_plugins(GamePlugin)
 //        .add_systems(Startup, add_people_system) // only run once
 //        .add_systems(Update, (print_hello_world_system, greet_people_system)) // looper
         .run()
@@ -50,12 +50,18 @@ struct Name(String);
 #[derive(Resource)]
 struct GreetTimer(Timer);
 
-// plugins
-pub struct HelloPlugin;
+#[derive(Resource, Debug)]
+pub struct GameState {
+    pub is_playing: bool,
+}
 
-impl Plugin for HelloPlugin {
+// plugins
+pub struct GamePlugin;
+
+impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(GreetTimer(Timer::from_seconds(3.0, TimerMode::Repeating)));
+        app.insert_resource(GameState { is_playing: true });
         app.add_systems(Startup, (add_people_system, print_hello_world_system, setup_system));
         app.add_systems(Update, greet_people_system);
     }
