@@ -16,7 +16,7 @@ pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: R
     *scene_assets = SceneAssets {
         background: asset_server.load("background_space.png"),
         landscape: asset_server.load("landscape.png"),
-        spaceship: asset_server.load("lander.png"),
+        lander: asset_server.load("lander.png"),
     }
 }
 
@@ -25,5 +25,5 @@ pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: R
 pub struct SceneAssets {
     pub background: Handle<Image>,
     pub landscape: Handle<Image>,
-    pub spaceship: Handle<Image>,
+    pub lander: Handle<Image>,
 }
