@@ -11,7 +11,7 @@ use bevy::prelude::*;
 
 use asset_loader::AssetsLoaderPlugin;
 use camera::CameraPlugin;
-//use collider::ColliderPlugin;
+// use collider::ColliderPlugin;
 use debug::DebugPlugin;
 use game::GamePlugin;
 use movement::CharacterControllerPlugin;
@@ -26,14 +26,14 @@ fn main() {
             PhysicsDebugPlugin::default(),
         ))
         // Resources
-        .insert_resource(Gravity(Vector::NEG_Y * 9.8))
+        .insert_resource(Gravity(Vector::NEG_Y * 98.0))
         // Sets
         .configure_sets(Startup, (AppSet::First, AppSet::Second).chain())
         // Custom plugins
         .add_plugins(AssetsLoaderPlugin) // startup
         .add_plugins(CameraPlugin) // startup
         .add_plugins(DebugPlugin) // startup
-        //.add_plugins(ColliderPlugin) // post startup
+        // TODO .add_plugins(ColliderPlugin) // post startup
         .add_plugins(SpaceshipPlugin) // post startup
         .add_plugins(GamePlugin) // post startup & update
         .add_plugins(CharacterControllerPlugin) // update
