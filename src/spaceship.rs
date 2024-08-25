@@ -26,7 +26,7 @@ fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>
         Friction::ZERO.with_combine_rule(CoefficientCombine::Min),
         Restitution::ZERO.with_combine_rule(CoefficientCombine::Min),
         ColliderDensity(2.0),
-        GravityScale(1.0),
+        GravityScale(3.0),
         SpriteBundle {
             texture: scene_assets.lander.clone(),
             transform: Transform::from_xyz(-200.0, 300.0, 2.0),
