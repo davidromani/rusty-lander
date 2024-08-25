@@ -1,3 +1,4 @@
+use avian2d::math::Vector;
 use avian2d::prelude::*;
 use bevy::{asset::LoadState, prelude::*};
 use bevy::color::palettes::css;
@@ -16,9 +17,10 @@ impl Plugin for AssetsLoaderPlugin {
                 Update, 
                 (
                     check_assets.run_if(in_state(SceneAssetState::Loading)),
-                    intialize_landscape_system.run_if(in_state(SceneAssetState::Loaded)),
+                    //intialize_landscape_system.run_if(in_state(SceneAssetState::Loaded)),
                 )
             )
+            .add_systems(OnEnter(SceneAssetState::Loaded), intialize_landscape_system);
         ;
     }
 }
@@ -29,22 +31,18 @@ pub fn check_assets(
     scene_assets: Res<SceneAssets>,
     mut state: ResMut<NextState<SceneAssetState>>,
 ) {
-
     // return if the background isn't loaded
     if Some(LoadState::Loaded) != asset_server.get_load_state(&scene_assets.background) {
         return;
     }
-
     // return if the landscape isn't loaded
     if Some(LoadState::Loaded) != asset_server.get_load_state(&scene_assets.landscape) {
         return;
     }
-
     // return if the lander isn't loaded
     if Some(LoadState::Loaded) != asset_server.get_load_state(&scene_assets.lander) {
         return;
     }
-
     // all assets have loaded
     state.set(SceneAssetState::Loaded)
 }
@@ -71,12 +69,24 @@ fn intialize_landscape_system(
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(700.0, 15.0)).into(),
             material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(0.0, -345.0, 1.0),
+            transform: Transform::from_xyz(0.0, -335.0, 1.0),
             ..default()
         },
         DebugRender::default().with_collider_color(css::VIOLET.into()),
     ));
 
+    let vertices = vec![
+        Vector::new(-125.0, 125.0),
+        Vector::new(0.0, -125.0),
+        Vector::new(125.0, 125.0)
+    ];
+    let polyline = Collider::polyline(vertices, None);
+    commands.spawn((
+        RigidBody::Static,
+        polyline,
+        DebugRender::default().with_collider_color(css::VIOLET.into()),
+    ));
+    
     let sprite_image_handle = scene_assets.landscape.clone();
     info!("sprite_image_handle {:?}", sprite_image_handle);
     let sprite_image = image_assets.get(&sprite_image_handle);
