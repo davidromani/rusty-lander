@@ -3825,7 +3825,6 @@ dependencies = [
  "bevy",
  "bevy_collider_gen",
  "iyes_perf_ui",
- "rand",
 ]
 
 [[package]]
