@@ -139,6 +139,12 @@ fn keyboard_input(
     if keyboard_input.just_pressed(KeyCode::Space) {
         movement_event_writer.send(MovementAction::Jump);
     }
+
+    // debug key
+    if keyboard_input.just_released(KeyCode::Digit1) {
+        info!("Debug key 1 has been pressed");
+        // info!("Transform {:?} · Velocity {:?}", transform, velocity);
+    }
 }
 
 /// Sends [`MovementAction`] events based on gamepad input.
