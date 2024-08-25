@@ -26,7 +26,7 @@ fn main() {
             PhysicsDebugPlugin::default(),
         ))
         // Resources
-        .insert_resource(Gravity(Vector::NEG_Y * 9.8))
+        .insert_resource(Gravity(Vector::NEG_Y * 98.0))
         // Sets
         .configure_sets(Startup, (AppSet::First, AppSet::Second).chain())
         // Custom plugins

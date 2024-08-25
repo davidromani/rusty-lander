@@ -1,4 +1,4 @@
-use avian2d::math::Vector;
+// use avian2d::math::Vector;
 use avian2d::prelude::*;
 use bevy::{asset::LoadState, prelude::*};
 use bevy::color::palettes::css;
@@ -20,7 +20,7 @@ impl Plugin for AssetsLoaderPlugin {
                     //intialize_landscape_system.run_if(in_state(SceneAssetState::Loaded)),
                 )
             )
-            .add_systems(OnEnter(SceneAssetState::Loaded), intialize_landscape_system);
+            .add_systems(OnEnter(SceneAssetState::Loaded), intialize_landscape_system)
         ;
     }
 }
@@ -50,7 +50,7 @@ pub fn check_assets(
 pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: Res<AssetServer>) {
     *scene_assets = SceneAssets {
         background: asset_server.load("background_space.png"),
-        //landscape: asset_server.load("landscape.png"),
+        // landscape: asset_server.load("landscape.png"),
         landscape: asset_server.load("terrain.png"),
         lander: asset_server.load("lander.png"),
     }
@@ -75,7 +75,7 @@ fn intialize_landscape_system(
         DebugRender::default().with_collider_color(css::VIOLET.into()),
     ));
 
-    let vertices = vec![
+    /*let vertices = vec![
         Vector::new(-125.0, 125.0),
         Vector::new(0.0, -125.0),
         Vector::new(125.0, 125.0)
@@ -85,7 +85,7 @@ fn intialize_landscape_system(
         RigidBody::Static,
         polyline,
         DebugRender::default().with_collider_color(css::VIOLET.into()),
-    ));
+    ));*/
     
     let sprite_image_handle = scene_assets.landscape.clone();
     info!("sprite_image_handle {:?}", sprite_image_handle);
