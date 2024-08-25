@@ -15,5 +15,8 @@ impl Plugin for ColliderPlugin {
 
 // Systems
 fn intialize_land_system(mut commands: Commands, scene_assets: Res<SceneAssets>) {
-    commands.spawn((RigidBody::Static, Collider::circle(450.0)));
+    commands.spawn((
+        RigidBody::Static, 
+        Collider::circle(450.0)
+    ));
 }
