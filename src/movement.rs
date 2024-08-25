@@ -218,7 +218,7 @@ fn movement(
     let delta_time = time.delta_seconds_f64().adjust_precision();
 
     for event in movement_event_reader.read() {
-        for (movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in
+        for (movement_acceleration, jump_impulse, mut linear_velocity, _is_grounded) in
             &mut controllers
         {
             match event {
@@ -230,7 +230,7 @@ fn movement(
                     // if is_grounded {
                     //     linear_velocity.y = jump_impulse.0;
                     // }
-                    linear_velocity.y += movement_acceleration.0 * delta_time;
+                    linear_velocity.y += jump_impulse.0;
                 }
             }
         }
