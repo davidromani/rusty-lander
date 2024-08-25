@@ -6,7 +6,7 @@ mod game;
 mod movement;
 mod spaceship;
 
-use avian2d::prelude::*;
+use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
 
 use asset_loader::AssetsLoaderPlugin;
@@ -14,25 +14,35 @@ use camera::CameraPlugin;
 use collider::ColliderPlugin;
 use debug::DebugPlugin;
 use game::GamePlugin;
-use movement::MovementPlugin;
+use movement::CharacterControllerPlugin;
 use spaceship::SpaceshipPlugin;
 
 fn main() {
     App::new()
-        // Bevy & Avian plugins
+        // Bevy & Avian2D plugins
         .add_plugins((
-            DefaultPlugins, 
-            PhysicsPlugins::default(),
+            DefaultPlugins,
+            PhysicsPlugins::default().with_length_unit(20.0),
             PhysicsDebugPlugin::default(),
         ))
-        // custom plugins
-        .add_plugins(AssetsLoaderPlugin)
-        .add_plugins(CameraPlugin)
-        .add_plugins(ColliderPlugin)
-        .add_plugins(DebugPlugin)
-        .add_plugins(GamePlugin)
-        .add_plugins(MovementPlugin)
-        .add_plugins(SpaceshipPlugin)
+        // Resources
+        .insert_resource(Gravity(Vector::NEG_Y * 9.8))
+        // Sets
+        .configure_sets(Startup, (AppSet::First, AppSet::Second).chain())
+        // Custom plugins
+        .add_plugins(AssetsLoaderPlugin) // startup
+        .add_plugins(CameraPlugin) // startup
+        .add_plugins(DebugPlugin) // startup
+        .add_plugins(ColliderPlugin) // post startup
+        .add_plugins(SpaceshipPlugin) // post startup
+        .add_plugins(GamePlugin) // post startup & update
+        .add_plugins(CharacterControllerPlugin) // update
         .run()
     ;
+}
+
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+pub enum AppSet {
+    First,
+    Second,
 }
