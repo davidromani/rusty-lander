@@ -18,13 +18,13 @@ impl Plugin for SpaceshipPlugin {
 fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>) {
     commands.spawn((
         CharacterControllerBundle::new(Collider::rectangle(60.0, 32.0)).with_movement(
-            850.0,  // before 1250.0
+            550.0,  // before 1250.0
             0.95,        // before    0.92
-            7.9,    // before   60.0
+            4.9,    // before   60.0
             (180.0 as Scalar).to_radians(),
         ),
-        Friction::ZERO.with_static_coefficient(0.5).with_combine_rule(CoefficientCombine::Min),
-        Restitution::PERFECTLY_ELASTIC.with_combine_rule(CoefficientCombine::Min),
+        Friction::ZERO.with_static_coefficient(0.15).with_combine_rule(CoefficientCombine::Min),
+        Restitution::PERFECTLY_ELASTIC.with_combine_rule(CoefficientCombine::Multiply),
         ColliderDensity(2.0),
         GravityScale(1.0),
         SpriteBundle {

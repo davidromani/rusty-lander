@@ -1,4 +1,4 @@
-// use avian2d::math::Vector;
+use avian2d::math::Vector;
 use avian2d::prelude::*;
 use bevy::{asset::LoadState, prelude::*};
 use bevy::color::palettes::css;
@@ -63,29 +63,31 @@ fn intialize_landscape_system(
     scene_assets: Res<SceneAssets>,
     image_assets: Res<Assets<Image>>
 ) {
+    // bottom world bounds
     commands.spawn((
-        Collider::rectangle(700.0, 15.0),
+        Collider::rectangle(1200.0, 5.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(700.0, 15.0)).into(),
+            mesh: meshes.add(Rectangle::new(1200.0, 5.0)).into(),
             material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(0.0, -335.0, 1.0),
+            transform: Transform::from_xyz(0.0, -355.0, 1.0),
             ..default()
         },
         DebugRender::default().with_collider_color(css::VIOLET.into()),
     ));
 
-    /*let vertices = vec![
-        Vector::new(-125.0, 125.0),
-        Vector::new(0.0, -125.0),
-        Vector::new(125.0, 125.0)
+    let vertices = vec![
+        Vector::new(-630.0, 360.0),
+        Vector::new(-630.0, -300.0),
+        Vector::new(630.0, -300.0),
+        Vector::new(630.0, 360.0)
     ];
     let polyline = Collider::polyline(vertices, None);
     commands.spawn((
         RigidBody::Static,
         polyline,
-        DebugRender::default().with_collider_color(css::VIOLET.into()),
-    ));*/
+        DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
+    ));
     
     let sprite_image_handle = scene_assets.landscape.clone();
     info!("sprite_image_handle {:?}", sprite_image_handle);
