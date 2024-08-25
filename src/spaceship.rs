@@ -10,7 +10,6 @@ impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_systems(PostStartup, spawn_spaceship_system)
-            //.add_systems(Update, spaceship_movement_controls_system)
         ;
     }
 }
@@ -19,9 +18,9 @@ impl Plugin for SpaceshipPlugin {
 fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>) {
     commands.spawn((
         CharacterControllerBundle::new(Collider::rectangle(60.0, 32.0)).with_movement(
-            1250.0,
-            0.92,
-            60.0,
+            100.0,  // before 1250.0
+            0.5,         // before    0.92
+            1.5,    // before   60.0
             (180.0 as Scalar).to_radians(),
         ),
         Friction::ZERO.with_combine_rule(CoefficientCombine::Min),
@@ -30,7 +29,7 @@ fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>
         GravityScale(1.0),
         SpriteBundle {
             texture: scene_assets.lander.clone(),
-            transform: Transform::from_xyz(-100.0, 350.0, 2.0),
+            transform: Transform::from_xyz(-200.0, 300.0, 2.0),
             ..default()
         },
         Player
