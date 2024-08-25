@@ -38,7 +38,6 @@ fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>
 fn spaceship_movement_controls_system(
     mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    time: Res<Time>,
 ) {
     let (transform, mut velocity) = query.single_mut();
     let mut movement = Vec3::ZERO;
