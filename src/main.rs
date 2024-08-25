@@ -26,15 +26,23 @@ fn main() {
             PhysicsDebugPlugin::default(),
         ))
         // Resources
-        .insert_resource(Gravity(Vector::NEG_Y * 9800.0))
+        .insert_resource(Gravity(Vector::NEG_Y * 9.8))
+        // Sets
+        .configure_sets(Startup, (AppSet::First, AppSet::Second).chain())
         // Custom plugins
         .add_plugins(AssetsLoaderPlugin) // startup
         .add_plugins(CameraPlugin) // startup
-        .add_plugins(ColliderPlugin) // startup
         .add_plugins(DebugPlugin) // startup
+        .add_plugins(ColliderPlugin) // post startup
+        .add_plugins(SpaceshipPlugin) // post startup
         .add_plugins(GamePlugin) // post startup & update
         .add_plugins(CharacterControllerPlugin) // update
-        .add_plugins(SpaceshipPlugin) // post startup
         .run()
     ;
+}
+
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
+pub enum AppSet {
+    First,
+    Second,
 }

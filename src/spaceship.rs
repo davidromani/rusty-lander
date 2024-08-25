@@ -21,7 +21,7 @@ fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>
         CharacterControllerBundle::new(Collider::rectangle(60.0, 32.0)).with_movement(
             1250.0,
             0.92,
-            600.0,
+            60.0,
             (180.0 as Scalar).to_radians(),
         ),
         Friction::ZERO.with_combine_rule(CoefficientCombine::Min),
@@ -30,7 +30,7 @@ fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>
         GravityScale(1.0),
         SpriteBundle {
             texture: scene_assets.lander.clone(),
-            transform: Transform::from_xyz(0.0, 300.0, 2.0),
+            transform: Transform::from_xyz(-100.0, 350.0, 2.0),
             ..default()
         },
         Player
