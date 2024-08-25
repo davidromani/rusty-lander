@@ -2,8 +2,13 @@
 name = "rusty-lander"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+repository = "https://github.com/davidromani/rusty-lander"
+description = "a Jupiter Lander videogame port made with Rust & Bevy game engine"
+readme = "README.md"
 
 [dependencies]
+avian2d = "0.1.2"
 bevy = "0.14.1"
 iyes_perf_ui = "0.3.0"
 rand = "0.8.5"
