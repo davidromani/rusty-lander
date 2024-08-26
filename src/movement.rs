@@ -1,6 +1,8 @@
 use avian2d::{math::*, prelude::*};
 use bevy::{ecs::query::Has, prelude::*};
 
+use crate::game::Scores;
+
 pub struct CharacterControllerPlugin;
 
 impl Plugin for CharacterControllerPlugin {
@@ -125,6 +127,7 @@ impl CharacterControllerBundle {
 fn keyboard_input(
     mut movement_event_writer: EventWriter<MovementAction>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
+    scores: Res<Scores>,
 ) {
     let left = keyboard_input.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]);
     let right = keyboard_input.any_pressed([KeyCode::KeyD, KeyCode::ArrowRight]);
@@ -143,7 +146,7 @@ fn keyboard_input(
     // debug key
     if keyboard_input.just_released(KeyCode::Digit1) {
         info!("Debug key 1 has been pressed");
-        // info!("Transform {:?} · Velocity {:?}", transform, velocity);
+        info!("Current score = {:?} · Hi score = {:?}", scores.score, scores.hi_score);
     }
 }
 
@@ -193,7 +196,6 @@ fn update_grounded(
                 true
             }
         });
-
         if is_grounded {
             commands.entity(entity).insert(Grounded);
         } else {
