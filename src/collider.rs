@@ -61,7 +61,11 @@ fn intialize_landscape_system(
         RigidBody::Static,
         SpriteBundle {
             texture: sprite_image_handle,
-            transform: Transform::from_xyz(0.0, 0.0, 1.0),
+            transform: Transform {
+                translation: Vec3::new(0.0, -260.0, 1.0),
+                //scale: Vec3::new(2.0, 0.0, 1.0),
+                ..default()
+            },
             ..default()
         },
         DebugRender::default().with_collider_color(css::VIOLET.into()),
