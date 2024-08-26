@@ -11,7 +11,7 @@ use bevy::prelude::*;
 
 use asset_loader::AssetsLoaderPlugin;
 use camera::CameraPlugin;
-// use collider::ColliderPlugin;
+use collider::ColliderPlugin;
 use debug::DebugPlugin;
 use game::GamePlugin;
 use movement::CharacterControllerPlugin;
@@ -33,7 +33,7 @@ fn main() {
         .add_plugins(AssetsLoaderPlugin) // startup
         .add_plugins(CameraPlugin) // startup
         .add_plugins(DebugPlugin) // startup
-        // TODO .add_plugins(ColliderPlugin) // post startup
+        .add_plugins(ColliderPlugin) // post startup
         .add_plugins(SpaceshipPlugin) // post startup
         .add_plugins(GamePlugin) // post startup & update
         .add_plugins(CharacterControllerPlugin) // update
