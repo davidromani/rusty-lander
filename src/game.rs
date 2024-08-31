@@ -14,7 +14,7 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         //app.insert_resource(GameState { is_playing: IS_PLAYING });
         app
-            .insert_resource(Scores { score: 0, hi_score: 0 })
+            .insert_resource(Scores { score: 0, hi_score: 0, fuel_quantity: 1000 })
             .add_systems(PostStartup, spawn_background_image_system) // runs only once at Startup sequence
             .add_systems(Update, handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape))) // main App looper
             .add_systems(Update, rotate_background_image_system)
@@ -63,4 +63,5 @@ struct Rotatable {
 pub struct Scores {
     pub score: i16,
     pub hi_score: i16,
+    pub fuel_quantity: i32,
 }
