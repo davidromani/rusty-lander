@@ -2,6 +2,7 @@ mod asset_loader;
 mod camera;
 mod collider;
 mod debug;
+mod fuel;
 mod game;
 mod movement;
 mod spaceship;
@@ -13,6 +14,7 @@ use asset_loader::AssetsLoaderPlugin;
 use camera::CameraPlugin;
 use collider::ColliderPlugin;
 use debug::DebugPlugin;
+use fuel::FuelPlugin;
 use game::GamePlugin;
 use movement::CharacterControllerPlugin;
 use spaceship::SpaceshipPlugin;
@@ -33,6 +35,7 @@ fn main() {
         .add_plugins(AssetsLoaderPlugin) // startup
         .add_plugins(CameraPlugin) // startup
         .add_plugins(DebugPlugin) // startup
+        .add_plugins(FuelPlugin) // post startup & update
         .add_plugins(ColliderPlugin) // post startup
         .add_plugins(SpaceshipPlugin) // post startup
         .add_plugins(GamePlugin) // post startup & update
