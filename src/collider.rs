@@ -5,7 +5,7 @@ use bevy::color::palettes::css;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
-use crate::{asset_loader::{SceneAssetState, SceneAssets}, movement::{CharacterController, Grounded}};
+use crate::{asset_loader::{SceneAssetState, SceneAssets}, movement::{CharacterController, Grounded, ReadyToLand}};
 
 pub struct ColliderPlugin;
 
@@ -13,7 +13,7 @@ impl Plugin for ColliderPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_systems(OnEnter(SceneAssetState::Loaded), intialize_landscape_system)
-            .add_systems(Update, print_collisions_system)
+            .add_systems(Update, (print_collisions_system, print_player_landed_system))
         ;
     }
 }
@@ -101,10 +101,19 @@ fn intialize_landscape_system(
 }
 
 fn print_collisions_system(query: Query<(Entity, &CollidingEntities, &CharacterController), Without<Grounded>>) {
-    for (entity, colliding_entities, platform) in &query {
+    for (entity, colliding_entities, player) in &query {
         if !colliding_entities.is_empty() {
             println!("{:?} is colliding with the following entities: {:?}", entity, colliding_entities);
-            println!("Platform {:?}", platform);
+            println!("Player is NOT Grounded {:?}", player);
+        }
+    }
+}
+
+fn print_player_landed_system(query: Query<(Entity, &CollidingEntities, &CharacterController), With<ReadyToLand>>) {
+    for (entity, colliding_entities, player) in &query {
+        if !colliding_entities.is_empty() {
+            println!("{:?} is colliding with the following entities: {:?}", entity, colliding_entities);
+            println!("Player is ReadyToLand {:?}", player);
         }
     }
 }
