@@ -19,7 +19,7 @@ fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>
     commands.spawn((
         CharacterControllerBundle::new(Collider::rectangle(60.0, 32.0)).with_movement(
             550.0,  // before 1250.0
-            0.95,        // before    0.92
+            0.97,        // before    0.92
             4.9,    // before   60.0
             (180.0 as Scalar).to_radians(),
         ),

@@ -6,6 +6,7 @@ mod fuel;
 mod game;
 mod movement;
 mod spaceship;
+mod speedometer;
 
 use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
@@ -18,6 +19,7 @@ use fuel::FuelPlugin;
 use game::GamePlugin;
 use movement::CharacterControllerPlugin;
 use spaceship::SpaceshipPlugin;
+use speedometer::SpeedometerPlugin;
 
 fn main() {
     App::new()
@@ -35,7 +37,8 @@ fn main() {
         .add_plugins(AssetsLoaderPlugin) // startup
         .add_plugins(CameraPlugin) // startup
         .add_plugins(DebugPlugin) // startup
-        .add_plugins(FuelPlugin) // post startup & update
+        .add_plugins(FuelPlugin) // startup & update
+        .add_plugins(SpeedometerPlugin) // startup & update
         .add_plugins(ColliderPlugin) // post startup
         .add_plugins(SpaceshipPlugin) // post startup
         .add_plugins(GamePlugin) // post startup & update

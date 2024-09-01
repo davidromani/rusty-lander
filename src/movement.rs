@@ -219,21 +219,16 @@ fn movement(
     // Precision is adjusted so that the example works with
     // both the `f32` and `f64` features. Otherwise you don't need this.
     let delta_time = time.delta_seconds_f64().adjust_precision();
-
     for event in movement_event_reader.read() {
-        for (movement_acceleration, jump_impulse, mut linear_velocity, _is_grounded) in
-            &mut controllers
-        {
+        for (movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in &mut controllers {
             match event {
                 MovementAction::Move(direction) => {
                     linear_velocity.x += *direction * movement_acceleration.0 * delta_time;
                 }
                 MovementAction::Jump(boost) => {
-                    // before
-                    // if is_grounded {
-                    //     linear_velocity.y = jump_impulse.0;
-                    // }
-                    linear_velocity.y += jump_impulse.0 * boost;
+                    if !is_grounded {
+                        linear_velocity.y += jump_impulse.0 * boost;
+                    }
                 }
             }
         }
