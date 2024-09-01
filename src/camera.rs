@@ -32,15 +32,8 @@ fn spawm_camera_system(mut commands: Commands) {
             PerfUiWidgetBar::new(PerfUiEntryMemUsage::default()),
         ),
         (
-            PerfUiEntryFixedTimeStep::default(),
-            PerfUiEntryClock::default(),
-        ),
-        (
             PerfUiEntryCursorPosition::default(),
             PerfUiEntryWindowResolution::default(),
-            PerfUiEntryWindowScaleFactor::default(),
-            PerfUiEntryWindowMode::default(),
-            PerfUiEntryWindowPresentMode::default(),
         ),
     ));
 }
