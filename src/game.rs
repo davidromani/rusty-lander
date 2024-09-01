@@ -34,13 +34,14 @@ fn spawn_background_image_system(mut commands: Commands, scene_assets: Res<Scene
     ));
 }
 
-fn rotate_background_image_system(mut backgrounds: Query<(&mut Transform, &Rotatable), With<Background>>, timer: Res<Time>) {
-    for (mut transform, background) in &mut backgrounds { // TODO get only one queried object
-        // The speed is first multiplied by TAU which is a full rotation (360deg) in radians,
-        // and then multiplied by delta_seconds which is the time that passed last frame.
-        // In other words. Speed is equal to the amount of rotations per second.
-        transform.rotate_z(background.speed * TAU * timer.delta_seconds());
-    }
+fn rotate_background_image_system(mut query: Query<(&mut Transform, &Rotatable), With<Background>>, timer: Res<Time>) {
+    let Ok((mut transform, background)) = query.get_single_mut() else {
+        return;
+    };
+    // The speed is first multiplied by TAU which is a full rotation (360deg) in radians,
+    // and then multiplied by delta_seconds which is the time that passed last frame.
+    // In other words. Speed is equal to the amount of rotations per second.
+    transform.rotate_z(background.speed * TAU * timer.delta_seconds());
 }
 
 fn handle_exit_key_pressed_system(mut exit: EventWriter<AppExit>) {

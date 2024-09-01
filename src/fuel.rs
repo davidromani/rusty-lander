@@ -32,12 +32,13 @@ fn spawn_fuel_bar_system(mut commands: Commands) {
     ));
 }
 
-fn handle_fire_big_booster_key_pressed_system(mut query: Query<(&mut FuelBar, &mut Sprite)>, scores: Res<Scores>) {
-    for (mut fuel_bar, mut sprite) in &mut query { // TODO get only one queried object
-        fuel_bar.fuel_quantity -= 1.0;
-        sprite.custom_size = Some(Vec2::new(fuel_bar.fuel_quantity, 15.0));
-        warn!("fuel_bar {:?} · sprite {:?} · scores {:?}", fuel_bar, sprite, scores);
-    }
+fn handle_fire_big_booster_key_pressed_system(mut query: Query<(&mut FuelBar, &mut Sprite), With<FuelBar>>, scores: Res<Scores>) {
+    let Ok((mut fuel_bar, mut sprite)) = query.get_single_mut() else {
+        return;
+    };
+    fuel_bar.fuel_quantity -= 1.0;
+    sprite.custom_size = Some(Vec2::new(fuel_bar.fuel_quantity, 15.0));
+    warn!("fuel_bar {:?} · sprite {:?} · scores {:?}", fuel_bar, sprite, scores);
 }
 
 // Components
