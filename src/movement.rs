@@ -21,7 +21,7 @@ impl Plugin for CharacterControllerPlugin {
 #[derive(Event)]
 pub enum MovementAction {
     Move(Scalar),
-    Jump,
+    Jump(Scalar),
 }
 
 /// A marker component indicating that an entity is using a character controller.
@@ -130,18 +130,23 @@ fn keyboard_input(
     scores: Res<Scores>
 ) {
     if scores.fuel_quantity >= 0.0 {
+        // X-axis
         let left = keyboard_input.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]);
         let right = keyboard_input.any_pressed([KeyCode::KeyD, KeyCode::ArrowRight]);
-
         let horizontal = left as i8 - right as i8;
         let direction = horizontal as Scalar;
-
         if direction != 0.0 {
             movement_event_writer.send(MovementAction::Move(direction));
         }
-
+        // Y-axis
         if keyboard_input.pressed(KeyCode::Digit2) {
-            movement_event_writer.send(MovementAction::Jump);
+            movement_event_writer.send(MovementAction::Jump(0.75 as Scalar));
+        }
+        if keyboard_input.pressed(KeyCode::KeyW) {
+            movement_event_writer.send(MovementAction::Jump(0.55 as Scalar));
+        }
+        if keyboard_input.pressed(KeyCode::KeyS) {
+            movement_event_writer.send(MovementAction::Jump(0.45 as Scalar));
         }
     }
 }
@@ -169,7 +174,7 @@ fn gamepad_input(
         };
 
         if buttons.pressed(jump_button) {
-            movement_event_writer.send(MovementAction::Jump);
+            movement_event_writer.send(MovementAction::Jump(1.0 as Scalar));
         }
     }
 }
@@ -223,12 +228,12 @@ fn movement(
                 MovementAction::Move(direction) => {
                     linear_velocity.x += *direction * movement_acceleration.0 * delta_time;
                 }
-                MovementAction::Jump => {
+                MovementAction::Jump(boost) => {
                     // before
                     // if is_grounded {
                     //     linear_velocity.y = jump_impulse.0;
                     // }
-                    linear_velocity.y += jump_impulse.0;
+                    linear_velocity.y += jump_impulse.0 * boost;
                 }
             }
         }

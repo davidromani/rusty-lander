@@ -11,6 +11,10 @@ impl Plugin for FuelPlugin {
         app
             .add_systems(Startup, spawn_fuel_bar_system)
             .add_systems(Update, handle_fire_big_booster_key_pressed_system.run_if(input_pressed(KeyCode::Digit2)))
+            .add_systems(Update, handle_fire_medium_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyW)))
+            .add_systems(Update, handle_fire_small_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyS)))
+            .add_systems(Update, handle_fire_small_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyA)))
+            .add_systems(Update, handle_fire_small_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyD)))
             .add_systems(Update, update_fuel_bar_system)
         ;
     }
@@ -36,6 +40,18 @@ fn spawn_fuel_bar_system(mut commands: Commands) {
 fn handle_fire_big_booster_key_pressed_system(mut scores: ResMut<Scores>) {
     if scores.fuel_quantity >= 0.0 {
         scores.fuel_quantity -= 1.0;
+    }
+}
+
+fn handle_fire_medium_booster_key_pressed_system(mut scores: ResMut<Scores>) {
+    if scores.fuel_quantity >= 0.0 {
+        scores.fuel_quantity -= 0.5;
+    }
+}
+
+fn handle_fire_small_booster_key_pressed_system(mut scores: ResMut<Scores>) {
+    if scores.fuel_quantity >= 0.0 {
+        scores.fuel_quantity -= 0.2;
     }
 }
 
