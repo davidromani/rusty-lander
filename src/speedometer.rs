@@ -39,7 +39,7 @@ fn spawn_speed_bar_system(
             transform: Transform::from_translation(Vec3::new(620.0, 0.0, 4.0)),
             sprite: Sprite {
                 color: Color::srgb(0.77, 0.84, 0.11),
-                custom_size: Some(Vec2::new(15.0, 15.0)),
+                custom_size: Some(Vec2::new(15.0, 25.0)),
                 ..default()
             },
             ..default()
@@ -67,7 +67,9 @@ fn update_fuel_bar_system(
     let Ok(linear_velocity) = query_player_linear_velocities.get_single_mut() else {
         return;
     };
-    black_indicator.translation.y = linear_velocity.y;
+    if linear_velocity.y < 300.0 && linear_velocity.y > -300.0 {
+        black_indicator.translation.y = linear_velocity.y;
+    }
 }
 
 // Components

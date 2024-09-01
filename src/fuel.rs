@@ -37,21 +37,21 @@ fn spawn_fuel_bar_system(mut commands: Commands) {
     ));
 }
 
-fn handle_fire_big_booster_key_pressed_system(mut scores: ResMut<Scores>) {
+fn handle_fire_big_booster_key_pressed_system(mut scores: ResMut<Scores>, time: Res<Time>) {
     if scores.fuel_quantity >= 0.0 {
-        scores.fuel_quantity -= 1.0;
+        scores.fuel_quantity -= 100.0 * time.delta_seconds();
     }
 }
 
-fn handle_fire_medium_booster_key_pressed_system(mut scores: ResMut<Scores>) {
+fn handle_fire_medium_booster_key_pressed_system(mut scores: ResMut<Scores>, time: Res<Time>) {
     if scores.fuel_quantity >= 0.0 {
-        scores.fuel_quantity -= 0.5;
+        scores.fuel_quantity -= 50.0 * time.delta_seconds();
     }
 }
 
-fn handle_fire_small_booster_key_pressed_system(mut scores: ResMut<Scores>) {
+fn handle_fire_small_booster_key_pressed_system(mut scores: ResMut<Scores>, time: Res<Time>) {
     if scores.fuel_quantity >= 0.0 {
-        scores.fuel_quantity -= 0.2;
+        scores.fuel_quantity -= 20.0 * time.delta_seconds();
     }
 }
 
