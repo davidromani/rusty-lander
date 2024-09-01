@@ -64,8 +64,8 @@ pub struct Scores {
     pub fuel_quantity: f32,
 }
 
-impl Scores {
+/*impl Scores {
     pub fn get_available_fuel_quantity(&self) -> f32 {
         return 1000.0 - self.fuel_quantity;
     }
-}
+}*/

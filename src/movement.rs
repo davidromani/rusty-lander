@@ -29,7 +29,7 @@ pub enum MovementAction {
 }
 
 /// A marker component indicating that an entity is using a character controller.
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct CharacterController;
 
 /// A marker component indicating that an entity is on the ground.

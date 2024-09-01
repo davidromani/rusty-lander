@@ -5,7 +5,7 @@ use bevy::color::palettes::css;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
-use crate::asset_loader::{SceneAssetState, SceneAssets};
+use crate::{asset_loader::{SceneAssetState, SceneAssets}, movement::{CharacterController, Grounded}};
 
 pub struct ColliderPlugin;
 
@@ -13,6 +13,7 @@ impl Plugin for ColliderPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_systems(OnEnter(SceneAssetState::Loaded), intialize_landscape_system)
+            .add_systems(Update, print_collisions_system)
         ;
     }
 }
@@ -95,12 +96,21 @@ fn intialize_landscape_system(
             },
             ..default()
         },
-        //DebugRender::default().with_collider_color(css::VIOLET.into()),
+        DebugRender::default().with_collider_color(css::VIOLET.into()),
     ));
 }
 
+fn print_collisions_system(query: Query<(Entity, &CollidingEntities, &CharacterController), Without<Grounded>>) {
+    for (entity, colliding_entities, platform) in &query {
+        if !colliding_entities.is_empty() {
+            println!("{:?} is colliding with the following entities: {:?}", entity, colliding_entities);
+            println!("Platform {:?}", platform);
+        }
+    }
+}
+
 // Components
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Platform {
     factor: i8,
 }
