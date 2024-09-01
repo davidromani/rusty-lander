@@ -1,6 +1,8 @@
+use avian2d::dynamics::rigid_body::LinearVelocity;
 use bevy::{prelude::*, input::common_conditions::input_just_pressed};
 
 use crate::AppSet;
+use crate::spaceship::Player;
 use crate::game::Scores;
 
 pub struct DebugPlugin;
@@ -20,7 +22,11 @@ fn print_hello_world_system() {
     // warn!("Entity {:?} · Component {:?}", entity, component);
 }
 
-fn handle_debug_key_pressed_system(scores: Res<Scores>) {
+fn handle_debug_key_pressed_system(mut query: Query<&LinearVelocity, With<Player>>, scores: Res<Scores>) {
     info!("Debug key 1 has been pressed");
-        info!("Current score = {:?} · Hi score = {:?} · Fuel = {:?}", scores.score, scores.hi_score, scores.fuel_quantity);
+    info!("Current score = {:?} · Hi score = {:?} · Fuel = {:?}", scores.score, scores.hi_score, scores.fuel_quantity);
+    let Ok(linear_velocity) = query.get_single_mut() else {
+        return;
+    };
+    info!("Current LinearVelocity: {:?}", linear_velocity);
 }

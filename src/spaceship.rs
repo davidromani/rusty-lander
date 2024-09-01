@@ -38,4 +38,4 @@ fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>
 
 // Components
 #[derive(Component)]
-struct Player;
+pub struct Player;

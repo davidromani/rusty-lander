@@ -1,5 +1,8 @@
+use avian2d::dynamics::rigid_body::LinearVelocity;
 use bevy::prelude::*;
 use bevy::sprite::*;
+
+use crate::spaceship::Player;
 
 pub struct SpeedometerPlugin;
 
@@ -54,11 +57,17 @@ fn spawn_speed_bar_system(
     ));
 }
 
-fn update_fuel_bar_system(mut query: Query<&mut Transform, With<SpeedBarBlackIndicator>>) {
-    let Ok(mut black_indicator) = query.get_single_mut() else {
+fn update_fuel_bar_system(
+    mut query_speed_bar_black_indicators: Query<&mut Transform, With<SpeedBarBlackIndicator>>,
+    mut query_player_linear_velocities: Query<&LinearVelocity, With<Player>>
+) {
+    let Ok(mut black_indicator) = query_speed_bar_black_indicators.get_single_mut() else {
         return;
     };
-    black_indicator.translation.y -= 0.1;
+    let Ok(linear_velocity) = query_player_linear_velocities.get_single_mut() else {
+        return;
+    };
+    black_indicator.translation.y = linear_velocity.y;
 }
 
 // Components
