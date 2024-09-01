@@ -15,7 +15,7 @@ impl Plugin for CharacterControllerPlugin {
             .add_event::<MovementAction>()
             .add_systems(
                 Update,
-                (keyboard_input, gamepad_input, update_grounded, movement, apply_movement_damping).chain()
+                (keyboard_input, gamepad_input, update_ready_to_land, update_grounded, movement, apply_movement_damping).chain()
             )
         ;
     }
@@ -36,6 +36,11 @@ pub struct CharacterController;
 #[derive(Component)]
 #[component(storage = "SparseSet")]
 pub struct Grounded;
+
+/// A marker component indicating that an entity is on the ground.
+#[derive(Component)]
+#[component(storage = "SparseSet")]
+pub struct ReadyToLand;
 
 /// The acceleration used for character movement.
 #[derive(Component)]
@@ -199,10 +204,7 @@ fn gamepad_input(
 /// Updates the [`Grounded`] status for character controllers.
 fn update_grounded(
     mut commands: Commands,
-    mut query: Query<
-        (Entity, &ShapeHits, &Rotation, Option<&MaxSlopeAngle>),
-        With<CharacterController>,
-    >,
+    mut query: Query<(Entity, &ShapeHits, &Rotation, Option<&MaxSlopeAngle>), With<CharacterController>>
 ) {
     for (entity, hits, rotation, max_slope_angle) in &mut query {
         // The character is grounded if the shape caster has a hit with a normal
@@ -219,6 +221,20 @@ fn update_grounded(
         } else {
             commands.entity(entity).remove::<Grounded>();
         }
+    }
+}
+
+fn update_ready_to_land(
+    mut commands: Commands,
+    mut query: Query<(Entity, &LinearVelocity), With<CharacterController>>
+) {
+    let Ok((entity, linear_velocity)) = query.get_single_mut() else {
+        return;
+    };
+    if linear_velocity.y < 12.5 && linear_velocity.y > -12.5 {
+        commands.entity(entity).insert(ReadyToLand);
+    } else {
+        commands.entity(entity).remove::<ReadyToLand>();
     }
 }
 
