@@ -3,6 +3,10 @@ use bevy::{ecs::query::Has, prelude::*};
 
 use crate::game::Scores;
 
+const BIG_THRUST: f32 = 0.75;
+const MEDIUM_THRUST: f32 = 0.55;
+const SMALL_THRUST: f32 = 0.45;
+
 pub struct CharacterControllerPlugin;
 
 impl Plugin for CharacterControllerPlugin {
@@ -140,13 +144,13 @@ fn keyboard_input(
         }
         // Y-axis
         if keyboard_input.pressed(KeyCode::Digit2) {
-            movement_event_writer.send(MovementAction::Jump(0.75 as Scalar));
+            movement_event_writer.send(MovementAction::Jump(BIG_THRUST as Scalar));
         }
         if keyboard_input.pressed(KeyCode::KeyW) {
-            movement_event_writer.send(MovementAction::Jump(0.55 as Scalar));
+            movement_event_writer.send(MovementAction::Jump(MEDIUM_THRUST as Scalar));
         }
         if keyboard_input.pressed(KeyCode::KeyS) {
-            movement_event_writer.send(MovementAction::Jump(0.45 as Scalar));
+            movement_event_writer.send(MovementAction::Jump(SMALL_THRUST as Scalar));
         }
     }
 }
@@ -159,22 +163,35 @@ fn gamepad_input(
     buttons: Res<ButtonInput<GamepadButton>>,
 ) {
     for gamepad in gamepads.iter() {
+        // X-axis
         let axis_lx = GamepadAxis {
             gamepad,
             axis_type: GamepadAxisType::LeftStickX,
         };
-
         if let Some(x) = axes.get(axis_lx) {
             movement_event_writer.send(MovementAction::Move(x as Scalar));
         }
-
-        let jump_button = GamepadButton {
+        // Y-axis
+        let big_booster_button = GamepadButton {
+            gamepad,
+            button_type: GamepadButtonType::North,
+        };
+        if buttons.pressed(big_booster_button) {
+            movement_event_writer.send(MovementAction::Jump(BIG_THRUST as Scalar));
+        }
+        let medium_booster_button = GamepadButton {
+            gamepad,
+            button_type: GamepadButtonType::East,
+        };
+        if buttons.pressed(medium_booster_button) {
+            movement_event_writer.send(MovementAction::Jump(MEDIUM_THRUST as Scalar));
+        }
+        let small_booster_button = GamepadButton {
             gamepad,
             button_type: GamepadButtonType::South,
         };
-
-        if buttons.pressed(jump_button) {
-            movement_event_writer.send(MovementAction::Jump(1.0 as Scalar));
+        if buttons.pressed(small_booster_button) {
+            movement_event_writer.send(MovementAction::Jump(SMALL_THRUST as Scalar));
         }
     }
 }
