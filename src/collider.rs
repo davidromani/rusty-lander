@@ -77,7 +77,7 @@ fn intialize_landscape_system(
             transform: Transform::from_xyz(200.0, -95.0, 1.0),
             ..default()
         },
-        Platform { factor: 5 },
+        Platform { factor: 10 },
         DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
 

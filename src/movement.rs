@@ -1,6 +1,8 @@
 use avian2d::{math::*, prelude::*};
 use bevy::{ecs::query::Has, prelude::*};
 
+use crate::game::Scores;
+
 pub struct CharacterControllerPlugin;
 
 impl Plugin for CharacterControllerPlugin {
@@ -124,20 +126,23 @@ impl CharacterControllerBundle {
 /// Sends [`MovementAction`] events based on keyboard input.
 fn keyboard_input(
     mut movement_event_writer: EventWriter<MovementAction>,
-    keyboard_input: Res<ButtonInput<KeyCode>>
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    scores: Res<Scores>
 ) {
-    let left = keyboard_input.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]);
-    let right = keyboard_input.any_pressed([KeyCode::KeyD, KeyCode::ArrowRight]);
+    if scores.fuel_quantity >= 0.0 {
+        let left = keyboard_input.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]);
+        let right = keyboard_input.any_pressed([KeyCode::KeyD, KeyCode::ArrowRight]);
 
-    let horizontal = left as i8 - right as i8;
-    let direction = horizontal as Scalar;
+        let horizontal = left as i8 - right as i8;
+        let direction = horizontal as Scalar;
 
-    if direction != 0.0 {
-        movement_event_writer.send(MovementAction::Move(direction));
-    }
+        if direction != 0.0 {
+            movement_event_writer.send(MovementAction::Move(direction));
+        }
 
-    if keyboard_input.pressed(KeyCode::Space) {
-        movement_event_writer.send(MovementAction::Jump);
+        if keyboard_input.pressed(KeyCode::Digit2) {
+            movement_event_writer.send(MovementAction::Jump);
+        }
     }
 }
 
