@@ -43,8 +43,7 @@ fn main() {
         .add_plugins(SpaceshipPlugin) // post startup
         .add_plugins(GamePlugin) // post startup & update
         .add_plugins(CharacterControllerPlugin) // update
-        .run()
-    ;
+        .run();
 }
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]

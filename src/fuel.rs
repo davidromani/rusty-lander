@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use bevy::input::common_conditions::*;
+use bevy::prelude::*;
 use bevy::sprite::*;
 
 use crate::game::Scores;
@@ -8,15 +8,28 @@ pub struct FuelPlugin;
 
 impl Plugin for FuelPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(Startup, spawn_fuel_bar_system)
-            .add_systems(Update, handle_fire_big_booster_key_pressed_system.run_if(input_pressed(KeyCode::Digit2)))
-            .add_systems(Update, handle_fire_medium_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyW)))
-            .add_systems(Update, handle_fire_small_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyS)))
-            .add_systems(Update, handle_fire_small_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyA)))
-            .add_systems(Update, handle_fire_small_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyD)))
-            .add_systems(Update, update_fuel_bar_system)
-        ;
+        app.add_systems(Startup, spawn_fuel_bar_system)
+            .add_systems(
+                Update,
+                handle_fire_big_booster_key_pressed_system.run_if(input_pressed(KeyCode::Digit2)),
+            )
+            .add_systems(
+                Update,
+                handle_fire_medium_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyW)),
+            )
+            .add_systems(
+                Update,
+                handle_fire_small_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyS)),
+            )
+            .add_systems(
+                Update,
+                handle_fire_small_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyA)),
+            )
+            .add_systems(
+                Update,
+                handle_fire_small_booster_key_pressed_system.run_if(input_pressed(KeyCode::KeyD)),
+            )
+            .add_systems(Update, update_fuel_bar_system);
     }
 }
 

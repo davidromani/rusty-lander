@@ -7,13 +7,11 @@ pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
+        app.add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
             .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
             .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin)
             .add_plugins(PerfUiPlugin)
-            .add_systems(Startup, (spawm_camera_system).in_set(AppSet::Second))
-        ;
+            .add_systems(Startup, (spawm_camera_system).in_set(AppSet::Second));
     }
 }
 

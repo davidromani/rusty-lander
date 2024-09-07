@@ -1,6 +1,6 @@
-use bevy::prelude::*;
-use bevy::input::common_conditions::*;
 use bevy::app::AppExit;
+use bevy::input::common_conditions::*;
+use bevy::prelude::*;
 use std::f32::consts::TAU;
 
 use crate::asset_loader::SceneAssets;
@@ -10,12 +10,17 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         //app.insert_resource(GameState { is_playing: IS_PLAYING });
-        app
-            .insert_resource(Scores { score: 0, hi_score: 0, fuel_quantity: 1000.0 })
-            .add_systems(PostStartup, spawn_background_image_system) // runs only once at Startup sequence
-            .add_systems(Update, handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape))) // main App looper
-            .add_systems(Update, rotate_background_image_system)
-        ; 
+        app.insert_resource(Scores {
+            score: 0,
+            hi_score: 0,
+            fuel_quantity: 1000.0,
+        })
+        .add_systems(PostStartup, spawn_background_image_system) // runs only once at Startup sequence
+        .add_systems(
+            Update,
+            handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape)),
+        ) // main App looper
+        .add_systems(Update, rotate_background_image_system);
     }
 }
 
@@ -27,11 +32,14 @@ fn spawn_background_image_system(mut commands: Commands, scene_assets: Res<Scene
             ..default()
         },
         Background,
-        Rotatable { speed: 0.001 }
+        Rotatable { speed: 0.001 },
     ));
 }
 
-fn rotate_background_image_system(mut query: Query<(&mut Transform, &Rotatable), With<Background>>, timer: Res<Time>) {
+fn rotate_background_image_system(
+    mut query: Query<(&mut Transform, &Rotatable), With<Background>>,
+    timer: Res<Time>,
+) {
     let Ok((mut transform, background)) = query.get_single_mut() else {
         return;
     };

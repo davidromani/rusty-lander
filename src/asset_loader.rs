@@ -4,12 +4,13 @@ pub struct AssetsLoaderPlugin;
 
 impl Plugin for AssetsLoaderPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .init_resource::<SceneAssets>()
+        app.init_resource::<SceneAssets>()
             .init_state::<SceneAssetState>()
             .add_systems(PreStartup, load_assets_system)
-            .add_systems(Update, check_assets.run_if(in_state(SceneAssetState::Loading)))
-        ;
+            .add_systems(
+                Update,
+                check_assets.run_if(in_state(SceneAssetState::Loading)),
+            );
     }
 }
 
