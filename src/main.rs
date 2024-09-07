@@ -25,7 +25,13 @@ fn main() {
     App::new()
         // Bevy & Avian2D plugins
         .add_plugins((
-            DefaultPlugins,
+            DefaultPlugins.set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: "Rusty Lander".to_string(),
+                    ..default()
+                }),
+                ..default()
+            }),
             PhysicsPlugins::default().with_length_unit(20.0),
             PhysicsDebugPlugin::default(),
         ))
