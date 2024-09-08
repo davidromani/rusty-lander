@@ -106,6 +106,7 @@ fn initialize_landscape_system(
 
 fn print_collisions_system(
     query: Query<(Entity, &CollidingEntities, &CharacterController), Without<Grounded>>,
+    mut game_state: ResMut<NextState<GameState>>,
 ) {
     for (entity, colliding_entities, player) in &query {
         if !colliding_entities.is_empty() {
@@ -114,12 +115,14 @@ fn print_collisions_system(
                 entity, colliding_entities
             );
             println!("Player is NOT Grounded {:?}", player);
+            game_state.set(GameState::Crashed);
         }
     }
 }
 
 fn print_player_landed_system(
     query: Query<(Entity, &CollidingEntities, &CharacterController), With<ReadyToLand>>,
+    mut game_state: ResMut<NextState<GameState>>,
 ) {
     for (entity, colliding_entities, player) in &query {
         if !colliding_entities.is_empty() {
@@ -128,6 +131,7 @@ fn print_player_landed_system(
                 entity, colliding_entities
             );
             println!("Player is ReadyToLand {:?}", player);
+            game_state.set(GameState::Landed);
         }
     }
 }
