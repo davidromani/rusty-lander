@@ -7,7 +7,7 @@ use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
 use crate::state::GameState;
 use crate::{
-    asset_loader::{SceneAssetState, SceneAssets},
+    asset_loader::SceneAssets,
     movement::{CharacterController, Grounded, ReadyToLand},
 };
 
@@ -86,9 +86,7 @@ fn initialize_landscape_system(
     ));
     // land
     let sprite_image_handle = scene_assets.landscape.clone();
-    info!("sprite_image_handle {:?}", sprite_image_handle);
     let sprite_image = image_assets.get(&sprite_image_handle);
-    info!("sprite_image {:?}", sprite_image);
     let collider = single_heightfield_collider_translated(sprite_image.unwrap());
     commands.spawn((
         collider,
