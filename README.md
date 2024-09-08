@@ -21,5 +21,5 @@ $ cargo run
 
 #### References
 
-Read about the original Jupiter Lander videogame article in
+Read about the original Jupiter Lander video game article in
 the [Wikipedia](https://en.wikipedia.org/wiki/Jupiter_Lander).
