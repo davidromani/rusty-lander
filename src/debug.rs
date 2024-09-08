@@ -3,13 +3,12 @@ use bevy::{input::common_conditions::input_just_pressed, prelude::*};
 
 use crate::game::Scores;
 use crate::spaceship::Player;
-use crate::AppSet;
 
 pub struct DebugPlugin;
 
 impl Plugin for DebugPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, (print_hello_world_system).in_set(AppSet::Second))
+        app.add_systems(Startup, print_hello_world_system)
             .add_systems(
                 Update,
                 handle_debug_key_pressed_system.run_if(input_just_pressed(KeyCode::Digit1)),

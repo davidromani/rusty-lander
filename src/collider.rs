@@ -5,6 +5,7 @@ use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
+use crate::state::GameState;
 use crate::{
     asset_loader::{SceneAssetState, SceneAssets},
     movement::{CharacterController, Grounded, ReadyToLand},
@@ -14,16 +15,17 @@ pub struct ColliderPlugin;
 
 impl Plugin for ColliderPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(SceneAssetState::Loaded), intialize_landscape_system)
+        app.add_systems(OnEnter(GameState::Landing), initialize_landscape_system)
             .add_systems(
                 Update,
-                (print_collisions_system, print_player_landed_system),
+                (print_collisions_system, print_player_landed_system)
+                    .run_if(in_state(GameState::Landing)),
             );
     }
 }
 
 // Systems
-fn intialize_landscape_system(
+fn initialize_landscape_system(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,

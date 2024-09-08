@@ -39,8 +39,6 @@ fn main() {
         ))
         // Resources
         .insert_resource(Gravity(Vector::NEG_Y * 98.0))
-        // Sets
-        .configure_sets(Startup, (AppSet::First, AppSet::Second).chain())
         // Custom plugins
         .add_plugins(StatesPlugin) // update
         .add_plugins(AssetsLoaderPlugin) // startup
@@ -53,10 +51,4 @@ fn main() {
         .add_plugins(GamePlugin) // post startup & update
         .add_plugins(CharacterControllerPlugin) // update
         .run();
-}
-
-#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
-pub enum AppSet {
-    First,
-    Second,
 }

@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 use iyes_perf_ui::prelude::*;
 
-use crate::AppSet;
-
 pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
@@ -11,7 +9,7 @@ impl Plugin for CameraPlugin {
             .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
             .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin)
             .add_plugins(PerfUiPlugin)
-            .add_systems(Startup, (spawn_camera_system).in_set(AppSet::Second));
+            .add_systems(Startup, spawn_camera_system);
     }
 }
 
