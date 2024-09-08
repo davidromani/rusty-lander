@@ -54,6 +54,12 @@ pub struct SceneAssets {
     pub lander: Handle<Image>,
 }
 
+#[derive(Debug, Resource)]
+pub struct UiAssets {
+    pub font: Handle<Font>,
+    pub font_fira: Handle<Font>,
+}
+
 // States
 #[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
 pub enum SceneAssetState {

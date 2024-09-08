@@ -4,6 +4,7 @@ mod collider;
 mod debug;
 mod fuel;
 mod game;
+mod menu;
 mod movement;
 mod spaceship;
 mod speedometer;
@@ -11,6 +12,7 @@ mod state;
 
 use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
+use std::string::ToString;
 
 use asset_loader::AssetsLoaderPlugin;
 use camera::CameraPlugin;
@@ -23,13 +25,15 @@ use spaceship::SpaceshipPlugin;
 use speedometer::SpeedometerPlugin;
 use state::StatesPlugin;
 
+const MAIN_TITLE: &str = "Rusty Lander";
+
 fn main() {
     App::new()
         // Bevy & Avian2D plugins
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
-                    title: "Rusty Lander".to_string(),
+                    title: MAIN_TITLE.to_string(),
                     ..default()
                 }),
                 ..default()
