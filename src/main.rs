@@ -21,6 +21,7 @@ use game::GamePlugin;
 use movement::CharacterControllerPlugin;
 use spaceship::SpaceshipPlugin;
 use speedometer::SpeedometerPlugin;
+use state::StatesPlugin;
 
 fn main() {
     App::new()
@@ -41,6 +42,7 @@ fn main() {
         // Sets
         .configure_sets(Startup, (AppSet::First, AppSet::Second).chain())
         // Custom plugins
+        .add_plugins(StatesPlugin) // update
         .add_plugins(AssetsLoaderPlugin) // startup
         .add_plugins(CameraPlugin) // startup
         .add_plugins(DebugPlugin) // startup
