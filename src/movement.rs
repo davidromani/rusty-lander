@@ -2,6 +2,7 @@ use avian2d::{math::*, prelude::*};
 use bevy::{ecs::query::Has, prelude::*};
 
 use crate::game::Scores;
+use crate::state::GameState;
 
 const BIG_THRUST: f32 = 0.75;
 const MEDIUM_THRUST: f32 = 0.55;
@@ -11,13 +12,31 @@ pub struct CharacterControllerPlugin;
 
 impl Plugin for CharacterControllerPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_event::<MovementAction>()
-            .add_systems(
-                Update,
-                (keyboard_input, gamepad_input, update_ready_to_land, update_grounded, movement, apply_movement_damping).chain()
+        app.add_event::<MovementAction>()
+            .add_systems(Update, (keyboard_input, gamepad_input).chain());
+        app.add_systems(
+            OnEnter(GameState::Landing),
+            |mut physics_time: ResMut<Time<Physics>>| {
+                physics_time.unpause();
+            },
+        )
+        .add_systems(
+            OnEnter(GameState::Paused),
+            |mut physics_time: ResMut<Time<Physics>>| {
+                physics_time.pause();
+            },
+        )
+        .add_systems(
+            Update,
+            (
+                update_ready_to_land,
+                update_grounded,
+                movement,
+                apply_movement_damping,
             )
-        ;
+                .chain()
+                .run_if(in_state(GameState::Landing)),
+        );
     }
 }
 
@@ -136,7 +155,7 @@ impl CharacterControllerBundle {
 fn keyboard_input(
     mut movement_event_writer: EventWriter<MovementAction>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    scores: Res<Scores>
+    scores: Res<Scores>,
 ) {
     if scores.fuel_quantity >= 0.0 {
         // X-axis
@@ -204,7 +223,10 @@ fn gamepad_input(
 /// Updates the [`Grounded`] status for character controllers.
 fn update_grounded(
     mut commands: Commands,
-    mut query: Query<(Entity, &ShapeHits, &Rotation, Option<&MaxSlopeAngle>), With<CharacterController>>
+    mut query: Query<
+        (Entity, &ShapeHits, &Rotation, Option<&MaxSlopeAngle>),
+        With<CharacterController>,
+    >,
 ) {
     for (entity, hits, rotation, max_slope_angle) in &mut query {
         // The character is grounded if the shape caster has a hit with a normal
@@ -226,7 +248,7 @@ fn update_grounded(
 
 fn update_ready_to_land(
     mut commands: Commands,
-    mut query: Query<(Entity, &LinearVelocity), With<CharacterController>>
+    mut query: Query<(Entity, &LinearVelocity), With<CharacterController>>,
 ) {
     let Ok((entity, linear_velocity)) = query.get_single_mut() else {
         return;
@@ -250,10 +272,12 @@ fn movement(
     )>,
 ) {
     // Precision is adjusted so that the example works with
-    // both the `f32` and `f64` features. Otherwise you don't need this.
+    // both the `f32` and `f64` features. Otherwise, you don't need this.
     let delta_time = time.delta_seconds_f64().adjust_precision();
     for event in movement_event_reader.read() {
-        for (movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in &mut controllers {
+        for (movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in
+            &mut controllers
+        {
             match event {
                 MovementAction::Move(direction) => {
                     linear_velocity.x += *direction * movement_acceleration.0 * delta_time;

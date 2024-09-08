@@ -1,37 +1,43 @@
 use avian2d::math::Vector;
 use avian2d::prelude::*;
-use bevy::prelude::*;
 use bevy::color::palettes::css;
+use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
-use crate::{asset_loader::{SceneAssetState, SceneAssets}, movement::{CharacterController, Grounded, ReadyToLand}};
+use crate::state::GameState;
+use crate::{
+    asset_loader::SceneAssets,
+    movement::{CharacterController, Grounded, ReadyToLand},
+};
 
 pub struct ColliderPlugin;
 
 impl Plugin for ColliderPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(OnEnter(SceneAssetState::Loaded), intialize_landscape_system)
-            .add_systems(Update, (print_collisions_system, print_player_landed_system))
-        ;
+        app.add_systems(OnEnter(GameState::Landing), initialize_landscape_system)
+            .add_systems(
+                Update,
+                (print_collisions_system, print_player_landed_system)
+                    .run_if(in_state(GameState::Landing)),
+            );
     }
 }
 
 // Systems
-fn intialize_landscape_system(
+fn initialize_landscape_system(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     scene_assets: Res<SceneAssets>,
-    image_assets: Res<Assets<Image>>
+    image_assets: Res<Assets<Image>>,
 ) {
     // world bounds collider
     let vertices = vec![
         Vector::new(-630.0, 360.0),
         Vector::new(-630.0, -300.0),
         Vector::new(630.0, -300.0),
-        Vector::new(630.0, 360.0)
+        Vector::new(630.0, 360.0),
     ];
     let polyline = Collider::polyline(vertices, None);
     commands.spawn((
@@ -80,9 +86,7 @@ fn intialize_landscape_system(
     ));
     // land
     let sprite_image_handle = scene_assets.landscape.clone();
-    info!("sprite_image_handle {:?}", sprite_image_handle);
     let sprite_image = image_assets.get(&sprite_image_handle);
-    info!("sprite_image {:?}", sprite_image);
     let collider = single_heightfield_collider_translated(sprite_image.unwrap());
     commands.spawn((
         collider,
@@ -100,20 +104,34 @@ fn intialize_landscape_system(
     ));
 }
 
-fn print_collisions_system(query: Query<(Entity, &CollidingEntities, &CharacterController), Without<Grounded>>) {
+fn print_collisions_system(
+    query: Query<(Entity, &CollidingEntities, &CharacterController), Without<Grounded>>,
+    mut game_state: ResMut<NextState<GameState>>,
+) {
     for (entity, colliding_entities, player) in &query {
         if !colliding_entities.is_empty() {
-            println!("{:?} is colliding with the following entities: {:?}", entity, colliding_entities);
+            println!(
+                "{:?} is colliding with the following entities: {:?}",
+                entity, colliding_entities
+            );
             println!("Player is NOT Grounded {:?}", player);
+            game_state.set(GameState::Crashed);
         }
     }
 }
 
-fn print_player_landed_system(query: Query<(Entity, &CollidingEntities, &CharacterController), With<ReadyToLand>>) {
+fn print_player_landed_system(
+    query: Query<(Entity, &CollidingEntities, &CharacterController), With<ReadyToLand>>,
+    mut game_state: ResMut<NextState<GameState>>,
+) {
     for (entity, colliding_entities, player) in &query {
         if !colliding_entities.is_empty() {
-            println!("{:?} is colliding with the following entities: {:?}", entity, colliding_entities);
+            println!(
+                "{:?} is colliding with the following entities: {:?}",
+                entity, colliding_entities
+            );
             println!("Player is ReadyToLand {:?}", player);
+            game_state.set(GameState::Landed);
         }
     }
 }
