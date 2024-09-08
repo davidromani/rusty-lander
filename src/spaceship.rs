@@ -1,5 +1,6 @@
 use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
+use leafwing_input_manager::prelude::*;
 
 use crate::asset_loader::SceneAssets;
 use crate::movement::*;
@@ -37,6 +38,20 @@ fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>
     ));
 }
 
+// Actions
+#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
+pub enum PlayerAction {
+    Idle,
+    LeftThruster,
+    RightThruster,
+    MainThrusterBig,
+    MainThrusterMedium,
+    MainThrusterSmall,
+}
+
 // Components
 #[derive(Component)]
 pub struct Player;
+
+#[derive(Component)]
+pub struct ExhaustEffect;

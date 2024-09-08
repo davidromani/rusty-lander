@@ -2,12 +2,9 @@ use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-use crate::spaceship::Player;
+use crate::spaceship::{ExhaustEffect, Player, PlayerAction};
 use crate::state::GameState;
 
-// Plugin that adds particle effects at different point in the game
-// All particle effects are handled in a separate plugin to be
-// easily disable when targeting WASM
 pub struct ParticlesThrusterPlugin;
 
 impl Plugin for ParticlesThrusterPlugin {
@@ -82,7 +79,7 @@ fn update_thrust_particles(
     mut exhaust_effect: Query<&mut EffectSpawner, With<ExhaustEffect>>,
 ) {
     for (action_state, children) in player.iter() {
-        if action_state.pressed(&PlayerAction::Forward) {
+        if action_state.pressed(&PlayerAction::Idle) {
             for &child in children.iter() {
                 if let Ok(mut spawner) = exhaust_effect.get_mut(child) {
                     spawner.reset();
