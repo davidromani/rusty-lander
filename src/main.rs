@@ -6,6 +6,7 @@ mod fuel;
 mod game;
 mod menu;
 mod movement;
+mod particles_thruster;
 mod spaceship;
 mod speedometer;
 mod state;
@@ -24,6 +25,7 @@ use game::GamePlugin;
 use menu::MenuAction;
 use menu::MenuPlugin;
 use movement::CharacterControllerPlugin;
+use particles_thruster::ParticlesThrusterPlugin;
 use spaceship::SpaceshipPlugin;
 use speedometer::SpeedometerPlugin;
 use state::StatesPlugin;
@@ -56,6 +58,7 @@ fn main() {
         .add_plugins(CameraPlugin) // startup
         .add_plugins(DebugPlugin) // startup
         .add_plugins(FuelPlugin) // startup & update
+        .add_plugins(ParticlesThrusterPlugin) // startup & update
         .add_plugins(SpeedometerPlugin) // startup & update
         .add_plugins(ColliderPlugin) // post startup
         .add_plugins(SpaceshipPlugin) // post startup
