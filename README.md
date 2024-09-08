@@ -1,15 +1,15 @@
 Rusty Lander v0.1
 =================
 
-A Jupiter Lander videogame port made with Rust & Bevy game engine.
+A Jupiter Lander video game port made with Rust & Bevy game engine.
 
 ---
 
 #### Installation requirements
 
- * Git 2.0+
- * Rust 1.8+
- * Cargo 1.80+
+* Git 2.0+
+* Rust 1.8+
+* Cargo 1.80+
 
 #### Installation instructions
 
@@ -21,4 +21,5 @@ $ cargo run
 
 #### References
 
-Read about the original Jupiter Lander videogame article in the [Wikipedia](https://en.wikipedia.org/wiki/Jupiter_Lander).
+Read about the original Jupiter Lander video game article in
+the [Wikipedia](https://en.wikipedia.org/wiki/Jupiter_Lander).

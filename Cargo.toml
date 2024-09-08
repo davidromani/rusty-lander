@@ -3,8 +3,9 @@ name = "rusty-lander"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
+authors = ["David Romaní <david@flux.cat>"]
 repository = "https://github.com/davidromani/rusty-lander"
-description = "a Jupiter Lander videogame port made with Rust & Bevy game engine"
+description = "a Jupiter Lander video game port made with Rust & Bevy game engine"
 readme = "README.md"
 
 [dependencies]
@@ -12,6 +13,8 @@ avian2d = "0.1.2"
 bevy = "0.14.1"
 bevy_collider_gen = { version = "0.2.2", default-features = false, features = ["avian2d"] }
 iyes_perf_ui = "0.3.0"
+leafwing-input-manager = "0.15"
+rand = "0.8.5"
 
 [workspace]
 resolver = "2" # Important! wgpu/Bevy needs this!

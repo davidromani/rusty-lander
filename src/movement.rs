@@ -2,6 +2,7 @@ use avian2d::{math::*, prelude::*};
 use bevy::{ecs::query::Has, prelude::*};
 
 use crate::game::Scores;
+use crate::state::GameState;
 
 const BIG_THRUST: f32 = 0.75;
 const MEDIUM_THRUST: f32 = 0.55;
@@ -11,17 +12,30 @@ pub struct CharacterControllerPlugin;
 
 impl Plugin for CharacterControllerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<MovementAction>().add_systems(
+        app.add_event::<MovementAction>()
+            .add_systems(Update, (keyboard_input, gamepad_input).chain());
+        app.add_systems(
+            OnEnter(GameState::Landing),
+            |mut physics_time: ResMut<Time<Physics>>| {
+                physics_time.unpause();
+            },
+        )
+        .add_systems(
+            OnEnter(GameState::Paused),
+            |mut physics_time: ResMut<Time<Physics>>| {
+                physics_time.pause();
+            },
+        )
+        .add_systems(
             Update,
             (
-                keyboard_input,
-                gamepad_input,
                 update_ready_to_land,
                 update_grounded,
                 movement,
                 apply_movement_damping,
             )
-                .chain(),
+                .chain()
+                .run_if(in_state(GameState::Landing)),
         );
     }
 }
@@ -258,7 +272,7 @@ fn movement(
     )>,
 ) {
     // Precision is adjusted so that the example works with
-    // both the `f32` and `f64` features. Otherwise you don't need this.
+    // both the `f32` and `f64` features. Otherwise, you don't need this.
     let delta_time = time.delta_seconds_f64().adjust_precision();
     for event in movement_event_reader.read() {
         for (movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in

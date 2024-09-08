@@ -3,13 +3,13 @@ use bevy::prelude::*;
 use bevy::sprite::*;
 
 use crate::spaceship::Player;
-use crate::state::{AppState, GameState};
+use crate::state::GameState;
 
 pub struct SpeedometerPlugin;
 
 impl Plugin for SpeedometerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::Game), spawn_speed_bar_system)
+        app.add_systems(OnEnter(GameState::Landing), spawn_speed_bar_system)
             .add_systems(
                 Update,
                 update_fuel_bar_system.run_if(in_state(GameState::Landing)),

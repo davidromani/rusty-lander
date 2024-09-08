@@ -1,9 +1,9 @@
+use crate::asset_loader::SceneAssets;
 use bevy::app::AppExit;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
+use rand::prelude::*;
 use std::f32::consts::TAU;
-
-use crate::asset_loader::SceneAssets;
 
 pub struct GamePlugin;
 
@@ -29,10 +29,14 @@ fn spawn_background_image_system(mut commands: Commands, scene_assets: Res<Scene
     commands.spawn((
         SpriteBundle {
             texture: scene_assets.background.clone(),
+            transform: Transform {
+                rotation: Quat::from_rotation_z(thread_rng().gen_range(0.0..1.0)),
+                ..default()
+            },
             ..default()
         },
         Background,
-        Rotatable { speed: 0.001 },
+        Rotatable { speed: -0.001 },
     ));
 }
 
