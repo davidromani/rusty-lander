@@ -32,7 +32,7 @@ impl Plugin for StatesPlugin {
         app.add_systems(
             Update,
             (
-                //transition_app_setup_to_menu_system.run_if(in_state(AppState::Setup)),
+                transition_app_setup_to_menu_system.run_if(in_state(AppState::Setup)),
                 transition_game_setup_to_running_system.run_if(in_state(GameState::Setup)),
             ),
         );

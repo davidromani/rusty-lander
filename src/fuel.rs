@@ -57,7 +57,7 @@ fn spawn_fuel_bar_system(mut commands: Commands) {
 fn handle_fire_big_booster_key_pressed_system(
     mut scores: ResMut<Scores>,
     game_state: ResMut<State<GameState>>,
-    time: Res<Time>
+    time: Res<Time>,
 ) {
     if game_state.get() == &GameState::Landing && scores.fuel_quantity >= 0.0 {
         scores.fuel_quantity -= 100.0 * time.delta_seconds();
@@ -67,7 +67,7 @@ fn handle_fire_big_booster_key_pressed_system(
 fn handle_fire_medium_booster_key_pressed_system(
     mut scores: ResMut<Scores>,
     game_state: ResMut<State<GameState>>,
-    time: Res<Time>
+    time: Res<Time>,
 ) {
     if game_state.get() == &GameState::Landing && scores.fuel_quantity >= 0.0 {
         scores.fuel_quantity -= 50.0 * time.delta_seconds();
@@ -77,7 +77,7 @@ fn handle_fire_medium_booster_key_pressed_system(
 fn handle_fire_small_booster_key_pressed_system(
     mut scores: ResMut<Scores>,
     game_state: ResMut<State<GameState>>,
-    time: Res<Time>
+    time: Res<Time>,
 ) {
     if game_state.get() == &GameState::Landing && scores.fuel_quantity >= 0.0 {
         scores.fuel_quantity -= 20.0 * time.delta_seconds();
