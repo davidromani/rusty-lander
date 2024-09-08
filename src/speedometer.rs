@@ -10,7 +10,10 @@ pub struct SpeedometerPlugin;
 impl Plugin for SpeedometerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::Game), spawn_speed_bar_system)
-            .add_systems(Update, update_fuel_bar_system.run_if(in_state(GameState::Landing)));
+            .add_systems(
+                Update,
+                update_fuel_bar_system.run_if(in_state(GameState::Landing)),
+            );
     }
 }
 
