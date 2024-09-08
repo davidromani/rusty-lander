@@ -1,3 +1,4 @@
+use crate::state::AppState;
 use bevy::{asset::LoadState, prelude::*};
 
 pub struct AssetsLoaderPlugin;
@@ -6,7 +7,10 @@ impl Plugin for AssetsLoaderPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<SceneAssets>()
             .init_state::<SceneAssetState>()
-            .add_systems(PreStartup, load_assets_system)
+            .add_systems(
+                OnEnter(AppState::Setup),
+                (load_assets_system, load_ui_assets_system),
+            )
             .add_systems(
                 Update,
                 check_assets.run_if(in_state(SceneAssetState::Loading)),
@@ -19,6 +23,7 @@ pub fn check_assets(
     asset_server: Res<AssetServer>,
     scene_assets: Res<SceneAssets>,
     mut state: ResMut<NextState<SceneAssetState>>,
+    mut app_state: ResMut<NextState<AppState>>,
 ) {
     // return if the background isn't loaded
     if Some(LoadState::Loaded) != asset_server.get_load_state(&scene_assets.background) {
@@ -33,7 +38,8 @@ pub fn check_assets(
         return;
     }
     // all assets have loaded
-    state.set(SceneAssetState::Loaded)
+    state.set(SceneAssetState::Loaded);
+    app_state.set(AppState::Menu);
 }
 
 pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: Res<AssetServer>) {
@@ -44,6 +50,13 @@ pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: R
         lander: asset_server.load("spaceship.png"),
         // lander: asset_server.load("lander.png"),
     }
+}
+
+fn load_ui_assets_system(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.insert_resource(UiAssets {
+        font: asset_server.load("kenvector_future.ttf"),
+        font_fira: asset_server.load("FiraSans-Bold.ttf"),
+    });
 }
 
 // Resources

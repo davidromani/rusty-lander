@@ -32,7 +32,7 @@ const MAIN_TITLE: &str = "Rusty Lander";
 
 fn main() {
     let mut app = App::new();
-    // Bevy, Avian2D & Leafwing Input Manager plugins
+    // Bevy, Avian2d & Leafwing Input Manager plugins
     app.add_plugins((
         DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {

@@ -9,12 +9,15 @@ impl Plugin for CameraPlugin {
             .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
             .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin)
             .add_plugins(PerfUiPlugin)
-            .add_systems(Startup, spawn_camera_system);
+            .add_systems(Startup, (spawn_camera_system, spawn_debug_ui_system));
     }
 }
 
 fn spawn_camera_system(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
+}
+
+fn spawn_debug_ui_system(mut commands: Commands) {
     #[cfg(debug_assertions)]
     commands.spawn((
         PerfUiRoot {
