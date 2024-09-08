@@ -3,13 +3,13 @@ use bevy::prelude::*;
 use bevy::sprite::*;
 
 use crate::game::Scores;
-use crate::state::{AppState, GameState};
+use crate::state::GameState;
 
 pub struct FuelPlugin;
 
 impl Plugin for FuelPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::Game), spawn_fuel_bar_system)
+        app.add_systems(OnEnter(GameState::Landing), spawn_fuel_bar_system)
             .add_systems(
                 Update,
                 handle_fire_big_booster_key_pressed_system.run_if(input_pressed(KeyCode::Digit2)),
