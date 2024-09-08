@@ -51,7 +51,7 @@ impl Plugin for MenuPlugin {
 fn setup(mut commands: Commands) {
     let mut input_map = InputMap::<MenuAction>::new([
         (MenuAction::Accept, KeyCode::Enter),
-        (MenuAction::PauseUnpause, KeyCode::Escape),
+        (MenuAction::PauseUnpause, KeyCode::KeyP),
         (MenuAction::MenuUp, KeyCode::KeyW),
         (MenuAction::MenuUp, KeyCode::ArrowUp),
         (MenuAction::MenuDown, KeyCode::KeyS),
