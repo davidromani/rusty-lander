@@ -7,6 +7,7 @@ mod game;
 mod movement;
 mod spaceship;
 mod speedometer;
+mod state;
 
 use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
