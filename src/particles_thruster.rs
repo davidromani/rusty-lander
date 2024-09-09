@@ -27,16 +27,16 @@ fn add_thrust_particles_to_spaceship_system(
     for ship_entity in added_ships.iter() {
         // for Ship exhaust, we store a particle effects on the player
         let writer = ExprWriter::new();
-        let lifetime = writer.lit(0.1).expr();
+        let lifetime = writer.lit(0.4).expr();
         // gradient for particle color evolution
         let mut gradient = Gradient::new();
-        gradient.add_key(0.0, Vec4::new(0.5, 0.4, 0.7, 0.8));
-        gradient.add_key(0.5, Vec4::new(1.0, 0.8, 0.0, 0.8));
+        gradient.add_key(0.0, Vec4::new(1.0, 0.2, 0.0, 0.9));
+        gradient.add_key(0.75, Vec4::new(1.0, 0.8, 0.0, 0.8));
         gradient.add_key(1.0, Vec4::ZERO);
         let init_pos = SetPositionCone3dModifier {
-            height: writer.lit(-5.0).expr(),
-            base_radius: writer.lit(2.).expr(),
-            top_radius: writer.lit(1.).expr(),
+            height: writer.lit(-10.0).expr(),
+            base_radius: writer.lit(2.3).expr(),
+            top_radius: writer.lit(1.0).expr(),
             dimension: ShapeDimension::Volume,
         };
         let init_vel = SetVelocitySphereModifier {
