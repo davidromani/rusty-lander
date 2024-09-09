@@ -1,7 +1,9 @@
 use avian2d::{math::*, prelude::*};
 use bevy::{ecs::query::Has, prelude::*};
+use leafwing_input_manager::prelude::*;
 
 use crate::game::Scores;
+use crate::spaceship::PlayerAction;
 use crate::state::GameState;
 
 const BIG_THRUST: f32 = 0.75;
@@ -263,8 +265,8 @@ fn update_ready_to_land(
 /// Responds to [`MovementAction`] events and moves character controllers accordingly.
 fn movement(
     time: Res<Time>,
-    mut movement_event_reader: EventReader<MovementAction>,
     mut controllers: Query<(
+        &ActionState<PlayerAction>,
         &MovementAcceleration,
         &JumpImpulse,
         &mut LinearVelocity,
@@ -274,22 +276,41 @@ fn movement(
     // Precision is adjusted so that the example works with
     // both the `f32` and `f64` features. Otherwise, you don't need this.
     let delta_time = time.delta_seconds_f64().adjust_precision();
-    for event in movement_event_reader.read() {
-        for (movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in
-            &mut controllers
-        {
-            match event {
-                MovementAction::Move(direction) => {
-                    linear_velocity.x += *direction * movement_acceleration.0 * delta_time;
-                }
-                MovementAction::Jump(boost) => {
-                    if !is_grounded {
-                        linear_velocity.y += jump_impulse.0 * boost;
-                    }
-                }
+
+    //for event in movement_event_reader.read() {
+    for (action_state, movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in
+        &mut controllers
+    {
+        if action_state.pressed(&PlayerAction::LeftThruster) {
+            linear_velocity.x += movement_acceleration.0 * delta_time;
+        }
+        if action_state.pressed(&PlayerAction::RightThruster) {
+            linear_velocity.x += -movement_acceleration.0 * delta_time;
+        }
+        if !is_grounded {
+            if action_state.pressed(&PlayerAction::MainThrusterBig) {
+                linear_velocity.y += jump_impulse.0 * BIG_THRUST;
+            }
+            if action_state.pressed(&PlayerAction::MainThrusterMedium) {
+                linear_velocity.y += jump_impulse.0 * MEDIUM_THRUST;
+            }
+            if action_state.pressed(&PlayerAction::MainThrusterSmall) {
+                linear_velocity.y += jump_impulse.0 * SMALL_THRUST;
             }
         }
+
+        /*match event {
+            MovementAction::Move(direction) => {
+                linear_velocity.x += *direction * movement_acceleration.0 * delta_time;
+            }
+            MovementAction::Jump(boost) => {
+                if !is_grounded {
+                    linear_velocity.y += jump_impulse.0 * boost;
+                }
+            }
+        }*/
     }
+    //}
 }
 
 /// Slows down movement in the X direction.
