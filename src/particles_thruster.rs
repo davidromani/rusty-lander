@@ -63,7 +63,7 @@ fn add_thrust_particles_to_spaceship_system(
             parent.spawn((
                 ParticleEffectBundle {
                     effect: ParticleEffect::new(effect).with_z_layer_2d(Some(10.)),
-                    transform: Transform::from_translation(Vec3::new(-10.0, -35.0, 0.0)),
+                    transform: Transform::from_translation(Vec3::new(-8.0, -30.0, 0.0)),
                     ..default()
                 },
                 ExhaustEffect,
