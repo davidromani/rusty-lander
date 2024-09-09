@@ -202,26 +202,28 @@ fn movement_system(
     for (action_state, movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in
         &mut controllers
     {
-        if action_state.pressed(&PlayerAction::LeftThruster) {
-            linear_velocity.x += movement_acceleration.0 * delta_time;
-            scores.fuel_quantity -= 20.0 * time.delta_seconds();
-        }
-        if action_state.pressed(&PlayerAction::RightThruster) {
-            linear_velocity.x += -movement_acceleration.0 * delta_time;
-            scores.fuel_quantity -= 20.0 * time.delta_seconds();
-        }
-        if !is_grounded {
-            if action_state.pressed(&PlayerAction::MainThrusterBig) {
-                linear_velocity.y += jump_impulse.0 * BIG_THRUST;
-                scores.fuel_quantity -= 100.0 * time.delta_seconds();
-            }
-            if action_state.pressed(&PlayerAction::MainThrusterMedium) {
-                linear_velocity.y += jump_impulse.0 * MEDIUM_THRUST;
-                scores.fuel_quantity -= 50.0 * time.delta_seconds();
-            }
-            if action_state.pressed(&PlayerAction::MainThrusterSmall) {
-                linear_velocity.y += jump_impulse.0 * SMALL_THRUST;
+        if scores.fuel_quantity > 0.0 {
+            if action_state.pressed(&PlayerAction::LeftThruster) {
+                linear_velocity.x += movement_acceleration.0 * delta_time;
                 scores.fuel_quantity -= 20.0 * time.delta_seconds();
+            }
+            if action_state.pressed(&PlayerAction::RightThruster) {
+                linear_velocity.x += -movement_acceleration.0 * delta_time;
+                scores.fuel_quantity -= 20.0 * time.delta_seconds();
+            }
+            if !is_grounded {
+                if action_state.pressed(&PlayerAction::MainThrusterBig) {
+                    linear_velocity.y += jump_impulse.0 * BIG_THRUST;
+                    scores.fuel_quantity -= 100.0 * time.delta_seconds();
+                }
+                if action_state.pressed(&PlayerAction::MainThrusterMedium) {
+                    linear_velocity.y += jump_impulse.0 * MEDIUM_THRUST;
+                    scores.fuel_quantity -= 50.0 * time.delta_seconds();
+                }
+                if action_state.pressed(&PlayerAction::MainThrusterSmall) {
+                    linear_velocity.y += jump_impulse.0 * SMALL_THRUST;
+                    scores.fuel_quantity -= 20.0 * time.delta_seconds();
+                }
             }
         }
     }
