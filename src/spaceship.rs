@@ -17,7 +17,7 @@ impl Plugin for SpaceshipPlugin {
 
 // Systems
 fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>) {
-    let mut input_map = InputMap::new([
+    let input_map = InputMap::new([
         (PlayerAction::MainThrusterBig, KeyCode::Digit2),
         (PlayerAction::MainThrusterBig, KeyCode::Digit9),
         (PlayerAction::MainThrusterMedium, KeyCode::KeyW),
