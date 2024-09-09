@@ -1,8 +1,9 @@
+use crate::game::Scores;
+use crate::spaceship::PlayerAction;
+use crate::state::GameState;
 use avian2d::{math::*, prelude::*};
 use bevy::{ecs::query::Has, prelude::*};
-
-use crate::game::Scores;
-use crate::state::GameState;
+use leafwing_input_manager::prelude::*;
 
 const BIG_THRUST: f32 = 0.75;
 const MEDIUM_THRUST: f32 = 0.55;
@@ -12,8 +13,6 @@ pub struct CharacterControllerPlugin;
 
 impl Plugin for CharacterControllerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<MovementAction>()
-            .add_systems(Update, (keyboard_input, gamepad_input).chain());
         app.add_systems(
             OnEnter(GameState::Landing),
             |mut physics_time: ResMut<Time<Physics>>| {
@@ -29,22 +28,15 @@ impl Plugin for CharacterControllerPlugin {
         .add_systems(
             Update,
             (
-                update_ready_to_land,
-                update_grounded,
-                movement,
-                apply_movement_damping,
+                update_ready_to_land_system,
+                update_grounded_system,
+                movement_system,
+                apply_movement_damping_system,
             )
                 .chain()
                 .run_if(in_state(GameState::Landing)),
         );
     }
-}
-
-/// An event sent for a movement input action.
-#[derive(Event)]
-pub enum MovementAction {
-    Move(Scalar),
-    Jump(Scalar),
 }
 
 /// A marker component indicating that an entity is using a character controller.
@@ -151,77 +143,8 @@ impl CharacterControllerBundle {
     }
 }
 
-/// Sends [`MovementAction`] events based on keyboard input.
-fn keyboard_input(
-    mut movement_event_writer: EventWriter<MovementAction>,
-    keyboard_input: Res<ButtonInput<KeyCode>>,
-    scores: Res<Scores>,
-) {
-    if scores.fuel_quantity >= 0.0 {
-        // X-axis
-        let left = keyboard_input.any_pressed([KeyCode::KeyA, KeyCode::ArrowLeft]);
-        let right = keyboard_input.any_pressed([KeyCode::KeyD, KeyCode::ArrowRight]);
-        let horizontal = left as i8 - right as i8;
-        let direction = horizontal as Scalar;
-        if direction != 0.0 {
-            movement_event_writer.send(MovementAction::Move(direction));
-        }
-        // Y-axis
-        if keyboard_input.pressed(KeyCode::Digit2) {
-            movement_event_writer.send(MovementAction::Jump(BIG_THRUST as Scalar));
-        }
-        if keyboard_input.pressed(KeyCode::KeyW) {
-            movement_event_writer.send(MovementAction::Jump(MEDIUM_THRUST as Scalar));
-        }
-        if keyboard_input.pressed(KeyCode::KeyS) {
-            movement_event_writer.send(MovementAction::Jump(SMALL_THRUST as Scalar));
-        }
-    }
-}
-
-/// Sends [`MovementAction`] events based on gamepad input.
-fn gamepad_input(
-    mut movement_event_writer: EventWriter<MovementAction>,
-    gamepads: Res<Gamepads>,
-    axes: Res<Axis<GamepadAxis>>,
-    buttons: Res<ButtonInput<GamepadButton>>,
-) {
-    for gamepad in gamepads.iter() {
-        // X-axis
-        let axis_lx = GamepadAxis {
-            gamepad,
-            axis_type: GamepadAxisType::LeftStickX,
-        };
-        if let Some(x) = axes.get(axis_lx) {
-            movement_event_writer.send(MovementAction::Move(x as Scalar));
-        }
-        // Y-axis
-        let big_booster_button = GamepadButton {
-            gamepad,
-            button_type: GamepadButtonType::North,
-        };
-        if buttons.pressed(big_booster_button) {
-            movement_event_writer.send(MovementAction::Jump(BIG_THRUST as Scalar));
-        }
-        let medium_booster_button = GamepadButton {
-            gamepad,
-            button_type: GamepadButtonType::East,
-        };
-        if buttons.pressed(medium_booster_button) {
-            movement_event_writer.send(MovementAction::Jump(MEDIUM_THRUST as Scalar));
-        }
-        let small_booster_button = GamepadButton {
-            gamepad,
-            button_type: GamepadButtonType::South,
-        };
-        if buttons.pressed(small_booster_button) {
-            movement_event_writer.send(MovementAction::Jump(SMALL_THRUST as Scalar));
-        }
-    }
-}
-
 /// Updates the [`Grounded`] status for character controllers.
-fn update_grounded(
+fn update_grounded_system(
     mut commands: Commands,
     mut query: Query<
         (Entity, &ShapeHits, &Rotation, Option<&MaxSlopeAngle>),
@@ -246,7 +169,8 @@ fn update_grounded(
     }
 }
 
-fn update_ready_to_land(
+/// Updates the [`ReadyToLand`] status for character controllers.
+fn update_ready_to_land_system(
     mut commands: Commands,
     mut query: Query<(Entity, &LinearVelocity), With<CharacterController>>,
 ) {
@@ -261,10 +185,11 @@ fn update_ready_to_land(
 }
 
 /// Responds to [`MovementAction`] events and moves character controllers accordingly.
-fn movement(
+fn movement_system(
     time: Res<Time>,
-    mut movement_event_reader: EventReader<MovementAction>,
+    mut scores: ResMut<Scores>,
     mut controllers: Query<(
+        &ActionState<PlayerAction>,
         &MovementAcceleration,
         &JumpImpulse,
         &mut LinearVelocity,
@@ -274,18 +199,30 @@ fn movement(
     // Precision is adjusted so that the example works with
     // both the `f32` and `f64` features. Otherwise, you don't need this.
     let delta_time = time.delta_seconds_f64().adjust_precision();
-    for event in movement_event_reader.read() {
-        for (movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in
-            &mut controllers
-        {
-            match event {
-                MovementAction::Move(direction) => {
-                    linear_velocity.x += *direction * movement_acceleration.0 * delta_time;
+    for (action_state, movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in
+        &mut controllers
+    {
+        if scores.fuel_quantity > 0.0 {
+            if action_state.pressed(&PlayerAction::LeftThruster) {
+                linear_velocity.x += movement_acceleration.0 * delta_time;
+                scores.fuel_quantity -= 20.0 * time.delta_seconds();
+            }
+            if action_state.pressed(&PlayerAction::RightThruster) {
+                linear_velocity.x += -movement_acceleration.0 * delta_time;
+                scores.fuel_quantity -= 20.0 * time.delta_seconds();
+            }
+            if !is_grounded {
+                if action_state.pressed(&PlayerAction::MainThrusterBig) {
+                    linear_velocity.y += jump_impulse.0 * BIG_THRUST;
+                    scores.fuel_quantity -= 100.0 * time.delta_seconds();
                 }
-                MovementAction::Jump(boost) => {
-                    if !is_grounded {
-                        linear_velocity.y += jump_impulse.0 * boost;
-                    }
+                if action_state.pressed(&PlayerAction::MainThrusterMedium) {
+                    linear_velocity.y += jump_impulse.0 * MEDIUM_THRUST;
+                    scores.fuel_quantity -= 50.0 * time.delta_seconds();
+                }
+                if action_state.pressed(&PlayerAction::MainThrusterSmall) {
+                    linear_velocity.y += jump_impulse.0 * SMALL_THRUST;
+                    scores.fuel_quantity -= 20.0 * time.delta_seconds();
                 }
             }
         }
@@ -293,7 +230,7 @@ fn movement(
 }
 
 /// Slows down movement in the X direction.
-fn apply_movement_damping(mut query: Query<(&MovementDampingFactor, &mut LinearVelocity)>) {
+fn apply_movement_damping_system(mut query: Query<(&MovementDampingFactor, &mut LinearVelocity)>) {
     for (damping_factor, mut linear_velocity) in &mut query {
         // We could use `LinearDamping`, but we don't want to dampen movement along the Y axis
         linear_velocity.x *= damping_factor.0;
