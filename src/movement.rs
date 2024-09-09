@@ -28,10 +28,10 @@ impl Plugin for CharacterControllerPlugin {
         .add_systems(
             Update,
             (
-                update_ready_to_land,
-                update_grounded,
+                update_ready_to_land_system,
+                update_grounded_system,
                 movement_system,
-                apply_movement_damping,
+                apply_movement_damping_system,
             )
                 .chain()
                 .run_if(in_state(GameState::Landing)),
@@ -144,7 +144,7 @@ impl CharacterControllerBundle {
 }
 
 /// Updates the [`Grounded`] status for character controllers.
-fn update_grounded(
+fn update_grounded_system(
     mut commands: Commands,
     mut query: Query<
         (Entity, &ShapeHits, &Rotation, Option<&MaxSlopeAngle>),
@@ -170,7 +170,7 @@ fn update_grounded(
 }
 
 /// Updates the [`ReadyToLand`] status for character controllers.
-fn update_ready_to_land(
+fn update_ready_to_land_system(
     mut commands: Commands,
     mut query: Query<(Entity, &LinearVelocity), With<CharacterController>>,
 ) {
@@ -228,7 +228,7 @@ fn movement_system(
 }
 
 /// Slows down movement in the X direction.
-fn apply_movement_damping(mut query: Query<(&MovementDampingFactor, &mut LinearVelocity)>) {
+fn apply_movement_damping_system(mut query: Query<(&MovementDampingFactor, &mut LinearVelocity)>) {
     for (damping_factor, mut linear_velocity) in &mut query {
         // We could use `LinearDamping`, but we don't want to dampen movement along the Y axis
         linear_velocity.x *= damping_factor.0;
