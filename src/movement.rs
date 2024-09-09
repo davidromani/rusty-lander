@@ -1,9 +1,9 @@
+use crate::game::Scores;
+use crate::spaceship::PlayerAction;
+use crate::state::GameState;
 use avian2d::{math::*, prelude::*};
 use bevy::{ecs::query::Has, prelude::*};
 use leafwing_input_manager::prelude::*;
-
-use crate::spaceship::PlayerAction;
-use crate::state::GameState;
 
 const BIG_THRUST: f32 = 0.75;
 const MEDIUM_THRUST: f32 = 0.55;
@@ -30,7 +30,7 @@ impl Plugin for CharacterControllerPlugin {
             (
                 update_ready_to_land,
                 update_grounded,
-                movement,
+                movement_system,
                 apply_movement_damping,
             )
                 .chain()
@@ -185,8 +185,9 @@ fn update_ready_to_land(
 }
 
 /// Responds to [`MovementAction`] events and moves character controllers accordingly.
-fn movement(
+fn movement_system(
     time: Res<Time>,
+    mut scores: ResMut<Scores>,
     mut controllers: Query<(
         &ActionState<PlayerAction>,
         &MovementAcceleration,
@@ -203,19 +204,24 @@ fn movement(
     {
         if action_state.pressed(&PlayerAction::LeftThruster) {
             linear_velocity.x += movement_acceleration.0 * delta_time;
+            scores.fuel_quantity -= 20.0 * time.delta_seconds();
         }
         if action_state.pressed(&PlayerAction::RightThruster) {
             linear_velocity.x += -movement_acceleration.0 * delta_time;
+            scores.fuel_quantity -= 20.0 * time.delta_seconds();
         }
         if !is_grounded {
             if action_state.pressed(&PlayerAction::MainThrusterBig) {
                 linear_velocity.y += jump_impulse.0 * BIG_THRUST;
+                scores.fuel_quantity -= 100.0 * time.delta_seconds();
             }
             if action_state.pressed(&PlayerAction::MainThrusterMedium) {
                 linear_velocity.y += jump_impulse.0 * MEDIUM_THRUST;
+                scores.fuel_quantity -= 50.0 * time.delta_seconds();
             }
             if action_state.pressed(&PlayerAction::MainThrusterSmall) {
                 linear_velocity.y += jump_impulse.0 * SMALL_THRUST;
+                scores.fuel_quantity -= 20.0 * time.delta_seconds();
             }
         }
     }
