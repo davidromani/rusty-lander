@@ -75,4 +75,7 @@ pub struct Player;
 pub struct VerticalThrusterEffect;
 
 #[derive(Component)]
-pub struct HorizontalThrusterEffect;
+pub struct LeftHorizontalThrusterEffect;
+
+#[derive(Component)]
+pub struct RightHorizontalThrusterEffect;
