@@ -72,4 +72,7 @@ pub enum PlayerAction {
 pub struct Player;
 
 #[derive(Component)]
-pub struct ExhaustEffect;
+pub struct VerticalThrusterEffect;
+
+#[derive(Component)]
+pub struct HorizontalThrusterEffect;

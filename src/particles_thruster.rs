@@ -1,5 +1,5 @@
 use crate::game::Scores;
-use crate::spaceship::{ExhaustEffect, Player, PlayerAction};
+use crate::spaceship::{Player, PlayerAction, VerticalThrusterEffect};
 use crate::state::GameState;
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
@@ -10,25 +10,23 @@ pub struct ParticlesThrusterPlugin;
 impl Plugin for ParticlesThrusterPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(HanabiPlugin)
-            .add_systems(Update, add_thrust_particles_to_spaceship_system)
+            .add_systems(Update, add_vertical_thrust_particles_to_spaceship_system)
             .add_systems(
                 Update,
-                update_thrust_particles_system.run_if(in_state(GameState::Landing)),
+                update_vertical_thrust_particles_system.run_if(in_state(GameState::Landing)),
             );
     }
 }
 
 // Systems
-fn add_thrust_particles_to_spaceship_system(
+fn add_vertical_thrust_particles_to_spaceship_system(
     mut commands: Commands,
     mut effects: ResMut<Assets<EffectAsset>>,
     added_ships: Query<Entity, Added<Player>>,
 ) {
     for ship_entity in added_ships.iter() {
-        // for Ship exhaust, we store a particle effects on the player
         let writer = ExprWriter::new();
         let lifetime = writer.lit(0.4).expr();
-        // gradient for particle color evolution
         let mut gradient = Gradient::new();
         gradient.add_key(0.0, Vec4::new(1.0, 0.2, 0.0, 0.9));
         gradient.add_key(0.75, Vec4::new(1.0, 0.8, 0.0, 0.8));
@@ -49,7 +47,7 @@ fn add_thrust_particles_to_spaceship_system(
                 Spawner::once(10.0.into(), false),
                 writer.finish(),
             )
-            .with_name("Exhaust")
+            .with_name("VerticalThrusterEffect")
             .init(init_pos)
             .init(init_vel)
             .init(SetAttributeModifier::new(Attribute::LIFETIME, lifetime))
@@ -67,7 +65,7 @@ fn add_thrust_particles_to_spaceship_system(
                     transform: Transform::from_translation(Vec3::new(-8.0, -30.0, 0.0)),
                     ..default()
                 },
-                ExhaustEffect,
+                VerticalThrusterEffect,
             ));
             parent.spawn((
                 ParticleEffectBundle {
@@ -75,17 +73,16 @@ fn add_thrust_particles_to_spaceship_system(
                     transform: Transform::from_translation(Vec3::new(8.0, -30.0, 0.0)),
                     ..default()
                 },
-                ExhaustEffect,
+                VerticalThrusterEffect,
             ));
         });
     }
 }
 
-// Trigger a new particle spawning whenever the Ship Impulse is non-0
-fn update_thrust_particles_system(
+fn update_vertical_thrust_particles_system(
     scores: ResMut<Scores>,
     player: Query<(&ActionState<PlayerAction>, &Children), Changed<ActionState<PlayerAction>>>,
-    mut exhaust_effect: Query<&mut EffectSpawner, With<ExhaustEffect>>,
+    mut exhaust_effect: Query<&mut EffectSpawner, With<VerticalThrusterEffect>>,
 ) {
     if scores.fuel_quantity > 0.0 {
         for (action_state, children) in player.iter() {
