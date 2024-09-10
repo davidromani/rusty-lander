@@ -19,7 +19,10 @@ impl Plugin for ParticlesThrusterPlugin {
             )
             .add_systems(
                 Update,
-                update_vertical_thrust_particles_system.run_if(in_state(GameState::Landing)),
+                (
+                    update_vertical_thrust_particles_system.run_if(in_state(GameState::Landing)),
+                    update_left_thrust_particles_system.run_if(in_state(GameState::Landing)),
+                ),
             );
     }
 }
@@ -97,7 +100,7 @@ fn add_left_thrust_particles_to_spaceship_system(
         gradient.add_key(0.0, Vec4::new(0.8, 0.8, 0.8, 0.9));
         gradient.add_key(1.0, Vec4::ZERO);
         let init_pos = SetPositionCone3dModifier {
-            height: writer.lit(-5.0).expr(),
+            height: writer.lit(-8.0).expr(),
             base_radius: writer.lit(1.1).expr(),
             top_radius: writer.lit(0.5).expr(),
             dimension: ShapeDimension::Volume,
@@ -126,7 +129,12 @@ fn add_left_thrust_particles_to_spaceship_system(
             parent.spawn((
                 ParticleEffectBundle {
                     effect: ParticleEffect::new(effect).with_z_layer_2d(Some(10.0)),
-                    transform: Transform::from_translation(Vec3::new(-28.0, 0.0, 0.0)),
+                    //transform: Transform::from_translation(Vec3::new(-38.0, 0.0, 0.0)),
+                    transform: Transform {
+                        translation: Vec3::new(-30.0, -23.0, 0.0),
+                        rotation: Quat::from_rotation_z(-91.0),
+                        ..default()
+                    },
                     ..default()
                 },
                 HorizontalThrusterEffect,
@@ -146,6 +154,24 @@ fn update_vertical_thrust_particles_system(
                 || action_state.pressed(&PlayerAction::MainThrusterMedium)
                 || action_state.pressed(&PlayerAction::MainThrusterSmall)
             {
+                for &child in children.iter() {
+                    if let Ok(mut spawner) = exhaust_effect.get_mut(child) {
+                        spawner.reset();
+                    }
+                }
+            }
+        }
+    }
+}
+
+fn update_left_thrust_particles_system(
+    scores: ResMut<Scores>,
+    player: Query<(&ActionState<PlayerAction>, &Children), Changed<ActionState<PlayerAction>>>,
+    mut exhaust_effect: Query<&mut EffectSpawner, With<HorizontalThrusterEffect>>,
+) {
+    if scores.fuel_quantity > 0.0 {
+        for (action_state, children) in player.iter() {
+            if action_state.pressed(&PlayerAction::LeftThruster) {
                 for &child in children.iter() {
                     if let Ok(mut spawner) = exhaust_effect.get_mut(child) {
                         spawner.reset();
