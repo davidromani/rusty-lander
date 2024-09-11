@@ -1,24 +1,27 @@
 use bevy::prelude::*;
 
+use crate::asset_loader::SceneAssets;
+use crate::state::AppState;
+
 pub struct ExplosionPlugin;
 
 impl Plugin for ExplosionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<SpawnExplosionEvent>()
-            .add_systems(Update, (animate_explosion_system, catch_explosion_event_system));
+        app.add_event::<SpawnExplosionEvent>().add_systems(
+            Update,
+            (animate_explosion_system, catch_explosion_event_system),
+        );
     }
 }
 
 fn catch_explosion_event_system(
     mut commands: Commands,
     mut event_reader: EventReader<SpawnExplosionEvent>,
-    handles: Res<SpriteAssets>,
-    audios: Res<AudioAssets>,
+    scene_assets: Res<SceneAssets>,
 ) {
     for event in event_reader.read() {
-        let (texture, sound, start_size, end_scale, duration) = (
-            handles.ship_explosion.clone(),
-            audios.ship_explosion.clone(),
+        let (texture, start_size, end_scale, duration) = (
+            scene_assets.explosion.clone(),
             Vec2::new(42.0, 39.0),
             5.0,
             2.0,
