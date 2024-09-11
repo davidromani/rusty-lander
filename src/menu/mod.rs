@@ -67,7 +67,7 @@ fn setup(mut commands: Commands) {
 fn spawn_main_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
     let entity = MenuHandler {
         main_text: MAIN_TITLE.to_string(),
-        main_text_color: Color::srgb(0.0, 0.7, 0.7),
+        main_text_color: Color::srgb(0.41, 0.22, 0.17),
         main_text_blink: false,
         selected_id: 0,
         entries: vec!["Play".into(), "Credits".into(), "Exit".into()],
