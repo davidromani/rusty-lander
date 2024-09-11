@@ -4,6 +4,7 @@ use crate::spaceship::{
     VerticalThrusterEffect,
 };
 use crate::state::GameState;
+use avian2d::math::PI;
 use bevy::prelude::*;
 use bevy_hanabi::prelude::*;
 use leafwing_input_manager::prelude::*;
@@ -136,7 +137,7 @@ fn add_left_thrust_particles_to_spaceship_system(
                     effect: ParticleEffect::new(effect).with_z_layer_2d(Some(10.0)),
                     transform: Transform {
                         translation: Vec3::new(-30.0, -23.0, 0.0),
-                        rotation: Quat::from_rotation_z(-0.91),
+                        rotation: Quat::from_rotation_z(1.625 * PI),
                         ..default()
                     },
                     ..default()
@@ -190,7 +191,7 @@ fn add_right_thrust_particles_to_spaceship_system(
                     effect: ParticleEffect::new(effect).with_z_layer_2d(Some(10.0)),
                     transform: Transform {
                         translation: Vec3::new(30.0, -23.0, 0.0),
-                        rotation: Quat::from_rotation_z(0.91),
+                        rotation: Quat::from_rotation_z(0.375 * PI),
                         ..default()
                     },
                     ..default()
