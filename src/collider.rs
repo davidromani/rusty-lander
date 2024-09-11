@@ -108,7 +108,7 @@ fn initialize_landscape_system(
 
 fn print_collisions_system(
     query: Query<(Entity, &CollidingEntities, &CharacterController), Without<Grounded>>,
-    spaceship_query: Query<(&Transform), With<Player>>,
+    spaceship_query: Query<&Transform, With<Player>>,
     mut commands: Commands,
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
     mut game_state: ResMut<NextState<GameState>>,
