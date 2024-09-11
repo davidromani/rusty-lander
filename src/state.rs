@@ -19,6 +19,7 @@ pub enum GameState {
     Paused,
     Landed,
     Crashed,
+    GameOver,
 }
 
 pub struct StatesPlugin;

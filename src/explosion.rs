@@ -2,16 +2,23 @@ use bevy::prelude::*;
 use std::f32::consts::TAU;
 
 use crate::asset_loader::SceneAssets;
-use crate::state::AppState;
+use crate::game::Scores;
+use crate::state::{AppState, GameState};
 
 pub struct ExplosionPlugin;
 
 impl Plugin for ExplosionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<SpawnExplosionEvent>().add_systems(
-            Update,
-            (animate_explosion_system, catch_explosion_event_system),
-        );
+        app.add_event::<SpawnExplosionEvent>()
+            .add_event::<FinishedExplosionEvent>()
+            .add_systems(
+                Update,
+                (
+                    animate_explosion_system,
+                    catch_explosion_event_system,
+                    catch_finished_explosion_event_system,
+                ),
+            );
     }
 }
 
@@ -51,14 +58,16 @@ fn catch_explosion_event_system(
 }
 
 fn animate_explosion_system(
-    mut commands: Commands,
     time: Res<Time>,
+    mut commands: Commands,
+    mut finished_explosion_events: EventWriter<FinishedExplosionEvent>,
     mut query: Query<(Entity, &mut Transform, &mut Explosion)>,
 ) {
     let elapsed = time.delta();
     for (entity, mut transform, mut explosion) in query.iter_mut() {
         explosion.timer.tick(elapsed);
         if explosion.timer.finished() {
+            finished_explosion_events.send(FinishedExplosionEvent {});
             commands.entity(entity).despawn();
         } else {
             transform.scale = Vec3::splat(
@@ -72,12 +81,30 @@ fn animate_explosion_system(
     }
 }
 
+fn catch_finished_explosion_event_system(
+    event_reader: EventReader<FinishedExplosionEvent>,
+    mut scores: ResMut<Scores>,
+    mut game_state: ResMut<NextState<GameState>>,
+) {
+    if !event_reader.is_empty() {
+        scores.fuel_quantity -= 100.0;
+        if scores.fuel_quantity <= 0.0 {
+            game_state.set(GameState::GameOver);
+        } else {
+            game_state.set(GameState::Landing);
+        }
+    }
+}
+
 // Events
 #[derive(Event)]
 pub struct SpawnExplosionEvent {
     pub x: f32,
     pub y: f32,
 }
+
+#[derive(Event)]
+pub struct FinishedExplosionEvent {}
 
 // Components
 #[derive(Component)]

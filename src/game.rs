@@ -68,7 +68,6 @@ struct Rotatable {
 }
 
 // Resources (global scope allocated data)
-
 #[derive(Resource, Debug)]
 pub struct Scores {
     pub score: i16,

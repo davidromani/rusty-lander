@@ -32,7 +32,7 @@ impl Plugin for MenuPlugin {
             .add_systems(OnEnter(AppState::Menu), spawn_main_menu)
             .add_systems(OnEnter(AppState::Credits), spawn_credits_menu)
             .add_systems(OnEnter(GameState::Paused), spawn_pause_menu)
-            .add_systems(OnEnter(GameState::Crashed), spawn_game_over_menu)
+            .add_systems(OnEnter(GameState::GameOver), spawn_game_over_menu)
             .add_systems(
                 Update,
                 (
@@ -87,7 +87,7 @@ fn spawn_game_over_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
     .spawn(&mut commands, assets.font.clone());
     commands
         .entity(entity)
-        .insert(StateScoped(GameState::Crashed));
+        .insert(StateScoped(GameState::GameOver));
 }
 
 fn spawn_pause_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
