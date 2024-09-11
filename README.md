@@ -1,7 +1,7 @@
 Rusty Lander v0.1
 =================
 
-A Jupiter Lander video game port made with Rust & Bevy game engine.
+A Jupiter Lander video game remake made with Rust & Bevy ECS game engine.
 
 ---
 
