@@ -5,6 +5,8 @@ use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
+use crate::explosion::SpawnExplosionEvent;
+use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{
     asset_loader::SceneAssets,
@@ -33,17 +35,17 @@ fn initialize_landscape_system(
     image_assets: Res<Assets<Image>>,
 ) {
     // world bounds collider
-    let vertices = vec![
+    let world_bounds_vertices = vec![
         Vector::new(-630.0, 360.0),
         Vector::new(-630.0, -300.0),
         Vector::new(630.0, -300.0),
         Vector::new(630.0, 360.0),
     ];
-    let polyline = Collider::polyline(vertices, None);
+    let world_bounds_polyline = Collider::polyline(world_bounds_vertices, None);
     commands.spawn((
         RigidBody::Static,
-        polyline,
-        //DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
+        world_bounds_polyline,
+        DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
     ));
     // platform x2
     commands.spawn((
@@ -56,7 +58,7 @@ fn initialize_landscape_system(
             ..default()
         },
         Platform { factor: 2 },
-        //DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
+        DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
     // platform x5
     commands.spawn((
@@ -69,7 +71,7 @@ fn initialize_landscape_system(
             ..default()
         },
         Platform { factor: 5 },
-        //DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
+        DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
     // platform x10
     commands.spawn((
@@ -82,7 +84,7 @@ fn initialize_landscape_system(
             ..default()
         },
         Platform { factor: 10 },
-        //DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
+        DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
     // land
     let sprite_image_handle = scene_assets.landscape.clone();
@@ -106,6 +108,9 @@ fn initialize_landscape_system(
 
 fn print_collisions_system(
     query: Query<(Entity, &CollidingEntities, &CharacterController), Without<Grounded>>,
+    spaceship_query: Query<&Transform, With<Player>>,
+    mut commands: Commands,
+    mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
     for (entity, colliding_entities, player) in &query {
@@ -115,6 +120,14 @@ fn print_collisions_system(
                 entity, colliding_entities
             );
             println!("Player is NOT Grounded {:?}", player);
+            let Ok(spaceship) = spaceship_query.get_single() else {
+                return;
+            };
+            explosion_spawn_events.send(SpawnExplosionEvent {
+                x: spaceship.translation.x,
+                y: spaceship.translation.y,
+            });
+            commands.entity(entity).despawn_recursive();
             game_state.set(GameState::Crashed);
         }
     }
