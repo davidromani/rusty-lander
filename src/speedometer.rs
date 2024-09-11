@@ -38,7 +38,7 @@ fn spawn_speed_bar_system(
         transform: Transform::from_translation(Vec3::new(620.0, 0.0, 4.0)),
         sprite: Sprite {
             color: Color::srgb(0.77, 0.84, 0.11),
-            custom_size: Some(Vec2::new(15.0, 25.0)),
+            custom_size: Some(Vec2::new(15.0, 70.0)),
             ..default()
         },
         ..default()
