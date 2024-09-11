@@ -33,17 +33,17 @@ fn initialize_landscape_system(
     image_assets: Res<Assets<Image>>,
 ) {
     // world bounds collider
-    let vertices = vec![
+    let world_bounds_vertices = vec![
         Vector::new(-630.0, 360.0),
         Vector::new(-630.0, -300.0),
         Vector::new(630.0, -300.0),
         Vector::new(630.0, 360.0),
     ];
-    let polyline = Collider::polyline(vertices, None);
+    let world_bounds_polyline = Collider::polyline(world_bounds_vertices, None);
     commands.spawn((
         RigidBody::Static,
-        polyline,
-        //DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
+        world_bounds_polyline,
+        DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
     ));
     // platform x2
     commands.spawn((
@@ -56,7 +56,7 @@ fn initialize_landscape_system(
             ..default()
         },
         Platform { factor: 2 },
-        //DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
+        DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
     // platform x5
     commands.spawn((
@@ -69,7 +69,7 @@ fn initialize_landscape_system(
             ..default()
         },
         Platform { factor: 5 },
-        //DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
+        DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
     // platform x10
     commands.spawn((
@@ -82,7 +82,7 @@ fn initialize_landscape_system(
             ..default()
         },
         Platform { factor: 10 },
-        //DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
+        DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
     // land
     let sprite_image_handle = scene_assets.landscape.clone();

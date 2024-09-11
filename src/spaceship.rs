@@ -1,5 +1,6 @@
 use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
+use bevy_collider_gen::avian2d::single_convex_polyline_collider_translated;
 use leafwing_input_manager::prelude::*;
 
 use crate::asset_loader::SceneAssets;
@@ -16,7 +17,11 @@ impl Plugin for SpaceshipPlugin {
 }
 
 // Systems
-fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>) {
+fn spawn_spaceship_system(
+    mut commands: Commands,
+    scene_assets: Res<SceneAssets>,
+    image_assets: Res<Assets<Image>>,
+) {
     let input_map = InputMap::new([
         (PlayerAction::MainThrusterBig, KeyCode::Digit2),
         (PlayerAction::MainThrusterBig, KeyCode::Digit9),
@@ -30,8 +35,11 @@ fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>
         (PlayerAction::RightThruster, KeyCode::KeyD),
         (PlayerAction::RightThruster, KeyCode::ArrowRight),
     ]);
+    let sprite_image_handle = scene_assets.lander.clone();
+    let sprite_image = image_assets.get(&sprite_image_handle);
+    let collider = single_convex_polyline_collider_translated(sprite_image.unwrap()).unwrap();
     commands.spawn((
-        CharacterControllerBundle::new(Collider::rectangle(60.0, 32.0)).with_movement(
+        CharacterControllerBundle::new(collider).with_movement(
             550.0, // before 1250.0
             0.97,  // before 0.92
             4.9,   // before 60.0
@@ -44,7 +52,7 @@ fn spawn_spaceship_system(mut commands: Commands, scene_assets: Res<SceneAssets>
         ColliderDensity(2.0),
         GravityScale(1.0),
         SpriteBundle {
-            texture: scene_assets.lander.clone(),
+            texture: sprite_image_handle,
             transform: Transform::from_xyz(-200.0, 300.0, 2.0),
             ..default()
         },
