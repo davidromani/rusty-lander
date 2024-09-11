@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use std::f32::consts::TAU;
 
 use crate::asset_loader::SceneAssets;
 use crate::state::AppState;
@@ -22,9 +23,9 @@ fn catch_explosion_event_system(
     for event in event_reader.read() {
         let (texture, start_size, end_scale, duration) = (
             scene_assets.explosion.clone(),
-            Vec2::new(42.0, 39.0),
-            5.0,
-            2.0,
+            Vec2::new(211.0, 195.0),
+            3.5,
+            2.5,
         );
         commands.spawn((
             SpriteBundle {
@@ -33,7 +34,7 @@ fn catch_explosion_event_system(
                     ..default()
                 },
                 transform: Transform {
-                    translation: Vec3::new(event.x, event.y, 3.0),
+                    translation: Vec3::new(event.x, event.y, 10.0),
                     ..default()
                 },
                 texture,
@@ -41,7 +42,7 @@ fn catch_explosion_event_system(
             },
             Explosion {
                 timer: Timer::from_seconds(duration, TimerMode::Once),
-                start_scale: 1.,
+                start_scale: 0.75,
                 end_scale,
             },
             StateScoped(AppState::Game),
@@ -66,6 +67,7 @@ fn animate_explosion_system(
                         * (explosion.timer.elapsed_secs()
                             / explosion.timer.duration().as_secs_f32()),
             );
+            transform.rotate_z(0.0025 * TAU * explosion.timer.duration().as_secs_f32());
         }
     }
 }

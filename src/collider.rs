@@ -5,6 +5,8 @@ use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
+use crate::explosion::SpawnExplosionEvent;
+use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{
     asset_loader::SceneAssets,
@@ -106,6 +108,9 @@ fn initialize_landscape_system(
 
 fn print_collisions_system(
     query: Query<(Entity, &CollidingEntities, &CharacterController), Without<Grounded>>,
+    spaceship_query: Query<(&Transform), With<Player>>,
+    mut commands: Commands,
+    mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
     for (entity, colliding_entities, player) in &query {
@@ -115,6 +120,14 @@ fn print_collisions_system(
                 entity, colliding_entities
             );
             println!("Player is NOT Grounded {:?}", player);
+            let Ok(spaceship) = spaceship_query.get_single() else {
+                return;
+            };
+            explosion_spawn_events.send(SpawnExplosionEvent {
+                x: spaceship.translation.x,
+                y: spaceship.translation.y,
+            });
+            commands.entity(entity).despawn_recursive();
             game_state.set(GameState::Crashed);
         }
     }
