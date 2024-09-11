@@ -135,6 +135,7 @@ fn print_collisions_system(
 
 fn print_player_landed_system(
     query: Query<(Entity, &CollidingEntities, &CharacterController), With<ReadyToLand>>,
+    platforms_query: Query<&Platform>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
     for (entity, colliding_entities, player) in &query {
@@ -144,6 +145,11 @@ fn print_player_landed_system(
                 entity, colliding_entities
             );
             println!("Player is ReadyToLand {:?}", player);
+            for &colliding_entity in colliding_entities.iter() {
+                if let Ok(platform) = platforms_query.get(colliding_entity) {
+                    println!("Landed in platform factor {:?}", platform.factor);
+                }
+            }
             game_state.set(GameState::Landed);
         }
     }
