@@ -2,7 +2,9 @@ use bevy::prelude::*;
 use std::f32::consts::TAU;
 
 use crate::asset_loader::SceneAssets;
+use crate::fuel::FuelBar;
 use crate::game::Scores;
+use crate::speedometer::SpeedBarBlackIndicator;
 use crate::state::{AppState, GameState};
 
 pub struct ExplosionPlugin;
@@ -83,6 +85,9 @@ fn animate_explosion_system(
 
 fn catch_finished_explosion_event_system(
     event_reader: EventReader<FinishedExplosionEvent>,
+    mut fuel_bar_query: Query<Entity, With<FuelBar>>,
+    mut speed_bar_black_indicator_query: Query<Entity, With<SpeedBarBlackIndicator>>,
+    mut commands: Commands,
     mut scores: ResMut<Scores>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
@@ -91,7 +96,18 @@ fn catch_finished_explosion_event_system(
         if scores.fuel_quantity <= 0.0 {
             game_state.set(GameState::GameOver);
         } else {
-            game_state.set(GameState::Landing);
+            let Ok(fuel_bar) = fuel_bar_query.get_single_mut() else {
+                return;
+            };
+            let Ok(speed_bar_black_indicator) = speed_bar_black_indicator_query.get_single_mut()
+            else {
+                return;
+            };
+            commands.entity(fuel_bar).despawn_recursive();
+            commands
+                .entity(speed_bar_black_indicator)
+                .despawn_recursive();
+            game_state.set(GameState::Setup);
         }
     }
 }

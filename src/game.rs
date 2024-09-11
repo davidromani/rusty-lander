@@ -1,15 +1,15 @@
-use crate::asset_loader::SceneAssets;
 use bevy::app::AppExit;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
 use rand::prelude::*;
 use std::f32::consts::TAU;
 
+use crate::asset_loader::SceneAssets;
+
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        //app.insert_resource(GameState { is_playing: IS_PLAYING });
         app.insert_resource(Scores {
             score: 0,
             hi_score: 0,
