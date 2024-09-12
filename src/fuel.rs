@@ -8,7 +8,7 @@ pub struct FuelPlugin;
 
 impl Plugin for FuelPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Landing), spawn_fuel_bar_system)
+        app.add_systems(OnEnter(GameState::Setup), spawn_fuel_bar_system)
             .add_systems(
                 Update,
                 update_fuel_bar_system.run_if(in_state(GameState::Landing)),
@@ -42,4 +42,4 @@ fn update_fuel_bar_system(mut query: Query<&mut Sprite, With<FuelBar>>, scores: 
 
 // Components
 #[derive(Component, Debug)]
-struct FuelBar;
+pub struct FuelBar;

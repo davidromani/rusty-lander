@@ -177,7 +177,7 @@ fn update_ready_to_land_system(
     let Ok((entity, linear_velocity)) = query.get_single_mut() else {
         return;
     };
-    if linear_velocity.y < 12.5 && linear_velocity.y > -12.5 {
+    if linear_velocity.y < 35.0 && linear_velocity.y > -35.0 {
         commands.entity(entity).insert(ReadyToLand);
     } else {
         commands.entity(entity).remove::<ReadyToLand>();
