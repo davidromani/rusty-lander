@@ -41,6 +41,8 @@ fn main() {
         DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: MAIN_TITLE.to_string(),
+                resizable: false,
+                focused: true,
                 ..default()
             }),
             ..default()
