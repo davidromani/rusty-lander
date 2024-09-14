@@ -6,7 +6,6 @@ use bevy::sprite::MaterialMesh2dBundle;
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
 use crate::explosion::SpawnExplosionEvent;
-use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{
     asset_loader::SceneAssets,
@@ -20,7 +19,7 @@ impl Plugin for ColliderPlugin {
         app.add_systems(OnEnter(GameState::Landing), initialize_landscape_system)
             .add_systems(
                 Update,
-                (print_collisions_system, print_player_landed_system)
+                (crash_collisions_system, print_player_landed_system)
                     .run_if(in_state(GameState::Landing)),
             );
     }
@@ -106,26 +105,17 @@ fn initialize_landscape_system(
     ));
 }
 
-fn print_collisions_system(
-    query: Query<(Entity, &CollidingEntities, &CharacterController), Without<Grounded>>,
-    spaceship_query: Query<&Transform, With<Player>>,
+fn crash_collisions_system(
+    query: Query<(Entity, &CollidingEntities, &CharacterController, &Transform), Without<Grounded>>,
     mut commands: Commands,
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    for (entity, colliding_entities, player) in &query {
+    for (entity, colliding_entities, player, transform) in &query {
         if !colliding_entities.is_empty() {
-            println!(
-                "{:?} is colliding with the following entities: {:?}",
-                entity, colliding_entities
-            );
-            println!("Player is NOT Grounded {:?}", player);
-            let Ok(spaceship) = spaceship_query.get_single() else {
-                return;
-            };
             explosion_spawn_events.send(SpawnExplosionEvent {
-                x: spaceship.translation.x,
-                y: spaceship.translation.y,
+                x: transform.translation.x,
+                y: transform.translation.y,
             });
             commands.entity(entity).despawn_recursive();
             game_state.set(GameState::Crashed);
