@@ -11,7 +11,9 @@ use crate::MAIN_TITLE;
 pub use handler::*;
 pub use interaction::*;
 
-const PRIMARY_COLOR: Color = Color::srgb(0.41, 0.22, 0.17);
+const PRIMARY_COLOR: Color = Color::srgb(0.54, 0.13, 0.07);
+const GREY_COLOR: Color = Color::srgb(0.5, 0.5, 0.5);
+const DARK_GREY_COLOR: Color = Color::srgb(0.15, 0.15, 0.15);
 
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
 pub enum MenuAction {
@@ -162,7 +164,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                         TextStyle {
                             font: assets.font_fira.clone(),
                             font_size: 20.0,
-                            color: Color::srgb(0.5, 0.5, 0.5),
+                            color: GREY_COLOR,
                         },
                     ),
                 ]),
@@ -202,7 +204,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                         TextStyle {
                             font: assets.font_fira.clone(),
                             font_size: 20.0,
-                            color: Color::srgb(0.5, 0.5, 0.5),
+                            color: GREY_COLOR,
                         },
                     ),
                 ]),
