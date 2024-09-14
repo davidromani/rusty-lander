@@ -10,7 +10,7 @@ use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{
     asset_loader::SceneAssets,
-    movement::{CharacterController, Grounded, ReadyToLand},
+    movement::{Grounded, ReadyToLand},
 };
 
 pub struct ColliderPlugin;
@@ -20,7 +20,7 @@ impl Plugin for ColliderPlugin {
         app.add_systems(OnEnter(GameState::Landing), initialize_landscape_system)
             .add_systems(
                 Update,
-                (crash_collisions_system, print_player_landed_system)
+                (crash_collisions_system, player_landed_collisions_system)
                     .run_if(in_state(GameState::Landing)),
             );
     }
@@ -124,24 +124,19 @@ fn crash_collisions_system(
     }
 }
 
-fn print_player_landed_system(
-    query: Query<(Entity, &CollidingEntities, &CharacterController), With<ReadyToLand>>,
+fn player_landed_collisions_system(
+    query: Query<(Entity, &CollidingEntities), (With<Player>, With<ReadyToLand>)>,
     platforms_query: Query<&Platform>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    for (entity, colliding_entities, player) in &query {
+    for (_entity, colliding_entities) in &query {
         if !colliding_entities.is_empty() {
-            println!(
-                "{:?} is colliding with the following entities: {:?}",
-                entity, colliding_entities
-            );
-            println!("Player is ReadyToLand {:?}", player);
             for &colliding_entity in colliding_entities.iter() {
                 if let Ok(platform) = platforms_query.get(colliding_entity) {
                     println!("Landed in platform factor {:?}", platform.factor);
+                    game_state.set(GameState::Landed);
                 }
             }
-            game_state.set(GameState::Landed);
         }
     }
 }

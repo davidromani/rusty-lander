@@ -11,17 +11,13 @@ use crate::MAIN_TITLE;
 pub use handler::*;
 pub use interaction::*;
 
-// List of user actions associated to menu/ui interaction
+const PRIMARY_COLOR: Color = Color::srgb(0.41, 0.22, 0.17);
+
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
 pub enum MenuAction {
-    // In menus move up the highlighted entry
     MenuUp,
-    // In menus move down the highlighted entry
     MenuDown,
-    // In menus, select highlighted entry
     Accept,
-    // During gameplay, pause the game.
-    // Also, directly unpause the game when in the pause screen.
     PauseUnpause,
 }
 
@@ -59,7 +55,7 @@ fn setup(mut commands: Commands) {
     ]);
     input_map.insert(MenuAction::PauseUnpause, GamepadButtonType::Start);
     input_map.insert(MenuAction::Accept, GamepadButtonType::South);
-    // Insert MenuAction resources
+    // insert MenuAction resources
     commands.insert_resource(input_map);
     commands.insert_resource(ActionState::<MenuAction>::default());
 }
@@ -67,7 +63,7 @@ fn setup(mut commands: Commands) {
 fn spawn_main_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
     let entity = MenuHandler {
         main_text: MAIN_TITLE.to_string(),
-        main_text_color: Color::srgb(0.41, 0.22, 0.17),
+        main_text_color: PRIMARY_COLOR,
         main_text_blink: false,
         selected_id: 0,
         entries: vec!["Play".into(), "Credits".into(), "Exit".into()],
@@ -107,7 +103,7 @@ fn spawn_pause_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
 fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
     let entity = MenuHandler {
         main_text: "".into(),
-        main_text_color: Color::srgb(0.0, 0.7, 0.7),
+        main_text_color: PRIMARY_COLOR,
         main_text_blink: false,
         selected_id: 0,
         entries: vec!["Menu".into(), "Exit".into()],
@@ -142,14 +138,14 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                     TextStyle {
                         font: assets.font.clone(),
                         font_size: 50.0,
-                        color: Color::srgb(0.0, 0.7, 0.7),
+                        color: PRIMARY_COLOR,
                     },
                 ),
                 ..default()
             },));
             parent.spawn((TextBundle {
                 style: Style {
-                    margin: UiRect::all(Val::Px(10.)),
+                    margin: UiRect::all(Val::Px(10.0)),
                     ..default()
                 },
                 text: Text::from_sections([
@@ -178,11 +174,11 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                     ..default()
                 },
                 text: Text::from_section(
-                    "Assets",
+                    "Acknowledgements",
                     TextStyle {
                         font: assets.font.clone(),
                         font_size: 50.0,
-                        color: Color::srgb(0.0, 0.7, 0.7),
+                        color: PRIMARY_COLOR,
                     },
                 ),
                 ..default()
@@ -194,7 +190,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                 },
                 text: Text::from_sections([
                     TextSection::new(
-                        "Kenney Vleugels ",
+                        "Boris Boutillier ",
                         TextStyle {
                             font: assets.font_fira.clone(),
                             font_size: 35.0,
@@ -202,7 +198,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                         },
                     ),
                     TextSection::new(
-                        "(www.kenney.nl)",
+                        "(github.com/BorisBoutillier)",
                         TextStyle {
                             font: assets.font_fira.clone(),
                             font_size: 20.0,
@@ -210,21 +206,6 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                         },
                     ),
                 ]),
-                ..default()
-            },));
-            parent.spawn((TextBundle {
-                style: Style {
-                    margin: UiRect::all(Val::Px(10.)),
-                    ..default()
-                },
-                text: Text::from_sections([TextSection::new(
-                    "Pablo Roman Andrioli",
-                    TextStyle {
-                        font: assets.font_fira.clone(),
-                        font_size: 35.0,
-                        color: Color::WHITE,
-                    },
-                )]),
                 ..default()
             },));
         });

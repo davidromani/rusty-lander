@@ -116,9 +116,7 @@ impl Default for MovementBundle {
 
 impl CharacterControllerBundle {
     pub fn new(collider: Collider) -> Self {
-        // Create shape caster as a slightly smaller version of collider
-        let mut caster_shape = collider.clone();
-        caster_shape.set_scale(Vector::ONE * 0.99, 10);
+        let caster_shape = collider.clone();
 
         Self {
             character_controller: CharacterController,
