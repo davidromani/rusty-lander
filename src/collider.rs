@@ -6,6 +6,7 @@ use bevy::sprite::MaterialMesh2dBundle;
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
 use crate::explosion::SpawnExplosionEvent;
+use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{
     asset_loader::SceneAssets,
@@ -106,12 +107,12 @@ fn initialize_landscape_system(
 }
 
 fn crash_collisions_system(
-    query: Query<(Entity, &CollidingEntities, &CharacterController, &Transform), Without<Grounded>>,
+    query: Query<(Entity, &CollidingEntities, &Transform), (With<Player>, Without<Grounded>)>,
     mut commands: Commands,
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    for (entity, colliding_entities, player, transform) in &query {
+    for (entity, colliding_entities, transform) in &query {
         if !colliding_entities.is_empty() {
             explosion_spawn_events.send(SpawnExplosionEvent {
                 x: transform.translation.x,
