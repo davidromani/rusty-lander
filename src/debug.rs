@@ -3,6 +3,7 @@ use bevy::{input::common_conditions::input_just_pressed, prelude::*};
 
 use crate::game::Scores;
 use crate::spaceship::Player;
+use crate::MAIN_TITLE;
 
 pub struct DebugPlugin;
 
@@ -18,7 +19,7 @@ impl Plugin for DebugPlugin {
 
 // Systems
 fn print_hello_world_system() {
-    info!("Hello 'Rusty Lander' World!");
+    info!("Hello '{}' World!", MAIN_TITLE.to_string());
 }
 
 fn handle_debug_key_pressed_system(

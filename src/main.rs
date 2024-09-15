@@ -59,7 +59,7 @@ fn main() {
         .add_plugins(MenuPlugin) // update
         .add_plugins(AssetsLoaderPlugin) // startup
         .add_plugins(CameraPlugin) // startup
-        .add_plugins(DebugPlugin) // startup
+        .add_plugins(DebugPlugin) // startup & update
         .add_plugins(FuelPlugin) // startup & update
         .add_plugins(ParticlesThrusterPlugin) // startup & update
         .add_plugins(SpeedometerPlugin) // startup & update
