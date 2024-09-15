@@ -24,8 +24,7 @@ use debug::DebugPlugin;
 use explosion::ExplosionPlugin;
 use fuel::FuelPlugin;
 use game::GamePlugin;
-use menu::MenuAction;
-use menu::MenuPlugin;
+use menu::{MenuAction, MenuPlugin};
 use movement::CharacterControllerPlugin;
 use particles_thruster::ParticlesThrusterPlugin;
 use spaceship::SpaceshipPlugin;
@@ -36,7 +35,7 @@ const MAIN_TITLE: &str = "Rusty Lander";
 
 fn main() {
     let mut app = App::new();
-    // Bevy, Avian2d & Leafwing Input Manager plugins
+    // Bevy, Avian2d & Leafwing plugins
     app.add_plugins((
         DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
@@ -54,7 +53,7 @@ fn main() {
     #[cfg(debug_assertions)]
     app.add_plugins(PhysicsDebugPlugin::default());
     // Resources
-    app.insert_resource(Gravity(Vector::NEG_Y * 98.0));
+    app.insert_resource(Gravity(Vector::NEG_Y * 58.0));
     // Custom plugins
     app.add_plugins(StatesPlugin) // update
         .add_plugins(MenuPlugin) // update
