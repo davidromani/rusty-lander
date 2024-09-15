@@ -5,6 +5,7 @@ use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::asset_loader::UiAssets;
+use crate::game::{Scores, FUEL_QUANTITY};
 use crate::state::{AppState, GameState};
 use crate::MAIN_TITLE;
 
@@ -74,7 +75,11 @@ fn spawn_main_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
     commands.entity(entity).insert(StateScoped(AppState::Menu));
 }
 
-fn spawn_game_over_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
+fn spawn_game_over_menu(
+    mut commands: Commands,
+    assets: ResMut<UiAssets>,
+    mut score: ResMut<Scores>,
+) {
     let entity = MenuHandler {
         main_text: "Game Over".into(),
         main_text_color: Color::srgb_u8(0xAA, 0x22, 0x22),
@@ -86,6 +91,7 @@ fn spawn_game_over_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
     commands
         .entity(entity)
         .insert(StateScoped(GameState::GameOver));
+    score.fuel_quantity = FUEL_QUANTITY;
 }
 
 fn spawn_pause_menu(mut commands: Commands, assets: ResMut<UiAssets>) {

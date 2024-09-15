@@ -6,6 +6,8 @@ use std::f32::consts::TAU;
 
 use crate::asset_loader::SceneAssets;
 
+pub const FUEL_QUANTITY: f32 = 1000.0;
+
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
@@ -13,7 +15,7 @@ impl Plugin for GamePlugin {
         app.insert_resource(Scores {
             score: 0,
             hi_score: 0,
-            fuel_quantity: 1000.0,
+            fuel_quantity: FUEL_QUANTITY,
         })
         .add_systems(PostStartup, spawn_background_image_system) // runs only once at Startup sequence
         .add_systems(
@@ -77,6 +79,6 @@ pub struct Scores {
 
 /*impl Scores {
     pub fn get_available_fuel_quantity(&self) -> f32 {
-        return 1000.0 - self.fuel_quantity;
+        return FUEL_QUANTITY - self.fuel_quantity;
     }
 }*/

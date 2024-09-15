@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy::sprite::*;
 
 use crate::asset_loader::UiAssets;
-use crate::game::Scores;
+use crate::game::{Scores, FUEL_QUANTITY};
 use crate::state::GameState;
 
 pub struct FuelPlugin;
@@ -28,7 +28,7 @@ fn spawn_fuel_bar_system(mut commands: Commands) {
             sprite: Sprite {
                 anchor: Anchor::CenterLeft,
                 color: Color::srgb(0.19, 0.10, 0.84),
-                custom_size: Some(Vec2::new(1000.0, 15.0)),
+                custom_size: Some(Vec2::new(FUEL_QUANTITY, 15.0)),
                 ..default()
             },
             ..default()
