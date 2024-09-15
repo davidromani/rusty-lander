@@ -44,9 +44,7 @@ fn spawn_spaceship_system(
             0.97,  // before 0.92
             4.9,   // before 60.0
         ),
-        Friction::ZERO
-            .with_static_coefficient(0.15)
-            .with_combine_rule(CoefficientCombine::Min),
+        Friction::ZERO,
         Restitution::PERFECTLY_ELASTIC.with_combine_rule(CoefficientCombine::Multiply),
         ColliderDensity(2.0),
         GravityScale(1.0),
