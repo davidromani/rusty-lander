@@ -12,7 +12,7 @@ pub struct SpaceshipPlugin;
 impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(InputManagerPlugin::<PlayerAction>::default());
-        app.add_systems(OnEnter(GameState::Setup), spawn_spaceship_system);
+        app.add_systems(OnEnter(GameState::Landing), spawn_spaceship_system);
     }
 }
 
