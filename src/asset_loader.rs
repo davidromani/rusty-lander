@@ -56,8 +56,9 @@ pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: R
 
 fn load_ui_assets_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.insert_resource(UiAssets {
-        font: asset_server.load("kenvector_future.ttf"),
-        font_fira: asset_server.load("FiraSans-Bold.ttf"),
+        font_kenvector: asset_server.load("fonts/kenvector_future.ttf"),
+        font_fira: asset_server.load("fonts/fira_sans_bold.ttf"),
+        font_vt323: asset_server.load("fonts/vt323_regular.ttf"),
     });
 }
 
@@ -72,8 +73,9 @@ pub struct SceneAssets {
 
 #[derive(Debug, Resource)]
 pub struct UiAssets {
-    pub font: Handle<Font>,
+    pub font_kenvector: Handle<Font>,
     pub font_fira: Handle<Font>,
+    pub font_vt323: Handle<Font>,
 }
 
 // States

@@ -6,10 +6,10 @@ use crate::state::{AppState, GameState};
 
 pub fn main_menu_input_system(
     app_state: ResMut<State<AppState>>,
-    mut next_app_state: ResMut<NextState<AppState>>,
     menu_action_state: Res<ActionState<MenuAction>>,
-    mut app_exit_events: EventWriter<AppExit>,
     menu: Query<&MenuHandler>,
+    mut next_app_state: ResMut<NextState<AppState>>,
+    mut app_exit_events: EventWriter<AppExit>,
 ) {
     if let Ok(menu) = menu.get_single() {
         if menu_action_state.just_pressed(&MenuAction::Accept) {

@@ -5,6 +5,7 @@ use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::asset_loader::UiAssets;
+use crate::game::{Scores, FUEL_QUANTITY};
 use crate::state::{AppState, GameState};
 use crate::MAIN_TITLE;
 
@@ -70,11 +71,15 @@ fn spawn_main_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         selected_id: 0,
         entries: vec!["Play".into(), "Credits".into(), "Exit".into()],
     }
-    .spawn(&mut commands, assets.font.clone());
+    .spawn(&mut commands, assets.font_kenvector.clone());
     commands.entity(entity).insert(StateScoped(AppState::Menu));
 }
 
-fn spawn_game_over_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
+fn spawn_game_over_menu(
+    mut commands: Commands,
+    assets: ResMut<UiAssets>,
+    mut score: ResMut<Scores>,
+) {
     let entity = MenuHandler {
         main_text: "Game Over".into(),
         main_text_color: Color::srgb_u8(0xAA, 0x22, 0x22),
@@ -82,10 +87,11 @@ fn spawn_game_over_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         selected_id: 0,
         entries: vec!["Menu".into(), "Exit".into()],
     }
-    .spawn(&mut commands, assets.font.clone());
+    .spawn(&mut commands, assets.font_kenvector.clone());
     commands
         .entity(entity)
         .insert(StateScoped(GameState::GameOver));
+    score.fuel_quantity = FUEL_QUANTITY;
 }
 
 fn spawn_pause_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
@@ -96,7 +102,7 @@ fn spawn_pause_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         selected_id: 0,
         entries: vec!["Resume".into(), "Menu".into(), "Exit".into()],
     }
-    .spawn(&mut commands, assets.font.clone());
+    .spawn(&mut commands, assets.font_kenvector.clone());
     commands
         .entity(entity)
         .insert(StateScoped(GameState::Paused));
@@ -110,7 +116,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         selected_id: 0,
         entries: vec!["Menu".into(), "Exit".into()],
     }
-    .spawn(&mut commands, assets.font.clone());
+    .spawn(&mut commands, assets.font_kenvector.clone());
     commands
         .entity(entity)
         .insert(StateScoped(AppState::Credits));
@@ -138,7 +144,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                 text: Text::from_section(
                     "Code",
                     TextStyle {
-                        font: assets.font.clone(),
+                        font: assets.font_kenvector.clone(),
                         font_size: 50.0,
                         color: PRIMARY_COLOR,
                     },
@@ -178,7 +184,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                 text: Text::from_section(
                     "Acknowledgements",
                     TextStyle {
-                        font: assets.font.clone(),
+                        font: assets.font_kenvector.clone(),
                         font_size: 50.0,
                         color: PRIMARY_COLOR,
                     },

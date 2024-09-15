@@ -16,9 +16,9 @@ impl Plugin for ExplosionPlugin {
             .add_systems(
                 Update,
                 (
-                    animate_explosion_system,
-                    catch_explosion_event_system,
-                    catch_finished_explosion_event_system,
+                    animate_explosion_system.run_if(in_state(GameState::Crashed)),
+                    catch_explosion_event_system.run_if(in_state(GameState::Crashed)),
+                    catch_finished_explosion_event_system.run_if(in_state(GameState::Crashed)),
                 ),
             );
     }
