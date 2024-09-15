@@ -25,17 +25,17 @@ pub struct StatesPlugin;
 
 impl Plugin for StatesPlugin {
     fn build(&self, app: &mut App) {
-        app.init_state::<AppState>();
-        app.enable_state_scoped_entities::<AppState>();
-        app.add_sub_state::<GameState>();
-        app.enable_state_scoped_entities::<GameState>();
-        app.add_systems(
-            Update,
-            (
-                transition_app_setup_to_menu_system.run_if(in_state(AppState::Setup)),
-                transition_game_setup_to_running_system.run_if(in_state(GameState::Setup)),
-            ),
-        );
+        app.init_state::<AppState>()
+            .enable_state_scoped_entities::<AppState>()
+            .add_sub_state::<GameState>()
+            .enable_state_scoped_entities::<GameState>()
+            .add_systems(
+                Update,
+                (
+                    transition_app_setup_to_menu_system.run_if(in_state(AppState::Setup)),
+                    transition_game_setup_to_running_system.run_if(in_state(GameState::Setup)),
+                ),
+            );
     }
 }
 
