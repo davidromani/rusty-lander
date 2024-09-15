@@ -1,8 +1,9 @@
+use bevy::prelude::*;
+use bevy::sprite::*;
+
 use crate::asset_loader::UiAssets;
 use crate::game::Scores;
 use crate::state::GameState;
-use bevy::prelude::*;
-use bevy::sprite::*;
 
 pub struct FuelPlugin;
 
