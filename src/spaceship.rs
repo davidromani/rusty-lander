@@ -1,4 +1,4 @@
-use avian2d::{math::*, prelude::*};
+use avian2d::prelude::*;
 use bevy::prelude::*;
 use bevy_collider_gen::avian2d::single_convex_polyline_collider_translated;
 use leafwing_input_manager::prelude::*;
@@ -12,7 +12,7 @@ pub struct SpaceshipPlugin;
 impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(InputManagerPlugin::<PlayerAction>::default());
-        app.add_systems(OnEnter(GameState::Setup), spawn_spaceship_system);
+        app.add_systems(OnEnter(GameState::Landing), spawn_spaceship_system);
     }
 }
 
@@ -43,7 +43,7 @@ fn spawn_spaceship_system(
             550.0, // before 1250.0
             0.97,  // before 0.92
             4.9,   // before 60.0
-            (180.0 as Scalar).to_radians(),
+            0.0,   // before (180.0 as Scalar).to_radians(),
         ),
         Friction::ZERO
             .with_static_coefficient(0.15)

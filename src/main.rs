@@ -2,6 +2,7 @@ mod asset_loader;
 mod camera;
 mod collider;
 mod debug;
+mod explosion;
 mod fuel;
 mod game;
 mod menu;
@@ -20,6 +21,7 @@ use asset_loader::AssetsLoaderPlugin;
 use camera::CameraPlugin;
 use collider::ColliderPlugin;
 use debug::DebugPlugin;
+use explosion::ExplosionPlugin;
 use fuel::FuelPlugin;
 use game::GamePlugin;
 use menu::MenuAction;
@@ -39,6 +41,8 @@ fn main() {
         DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: MAIN_TITLE.to_string(),
+                resizable: false,
+                focused: true,
                 ..default()
             }),
             ..default()
@@ -64,5 +68,6 @@ fn main() {
         .add_plugins(SpaceshipPlugin) // post startup
         .add_plugins(GamePlugin) // post startup & update
         .add_plugins(CharacterControllerPlugin) // update
+        .add_plugins(ExplosionPlugin) // update
         .run();
 }

@@ -19,6 +19,7 @@ pub enum GameState {
     Paused,
     Landed,
     Crashed,
+    GameOver,
 }
 
 pub struct StatesPlugin;
@@ -30,10 +31,15 @@ impl Plugin for StatesPlugin {
         app.add_sub_state::<GameState>();
         app.enable_state_scoped_entities::<GameState>();
         app.add_systems(
+            OnEnter(GameState::Setup),
+            transition_game_setup_to_running_system,
+        );
+        app.add_systems(
             Update,
             (
                 transition_app_setup_to_menu_system.run_if(in_state(AppState::Setup)),
-                transition_game_setup_to_running_system.run_if(in_state(GameState::Setup)),
+                on_completed_transition_game_setup_to_running_system
+                    .run_if(in_state(GameState::Setup)),
             ),
         );
     }
@@ -44,6 +50,23 @@ fn transition_app_setup_to_menu_system(mut state: ResMut<NextState<AppState>>) {
     state.set(AppState::Menu);
 }
 
-fn transition_game_setup_to_running_system(mut state: ResMut<NextState<GameState>>) {
-    state.set(GameState::Landing);
+fn transition_game_setup_to_running_system(mut commands: Commands) {
+    commands.spawn(OnCompletionTimer(Timer::from_seconds(5.0, TimerMode::Once)));
 }
+
+fn on_completed_transition_game_setup_to_running_system(
+    time: Res<Time>,
+    mut query: Query<&mut OnCompletionTimer>,
+    mut state: ResMut<NextState<GameState>>,
+) {
+    for mut timer in &mut query {
+        if timer.tick(time.delta()).just_finished() {
+            info!("Entity timer just finished");
+            state.set(GameState::Landing);
+        }
+    }
+}
+
+// Components
+#[derive(Component, Deref, DerefMut)]
+struct OnCompletionTimer(Timer);

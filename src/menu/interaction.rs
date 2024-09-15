@@ -71,7 +71,7 @@ pub fn game_menu_input_system(
                     }
                 }
             }
-            if game_state.get() == &GameState::Crashed {
+            if game_state.get() == &GameState::GameOver {
                 match menu.selected_id {
                     0 => {
                         next_app_state.set(AppState::Menu);

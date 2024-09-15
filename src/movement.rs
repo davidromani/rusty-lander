@@ -116,9 +116,7 @@ impl Default for MovementBundle {
 
 impl CharacterControllerBundle {
     pub fn new(collider: Collider) -> Self {
-        // Create shape caster as a slightly smaller version of collider
-        let mut caster_shape = collider.clone();
-        caster_shape.set_scale(Vector::ONE * 0.99, 10);
+        let caster_shape = collider.clone();
 
         Self {
             character_controller: CharacterController,
@@ -177,7 +175,7 @@ fn update_ready_to_land_system(
     let Ok((entity, linear_velocity)) = query.get_single_mut() else {
         return;
     };
-    if linear_velocity.y < 12.5 && linear_velocity.y > -12.5 {
+    if linear_velocity.y < 35.0 && linear_velocity.y > -35.0 {
         commands.entity(entity).insert(ReadyToLand);
     } else {
         commands.entity(entity).remove::<ReadyToLand>();

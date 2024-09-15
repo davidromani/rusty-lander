@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-use crate::menu::MenuAction;
+use crate::menu::{MenuAction, DARK_GREY_COLOR, GREY_COLOR};
 
 #[derive(Component)]
 pub struct DrawBlinkTimer(pub Timer);
@@ -18,10 +18,11 @@ pub struct MenuHandler {
     pub selected_id: i32,
 }
 impl MenuHandler {
-    const SELECTED_BORDER: Color = Color::srgb(0.4, 0.4, 0.4);
-    const SELECTED_BG: Color = Color::srgb(0.2, 0.2, 0.2);
-    const UNSELECTED_BORDER: Color = Color::srgb(0.2, 0.2, 0.2);
-    const UNSELECTED_BG: Color = Color::srgb(0.0, 0.0, 0.0);
+    const SELECTED_BORDER: Color = GREY_COLOR;
+    const SELECTED_BG: Color = DARK_GREY_COLOR;
+    const UNSELECTED_BORDER: Color = DARK_GREY_COLOR;
+    const UNSELECTED_BG: Color = Color::BLACK;
+
     pub fn spawn(self, commands: &mut Commands, font: Handle<Font>) -> Entity {
         let button_style = Style {
             width: Val::Px(150.0),

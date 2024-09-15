@@ -5,10 +5,12 @@ use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
+use crate::explosion::SpawnExplosionEvent;
+use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{
     asset_loader::SceneAssets,
-    movement::{CharacterController, Grounded, ReadyToLand},
+    movement::{Grounded, ReadyToLand},
 };
 
 pub struct ColliderPlugin;
@@ -18,7 +20,7 @@ impl Plugin for ColliderPlugin {
         app.add_systems(OnEnter(GameState::Landing), initialize_landscape_system)
             .add_systems(
                 Update,
-                (print_collisions_system, print_player_landed_system)
+                (crash_collisions_system, player_landed_collisions_system)
                     .run_if(in_state(GameState::Landing)),
             );
     }
@@ -104,34 +106,37 @@ fn initialize_landscape_system(
     ));
 }
 
-fn print_collisions_system(
-    query: Query<(Entity, &CollidingEntities, &CharacterController), Without<Grounded>>,
+fn crash_collisions_system(
+    query: Query<(Entity, &CollidingEntities, &Transform), (With<Player>, Without<Grounded>)>,
+    mut commands: Commands,
+    mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    for (entity, colliding_entities, player) in &query {
+    for (entity, colliding_entities, transform) in &query {
         if !colliding_entities.is_empty() {
-            println!(
-                "{:?} is colliding with the following entities: {:?}",
-                entity, colliding_entities
-            );
-            println!("Player is NOT Grounded {:?}", player);
+            explosion_spawn_events.send(SpawnExplosionEvent {
+                x: transform.translation.x,
+                y: transform.translation.y,
+            });
+            commands.entity(entity).despawn_recursive();
             game_state.set(GameState::Crashed);
         }
     }
 }
 
-fn print_player_landed_system(
-    query: Query<(Entity, &CollidingEntities, &CharacterController), With<ReadyToLand>>,
+fn player_landed_collisions_system(
+    query: Query<(Entity, &CollidingEntities), (With<Player>, With<ReadyToLand>)>,
+    platforms_query: Query<&Platform>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    for (entity, colliding_entities, player) in &query {
+    for (_entity, colliding_entities) in &query {
         if !colliding_entities.is_empty() {
-            println!(
-                "{:?} is colliding with the following entities: {:?}",
-                entity, colliding_entities
-            );
-            println!("Player is ReadyToLand {:?}", player);
-            game_state.set(GameState::Landed);
+            for &colliding_entity in colliding_entities.iter() {
+                if let Ok(platform) = platforms_query.get(colliding_entity) {
+                    println!("Landed in platform factor {:?}", platform.factor);
+                    game_state.set(GameState::Landed);
+                }
+            }
         }
     }
 }

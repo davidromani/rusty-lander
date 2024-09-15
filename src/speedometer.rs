@@ -9,7 +9,7 @@ pub struct SpeedometerPlugin;
 
 impl Plugin for SpeedometerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Landing), spawn_speed_bar_system)
+        app.add_systems(OnEnter(GameState::Setup), spawn_speed_bar_system)
             .add_systems(
                 Update,
                 update_fuel_bar_system.run_if(in_state(GameState::Landing)),
@@ -38,7 +38,7 @@ fn spawn_speed_bar_system(
         transform: Transform::from_translation(Vec3::new(620.0, 0.0, 4.0)),
         sprite: Sprite {
             color: Color::srgb(0.77, 0.84, 0.11),
-            custom_size: Some(Vec2::new(15.0, 25.0)),
+            custom_size: Some(Vec2::new(15.0, 70.0)),
             ..default()
         },
         ..default()
@@ -72,4 +72,4 @@ fn update_fuel_bar_system(
 
 // Components
 #[derive(Component, Debug)]
-struct SpeedBarBlackIndicator;
+pub struct SpeedBarBlackIndicator;

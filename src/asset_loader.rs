@@ -1,5 +1,6 @@
-use crate::state::AppState;
 use bevy::{asset::LoadState, prelude::*};
+
+use crate::state::AppState;
 
 pub struct AssetsLoaderPlugin;
 
@@ -49,6 +50,7 @@ pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: R
         landscape: asset_server.load("terrain.png"),
         lander: asset_server.load("spaceship.png"),
         // lander: asset_server.load("lander.png"),
+        explosion: asset_server.load("explosion.png"),
     }
 }
 
@@ -65,6 +67,7 @@ pub struct SceneAssets {
     pub background: Handle<Image>,
     pub landscape: Handle<Image>,
     pub lander: Handle<Image>,
+    pub explosion: Handle<Image>,
 }
 
 #[derive(Debug, Resource)]
