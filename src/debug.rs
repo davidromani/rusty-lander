@@ -19,11 +19,10 @@ impl Plugin for DebugPlugin {
 // Systems
 fn print_hello_world_system() {
     info!("Hello 'Rusty Lander' World!");
-    // warn!("Entity {:?} · Component {:?}", entity, component);
 }
 
 fn handle_debug_key_pressed_system(
-    mut query: Query<&LinearVelocity, With<Player>>,
+    query: Query<&LinearVelocity, With<Player>>,
     scores: Res<Scores>,
 ) {
     info!("Debug key 1 has been pressed");
@@ -31,7 +30,7 @@ fn handle_debug_key_pressed_system(
         "Current score = {:?} · Hi score = {:?} · Fuel = {:?}",
         scores.score, scores.hi_score, scores.fuel_quantity
     );
-    let Ok(linear_velocity) = query.get_single_mut() else {
+    let Ok(linear_velocity) = query.get_single() else {
         return;
     };
     info!("Current LinearVelocity: {:?}", linear_velocity);
