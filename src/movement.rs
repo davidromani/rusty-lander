@@ -1,9 +1,10 @@
+use avian2d::{math::*, prelude::*};
+use bevy::prelude::*;
+use leafwing_input_manager::prelude::*;
+
 use crate::game::Scores;
 use crate::spaceship::PlayerAction;
 use crate::state::GameState;
-use avian2d::{math::*, prelude::*};
-use bevy::{ecs::query::Has, prelude::*};
-use leafwing_input_manager::prelude::*;
 
 const BIG_THRUST: f32 = 0.75;
 const MEDIUM_THRUST: f32 = 0.55;
@@ -29,7 +30,6 @@ impl Plugin for CharacterControllerPlugin {
             Update,
             (
                 update_ready_to_land_system,
-                update_grounded_system,
                 movement_system,
                 apply_movement_damping_system,
             )
@@ -39,40 +39,22 @@ impl Plugin for CharacterControllerPlugin {
     }
 }
 
-/// A marker component indicating that an entity is using a character controller.
 #[derive(Component, Debug)]
 pub struct CharacterController;
 
-/// A marker component indicating that an entity is on the ground.
-#[derive(Component)]
-#[component(storage = "SparseSet")]
-pub struct Grounded;
-
-/// A marker component indicating that an entity is on the ground.
 #[derive(Component)]
 #[component(storage = "SparseSet")]
 pub struct ReadyToLand;
 
-/// The acceleration used for character movement.
 #[derive(Component)]
 pub struct MovementAcceleration(Scalar);
 
-/// The damping factor used for slowing down movement.
 #[derive(Component)]
 pub struct MovementDampingFactor(Scalar);
 
-/// The strength of a jump.
 #[derive(Component)]
 pub struct JumpImpulse(Scalar);
 
-/// The maximum angle a slope can have for a character controller
-/// to be able to climb and jump. If the slope is steeper than this angle,
-/// the character will slide down.
-#[derive(Component)]
-pub struct MaxSlopeAngle(Scalar);
-
-/// A bundle that contains the components needed for a basic
-/// kinematic character controller.
 #[derive(Bundle)]
 pub struct CharacterControllerBundle {
     character_controller: CharacterController,
@@ -83,34 +65,26 @@ pub struct CharacterControllerBundle {
     movement: MovementBundle,
 }
 
-/// A bundle that contains components for character movement.
 #[derive(Bundle)]
 pub struct MovementBundle {
     acceleration: MovementAcceleration,
     damping: MovementDampingFactor,
     jump_impulse: JumpImpulse,
-    max_slope_angle: MaxSlopeAngle,
 }
 
 impl MovementBundle {
-    pub const fn new(
-        acceleration: Scalar,
-        damping: Scalar,
-        jump_impulse: Scalar,
-        max_slope_angle: Scalar,
-    ) -> Self {
+    pub const fn new(acceleration: Scalar, damping: Scalar, jump_impulse: Scalar) -> Self {
         Self {
             acceleration: MovementAcceleration(acceleration),
             damping: MovementDampingFactor(damping),
             jump_impulse: JumpImpulse(jump_impulse),
-            max_slope_angle: MaxSlopeAngle(max_slope_angle),
         }
     }
 }
 
 impl Default for MovementBundle {
     fn default() -> Self {
-        Self::new(30.0, 0.9, 7.0, PI * 0.45)
+        Self::new(30.0, 0.9, 7.0)
     }
 }
 
@@ -122,8 +96,7 @@ impl CharacterControllerBundle {
             character_controller: CharacterController,
             rigid_body: RigidBody::Dynamic,
             collider,
-            ground_caster: ShapeCaster::new(caster_shape, Vector::ZERO, 0.0, Dir2::NEG_Y)
-                .with_max_time_of_impact(10.0),
+            ground_caster: ShapeCaster::new(caster_shape, Vector::ZERO, 0.0, Dir2::NEG_Y),
             locked_axes: LockedAxes::ROTATION_LOCKED,
             movement: MovementBundle::default(),
         }
@@ -134,40 +107,12 @@ impl CharacterControllerBundle {
         acceleration: Scalar,
         damping: Scalar,
         jump_impulse: Scalar,
-        max_slope_angle: Scalar,
     ) -> Self {
-        self.movement = MovementBundle::new(acceleration, damping, jump_impulse, max_slope_angle);
+        self.movement = MovementBundle::new(acceleration, damping, jump_impulse);
         self
     }
 }
 
-/// Updates the [`Grounded`] status for character controllers.
-fn update_grounded_system(
-    mut commands: Commands,
-    mut query: Query<
-        (Entity, &ShapeHits, &Rotation, Option<&MaxSlopeAngle>),
-        With<CharacterController>,
-    >,
-) {
-    for (entity, hits, rotation, max_slope_angle) in &mut query {
-        // The character is grounded if the shape caster has a hit with a normal
-        // that isn't too steep.
-        let is_grounded = hits.iter().any(|hit| {
-            if let Some(angle) = max_slope_angle {
-                (rotation * -hit.normal2).angle_between(Vector::Y).abs() <= angle.0
-            } else {
-                true
-            }
-        });
-        if is_grounded {
-            commands.entity(entity).insert(Grounded);
-        } else {
-            commands.entity(entity).remove::<Grounded>();
-        }
-    }
-}
-
-/// Updates the [`ReadyToLand`] status for character controllers.
 fn update_ready_to_land_system(
     mut commands: Commands,
     mut query: Query<(Entity, &LinearVelocity), With<CharacterController>>,
@@ -182,7 +127,6 @@ fn update_ready_to_land_system(
     }
 }
 
-/// Responds to [`MovementAction`] events and moves character controllers accordingly.
 fn movement_system(
     time: Res<Time>,
     mut scores: ResMut<Scores>,
@@ -191,14 +135,10 @@ fn movement_system(
         &MovementAcceleration,
         &JumpImpulse,
         &mut LinearVelocity,
-        Has<Grounded>,
     )>,
 ) {
-    // Precision is adjusted so that the example works with
-    // both the `f32` and `f64` features. Otherwise, you don't need this.
     let delta_time = time.delta_seconds_f64().adjust_precision();
-    for (action_state, movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in
-        &mut controllers
+    for (action_state, movement_acceleration, jump_impulse, mut linear_velocity) in &mut controllers
     {
         if scores.fuel_quantity > 0.0 {
             if action_state.pressed(&PlayerAction::LeftThruster) {
@@ -209,25 +149,22 @@ fn movement_system(
                 linear_velocity.x += -movement_acceleration.0 * delta_time;
                 scores.fuel_quantity -= 20.0 * time.delta_seconds();
             }
-            if !is_grounded {
-                if action_state.pressed(&PlayerAction::MainThrusterBig) {
-                    linear_velocity.y += jump_impulse.0 * BIG_THRUST;
-                    scores.fuel_quantity -= 100.0 * time.delta_seconds();
-                }
-                if action_state.pressed(&PlayerAction::MainThrusterMedium) {
-                    linear_velocity.y += jump_impulse.0 * MEDIUM_THRUST;
-                    scores.fuel_quantity -= 50.0 * time.delta_seconds();
-                }
-                if action_state.pressed(&PlayerAction::MainThrusterSmall) {
-                    linear_velocity.y += jump_impulse.0 * SMALL_THRUST;
-                    scores.fuel_quantity -= 20.0 * time.delta_seconds();
-                }
+            if action_state.pressed(&PlayerAction::MainThrusterBig) {
+                linear_velocity.y += jump_impulse.0 * BIG_THRUST;
+                scores.fuel_quantity -= 100.0 * time.delta_seconds();
+            }
+            if action_state.pressed(&PlayerAction::MainThrusterMedium) {
+                linear_velocity.y += jump_impulse.0 * MEDIUM_THRUST;
+                scores.fuel_quantity -= 50.0 * time.delta_seconds();
+            }
+            if action_state.pressed(&PlayerAction::MainThrusterSmall) {
+                linear_velocity.y += jump_impulse.0 * SMALL_THRUST;
+                scores.fuel_quantity -= 20.0 * time.delta_seconds();
             }
         }
     }
 }
 
-/// Slows down movement in the X direction.
 fn apply_movement_damping_system(mut query: Query<(&MovementDampingFactor, &mut LinearVelocity)>) {
     for (damping_factor, mut linear_velocity) in &mut query {
         // We could use `LinearDamping`, but we don't want to dampen movement along the Y axis

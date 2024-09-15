@@ -1,17 +1,14 @@
 use avian2d::math::Vector;
 use avian2d::prelude::*;
 use bevy::color::palettes::css;
-use bevy::prelude::*;
 use bevy::sprite::MaterialMesh2dBundle;
+use bevy::{ecs::query::Has, prelude::*};
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
 use crate::explosion::SpawnExplosionEvent;
 use crate::spaceship::Player;
 use crate::state::GameState;
-use crate::{
-    asset_loader::SceneAssets,
-    movement::{Grounded, ReadyToLand},
-};
+use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
 
 pub struct ColliderPlugin;
 
@@ -20,8 +17,7 @@ impl Plugin for ColliderPlugin {
         app.add_systems(OnEnter(GameState::Landing), initialize_landscape_system)
             .add_systems(
                 Update,
-                (crash_collisions_system, player_landed_collisions_system)
-                    .run_if(in_state(GameState::Landing)),
+                player_landed_collisions_system.run_if(in_state(GameState::Landing)),
             );
     }
 }
@@ -106,35 +102,37 @@ fn initialize_landscape_system(
     ));
 }
 
-fn crash_collisions_system(
-    query: Query<(Entity, &CollidingEntities, &Transform), (With<Player>, Without<Grounded>)>,
-    mut commands: Commands,
-    mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
-    mut game_state: ResMut<NextState<GameState>>,
-) {
-    for (entity, colliding_entities, transform) in &query {
-        if !colliding_entities.is_empty() {
-            explosion_spawn_events.send(SpawnExplosionEvent {
-                x: transform.translation.x,
-                y: transform.translation.y,
-            });
-            commands.entity(entity).despawn_recursive();
-            game_state.set(GameState::Crashed);
-        }
-    }
-}
-
 fn player_landed_collisions_system(
-    query: Query<(Entity, &CollidingEntities), (With<Player>, With<ReadyToLand>)>,
+    query: Query<(Entity, &CollidingEntities, &Transform, Has<ReadyToLand>), With<Player>>,
     platforms_query: Query<&Platform>,
+    mut commands: Commands,
     mut game_state: ResMut<NextState<GameState>>,
+    mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
 ) {
-    for (_entity, colliding_entities) in &query {
+    for (entity, colliding_entities, transform, is_ready_to_land) in &query {
         if !colliding_entities.is_empty() {
-            for &colliding_entity in colliding_entities.iter() {
-                if let Ok(platform) = platforms_query.get(colliding_entity) {
-                    println!("Landed in platform factor {:?}", platform.factor);
-                    game_state.set(GameState::Landed);
+            if !is_ready_to_land {
+                println!("Lander is not ready to land. Crash!");
+                explosion_spawn_events.send(SpawnExplosionEvent {
+                    x: transform.translation.x,
+                    y: transform.translation.y,
+                });
+                commands.entity(entity).despawn_recursive(); // TODO set invisible
+                game_state.set(GameState::Crashed);
+            } else {
+                for &colliding_entity in colliding_entities.iter() {
+                    if let Ok(platform) = platforms_query.get(colliding_entity) {
+                        println!("Landed in platform factor {:?}", platform.factor);
+                        game_state.set(GameState::Landed);
+                    } else {
+                        println!("Landed outside a platform");
+                        explosion_spawn_events.send(SpawnExplosionEvent {
+                            x: transform.translation.x,
+                            y: transform.translation.y,
+                        });
+                        commands.entity(entity).despawn_recursive(); // TODO set invisible
+                        game_state.set(GameState::Crashed);
+                    }
                 }
             }
         }
