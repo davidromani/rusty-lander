@@ -1,18 +1,21 @@
-use bevy::prelude::*;
-use bevy::sprite::*;
-
+use crate::asset_loader::UiAssets;
 use crate::game::Scores;
 use crate::state::GameState;
+use bevy::prelude::*;
+use bevy::sprite::*;
 
 pub struct FuelPlugin;
 
 impl Plugin for FuelPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Setup), spawn_fuel_bar_system)
-            .add_systems(
-                Update,
-                update_fuel_bar_system.run_if(in_state(GameState::Landing)),
-            );
+        app.add_systems(
+            OnEnter(GameState::Setup),
+            (spawn_fuel_bar_system, spawn_fuel_bar_text_system),
+        )
+        .add_systems(
+            Update,
+            update_fuel_bar_system.run_if(in_state(GameState::Landing)),
+        );
     }
 }
 
@@ -31,6 +34,24 @@ fn spawn_fuel_bar_system(mut commands: Commands) {
         },
         FuelBar,
     ));
+}
+
+fn spawn_fuel_bar_text_system(mut commands: Commands, assets: ResMut<UiAssets>) {
+    commands.spawn(
+        TextBundle::from_section(
+            "Fuel",
+            TextStyle {
+                font: assets.font_vt323.clone(),
+                ..default()
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(10.0),
+            left: Val::Px(92.0),
+            ..default()
+        }),
+    );
 }
 
 fn update_fuel_bar_system(mut query: Query<&mut Sprite, With<FuelBar>>, scores: Res<Scores>) {
