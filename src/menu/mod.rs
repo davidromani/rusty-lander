@@ -70,7 +70,7 @@ fn spawn_main_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         selected_id: 0,
         entries: vec!["Play".into(), "Credits".into(), "Exit".into()],
     }
-    .spawn(&mut commands, assets.font.clone());
+    .spawn(&mut commands, assets.font_kenvector.clone());
     commands.entity(entity).insert(StateScoped(AppState::Menu));
 }
 
@@ -82,7 +82,7 @@ fn spawn_game_over_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         selected_id: 0,
         entries: vec!["Menu".into(), "Exit".into()],
     }
-    .spawn(&mut commands, assets.font.clone());
+    .spawn(&mut commands, assets.font_kenvector.clone());
     commands
         .entity(entity)
         .insert(StateScoped(GameState::GameOver));
@@ -96,7 +96,7 @@ fn spawn_pause_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         selected_id: 0,
         entries: vec!["Resume".into(), "Menu".into(), "Exit".into()],
     }
-    .spawn(&mut commands, assets.font.clone());
+    .spawn(&mut commands, assets.font_kenvector.clone());
     commands
         .entity(entity)
         .insert(StateScoped(GameState::Paused));
@@ -110,7 +110,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         selected_id: 0,
         entries: vec!["Menu".into(), "Exit".into()],
     }
-    .spawn(&mut commands, assets.font.clone());
+    .spawn(&mut commands, assets.font_kenvector.clone());
     commands
         .entity(entity)
         .insert(StateScoped(AppState::Credits));
@@ -138,7 +138,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                 text: Text::from_section(
                     "Code",
                     TextStyle {
-                        font: assets.font.clone(),
+                        font: assets.font_kenvector.clone(),
                         font_size: 50.0,
                         color: PRIMARY_COLOR,
                     },
@@ -178,7 +178,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                 text: Text::from_section(
                     "Acknowledgements",
                     TextStyle {
-                        font: assets.font.clone(),
+                        font: assets.font_kenvector.clone(),
                         font_size: 50.0,
                         color: PRIMARY_COLOR,
                     },

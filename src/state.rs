@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 
-// Main state enum, differentiating, Menu from Game 'scenes'
 #[derive(States, Debug, Copy, Clone, Hash, Eq, PartialEq, Default)]
 pub enum AppState {
     #[default]
