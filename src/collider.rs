@@ -7,7 +7,7 @@ use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
 use crate::asset_loader::UiAssets;
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::{Scores, TextScoringAfterLanding, FUEL_QUANTITY};
+use crate::game::{Resettable, Scores, TextScoringAfterLanding, FUEL_QUANTITY};
 use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
@@ -134,6 +134,7 @@ fn player_landed_collisions_system(
                             scores.hi_score = scores.score;
                         }
                         commands.spawn((
+                            Resettable,
                             TextScoringAfterLanding,
                             TextBundle::from_section(
                                 (scores.get_available_fuel_quantity() as i16).to_string()
@@ -155,9 +156,10 @@ fn player_landed_collisions_system(
                             }),
                         ));
                         commands.spawn((
+                            Resettable,
                             TextScoringAfterLanding,
                             TextBundle::from_section(
-                                "press any key to continue",
+                                "press space bar key to continue",
                                 TextStyle {
                                     font: assets.font_vt323.clone(),
                                     font_size: 30.0,
@@ -182,7 +184,7 @@ fn player_landed_collisions_system(
                             x: transform.translation.x,
                             y: transform.translation.y,
                         });
-                        commands.entity(entity).despawn_recursive(); // TODO set invisible
+                        commands.entity(entity).despawn_recursive();
                         game_state.set(GameState::Crashed);
                     }
                 }

@@ -1,15 +1,14 @@
-use crate::asset_loader::{SceneAssets, UiAssets};
-use crate::fuel::FuelBar;
-use crate::movement::ReadyToLand;
-use crate::spaceship::Player;
-use crate::speedometer::SpeedBarBlackIndicator;
-use crate::state::GameState;
-use avian2d::collision::CollidingEntities;
 use bevy::app::AppExit;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
 use rand::prelude::*;
 use std::f32::consts::TAU;
+
+use crate::asset_loader::{SceneAssets, UiAssets};
+use crate::fuel::FuelBar;
+use crate::spaceship::Player;
+use crate::speedometer::SpeedBarBlackIndicator;
+use crate::state::GameState;
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
 
@@ -58,7 +57,8 @@ fn update_text_high_score_system(
 }
 
 fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
-    commands.spawn(
+    commands.spawn((
+        Resettable,
         TextBundle::from_section(
             "Score",
             TextStyle {
@@ -72,8 +72,9 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
             left: Val::Px(88.0),
             ..default()
         }),
-    );
+    ));
     commands.spawn((
+        Resettable,
         TextScore,
         TextBundle::from_section(
             scores.score.to_string(),
@@ -89,7 +90,8 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
             ..default()
         }),
     ));
-    commands.spawn(
+    commands.spawn((
+        Resettable,
         TextBundle::from_section(
             "High Score",
             TextStyle {
@@ -103,8 +105,9 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
             left: Val::Px(500.0),
             ..default()
         }),
-    );
+    ));
     commands.spawn((
+        Resettable,
         TextHiScore,
         TextBundle::from_section(
             scores.hi_score.to_string(),
@@ -157,7 +160,7 @@ fn handle_exit_key_pressed_system(mut exit: EventWriter<AppExit>) {
 
 fn handle_any_key_has_been_pressed_system(
     inputs: Res<ButtonInput<KeyCode>>,
-    mut text_scoring_query: Query<Entity, With<TextScoringAfterLanding>>,
+    resettable_text_query: Query<Entity, With<Resettable>>,
     mut spaceship_query: Query<Entity, With<Player>>,
     mut fuel_bar_query: Query<Entity, With<FuelBar>>,
     mut speed_bar_black_indicator_query: Query<Entity, With<SpeedBarBlackIndicator>>,
@@ -166,7 +169,7 @@ fn handle_any_key_has_been_pressed_system(
 ) {
     if inputs.just_pressed(KeyCode::Space) {
         info!("space key has been pressed");
-        for entity in text_scoring_query.iter() {
+        for entity in resettable_text_query.iter() {
             commands.entity(entity).despawn_recursive();
         }
         let Ok(spaceship) = spaceship_query.get_single_mut() else {
@@ -204,6 +207,9 @@ struct TextHiScore;
 
 #[derive(Component)]
 pub struct TextScoringAfterLanding;
+
+#[derive(Component)]
+pub struct Resettable;
 
 // Resources (global scope allocated data)
 #[derive(Resource, Debug)]
