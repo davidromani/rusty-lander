@@ -7,7 +7,7 @@ use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
 use crate::asset_loader::UiAssets;
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::{Scores, FUEL_QUANTITY};
+use crate::game::{Scores, TextScoringAfterLanding, FUEL_QUANTITY};
 use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
@@ -133,7 +133,8 @@ fn player_landed_collisions_system(
                         if scores.hi_score < scores.score {
                             scores.hi_score = scores.score;
                         }
-                        commands.spawn(
+                        commands.spawn((
+                            TextScoringAfterLanding,
                             TextBundle::from_section(
                                 (scores.get_available_fuel_quantity() as i16).to_string()
                                     + " x "
@@ -152,7 +153,7 @@ fn player_landed_collisions_system(
                                 left: Val::Px(88.0),
                                 ..default()
                             }),
-                        );
+                        ));
                         if new_score > FUEL_QUANTITY as i16 {
                             new_score = FUEL_QUANTITY as i16;
                         }

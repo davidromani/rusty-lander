@@ -165,6 +165,9 @@ struct TextScore;
 #[derive(Component)]
 struct TextHiScore;
 
+#[derive(Component)]
+pub struct TextScoringAfterLanding;
+
 // Resources (global scope allocated data)
 #[derive(Resource, Debug)]
 pub struct Scores {
