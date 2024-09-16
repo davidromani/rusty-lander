@@ -4,7 +4,8 @@ use bevy::prelude::*;
 use rand::prelude::*;
 use std::f32::consts::TAU;
 
-use crate::asset_loader::SceneAssets;
+use crate::asset_loader::{SceneAssets, UiAssets};
+use crate::state::GameState;
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
 
@@ -14,19 +15,87 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(Scores {
             score: 0,
-            hi_score: 0,
+            hi_score: 13540,
             fuel_quantity: FUEL_QUANTITY,
         })
         .add_systems(PostStartup, spawn_background_image_system) // runs only once at Startup sequence
+        .add_systems(OnEnter(GameState::Setup), spawn_scores_text_system)
         .add_systems(
             Update,
-            handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape)),
-        ) // main App looper
-        .add_systems(Update, rotate_background_image_system);
+            (
+                rotate_background_image_system,
+                handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape)),
+            ),
+        );
     }
 }
 
 // Systems
+fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
+    commands.spawn(
+        TextBundle::from_section(
+            "Score",
+            TextStyle {
+                font: assets.font_vt323.clone(),
+                ..default()
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(30.0),
+            left: Val::Px(88.0),
+            ..default()
+        }),
+    );
+    commands.spawn((
+        TextScore,
+        TextBundle::from_section(
+            scores.score.to_string(),
+            TextStyle {
+                font: assets.font_vt323.clone(),
+                ..default()
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(30.0),
+            left: Val::Px(188.0),
+            ..default()
+        }),
+    ));
+    commands.spawn(
+        TextBundle::from_section(
+            "High Score",
+            TextStyle {
+                font: assets.font_vt323.clone(),
+                ..default()
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(30.0),
+            left: Val::Px(500.0),
+            ..default()
+        }),
+    );
+    commands.spawn((
+        TextHiScore,
+        TextBundle::from_section(
+            scores.hi_score.to_string(),
+            TextStyle {
+                font: assets.font_vt323.clone(),
+                ..default()
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(30.0),
+            left: Val::Px(638.0),
+            ..default()
+        }),
+    ));
+}
+
 fn spawn_background_image_system(mut commands: Commands, scene_assets: Res<SceneAssets>) {
     commands.spawn((
         SpriteBundle {
@@ -68,6 +137,12 @@ struct Background;
 struct Rotatable {
     speed: f32,
 }
+
+#[derive(Component)]
+struct TextScore;
+
+#[derive(Component)]
+struct TextHiScore;
 
 // Resources (global scope allocated data)
 #[derive(Resource, Debug)]
