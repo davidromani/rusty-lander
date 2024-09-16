@@ -154,6 +154,23 @@ fn player_landed_collisions_system(
                                 ..default()
                             }),
                         ));
+                        commands.spawn((
+                            TextScoringAfterLanding,
+                            TextBundle::from_section(
+                                "press any key to continue",
+                                TextStyle {
+                                    font: assets.font_vt323.clone(),
+                                    font_size: 30.0,
+                                    ..default()
+                                },
+                            )
+                            .with_style(Style {
+                                position_type: PositionType::Absolute,
+                                top: Val::Px(80.0),
+                                left: Val::Px(88.0),
+                                ..default()
+                            }),
+                        ));
                         if new_score > FUEL_QUANTITY as i16 {
                             new_score = FUEL_QUANTITY as i16;
                         }
