@@ -121,7 +121,7 @@ fn player_landed_collisions_system(
                     x: transform.translation.x,
                     y: transform.translation.y,
                 });
-                commands.entity(entity).despawn_recursive(); // TODO set invisible
+                commands.entity(entity).despawn_recursive();
                 game_state.set(GameState::Crashed);
             } else {
                 for &colliding_entity in colliding_entities.iter() {

@@ -1,11 +1,15 @@
+use crate::asset_loader::{SceneAssets, UiAssets};
+use crate::fuel::FuelBar;
+use crate::movement::ReadyToLand;
+use crate::spaceship::Player;
+use crate::speedometer::SpeedBarBlackIndicator;
+use crate::state::GameState;
+use avian2d::collision::CollidingEntities;
 use bevy::app::AppExit;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
 use rand::prelude::*;
 use std::f32::consts::TAU;
-
-use crate::asset_loader::{SceneAssets, UiAssets};
-use crate::state::GameState;
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
 
@@ -28,6 +32,7 @@ impl Plugin for GamePlugin {
             Update,
             (
                 rotate_background_image_system,
+                handle_any_key_has_been_pressed_system.run_if(in_state(GameState::Landed)),
                 handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape)),
             ),
         );
@@ -148,6 +153,38 @@ fn rotate_background_image_system(
 fn handle_exit_key_pressed_system(mut exit: EventWriter<AppExit>) {
     info!("exit key has been pressed");
     exit.send(AppExit::Success);
+}
+
+fn handle_any_key_has_been_pressed_system(
+    inputs: Res<ButtonInput<KeyCode>>,
+    mut text_scoring_query: Query<Entity, With<TextScoringAfterLanding>>,
+    mut spaceship_query: Query<Entity, With<Player>>,
+    mut fuel_bar_query: Query<Entity, With<FuelBar>>,
+    mut speed_bar_black_indicator_query: Query<Entity, With<SpeedBarBlackIndicator>>,
+    mut commands: Commands,
+    mut game_state: ResMut<NextState<GameState>>,
+) {
+    if inputs.just_pressed(KeyCode::Space) {
+        info!("space key has been pressed");
+        for entity in text_scoring_query.iter() {
+            commands.entity(entity).despawn_recursive();
+        }
+        let Ok(spaceship) = spaceship_query.get_single_mut() else {
+            return;
+        };
+        let Ok(fuel_bar) = fuel_bar_query.get_single_mut() else {
+            return;
+        };
+        let Ok(speed_bar_black_indicator) = speed_bar_black_indicator_query.get_single_mut() else {
+            return;
+        };
+        commands.entity(spaceship).despawn_recursive();
+        commands.entity(fuel_bar).despawn_recursive();
+        commands
+            .entity(speed_bar_black_indicator)
+            .despawn_recursive();
+        game_state.set(GameState::Setup);
+    }
 }
 
 // Components
