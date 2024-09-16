@@ -15,11 +15,15 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(Scores {
             score: 0,
-            hi_score: 13540,
+            hi_score: 0,
             fuel_quantity: FUEL_QUANTITY,
         })
         .add_systems(PostStartup, spawn_background_image_system) // runs only once at Startup sequence
         .add_systems(OnEnter(GameState::Setup), spawn_scores_text_system)
+        .add_systems(
+            OnEnter(GameState::Landed),
+            (update_text_score_system, update_text_high_score_system),
+        )
         .add_systems(
             Update,
             (
@@ -31,6 +35,23 @@ impl Plugin for GamePlugin {
 }
 
 // Systems
+fn update_text_score_system(mut query: Query<&mut Text, With<TextScore>>, scores: Res<Scores>) {
+    let Ok(mut score) = query.get_single_mut() else {
+        return;
+    };
+    score.sections[0].value = scores.score.to_string();
+}
+
+fn update_text_high_score_system(
+    mut query: Query<&mut Text, With<TextHiScore>>,
+    scores: Res<Scores>,
+) {
+    let Ok(mut score) = query.get_single_mut() else {
+        return;
+    };
+    score.sections[0].value = scores.hi_score.to_string();
+}
+
 fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
     commands.spawn(
         TextBundle::from_section(
@@ -152,8 +173,8 @@ pub struct Scores {
     pub fuel_quantity: f32,
 }
 
-/*impl Scores {
+impl Scores {
     pub fn get_available_fuel_quantity(&self) -> f32 {
-        return FUEL_QUANTITY - self.fuel_quantity;
+        FUEL_QUANTITY - self.fuel_quantity
     }
-}*/
+}

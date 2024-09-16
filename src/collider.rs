@@ -6,6 +6,7 @@ use bevy::{ecs::query::Has, prelude::*};
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
 use crate::explosion::SpawnExplosionEvent;
+use crate::game::Scores;
 use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
@@ -107,6 +108,7 @@ fn player_landed_collisions_system(
     platforms_query: Query<&Platform>,
     mut commands: Commands,
     mut game_state: ResMut<NextState<GameState>>,
+    mut scores: ResMut<Scores>,
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
 ) {
     for (entity, colliding_entities, transform, is_ready_to_land) in &query {
@@ -123,6 +125,11 @@ fn player_landed_collisions_system(
                 for &colliding_entity in colliding_entities.iter() {
                     if let Ok(platform) = platforms_query.get(colliding_entity) {
                         println!("Landed in platform factor {:?}", platform.factor);
+                        scores.score +=
+                            platform.factor as i16 * scores.get_available_fuel_quantity() as i16;
+                        if scores.hi_score < scores.score {
+                            scores.hi_score = scores.score;
+                        }
                         game_state.set(GameState::Landed);
                     } else {
                         println!("Landed outside a platform");
