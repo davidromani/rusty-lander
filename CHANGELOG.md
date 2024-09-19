@@ -7,6 +7,7 @@ Changelog
 * add README game instructions
 * improve keyboard control keys
 * render more accurate yellow speedometer bar
+* better computed score after landing
 
 ##### Version 0.02.000 (2024-09-19)
 

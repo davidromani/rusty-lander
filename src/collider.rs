@@ -7,7 +7,7 @@ use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
 use crate::asset_loader::UiAssets;
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::{Resettable, Scores, TextScoringAfterLanding, FUEL_QUANTITY};
+use crate::game::{Resettable, Scores, TextScoringAfterLanding};
 use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
@@ -105,7 +105,16 @@ fn initialize_landscape_system(
 }
 
 fn player_landed_collisions_system(
-    query: Query<(Entity, &CollidingEntities, &Transform, Has<ReadyToLand>), With<Player>>,
+    query: Query<
+        (
+            Entity,
+            &CollidingEntities,
+            &LinearVelocity,
+            &Transform,
+            Has<ReadyToLand>,
+        ),
+        With<Player>,
+    >,
     platforms_query: Query<&Platform>,
     assets: ResMut<UiAssets>,
     mut commands: Commands,
@@ -113,7 +122,7 @@ fn player_landed_collisions_system(
     mut scores: ResMut<Scores>,
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
 ) {
-    for (entity, colliding_entities, transform, is_ready_to_land) in &query {
+    for (entity, colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
         if !colliding_entities.is_empty() {
             if !is_ready_to_land {
                 println!("Lander is not ready to land. Crash!");
@@ -126,9 +135,12 @@ fn player_landed_collisions_system(
             } else {
                 for &colliding_entity in colliding_entities.iter() {
                     if let Ok(platform) = platforms_query.get(colliding_entity) {
-                        println!("Landed in platform factor {:?}", platform.factor);
+                        println!(
+                            "Landed in platform factor {:?} with linear velocity {:?}",
+                            platform.factor, linear_velocity.y
+                        );
                         let mut new_score =
-                            platform.factor * scores.get_available_fuel_quantity() as i16;
+                            platform.factor * ((14.57 * linear_velocity.y) as i16 + 720);
                         scores.score += new_score;
                         if scores.hi_score < scores.score {
                             scores.hi_score = scores.score;
@@ -173,8 +185,8 @@ fn player_landed_collisions_system(
                                 ..default()
                             }),
                         ));
-                        if new_score > FUEL_QUANTITY as i16 {
-                            new_score = FUEL_QUANTITY as i16;
+                        if new_score > scores.get_available_fuel_quantity() as i16 {
+                            new_score = scores.get_available_fuel_quantity() as i16;
                         }
                         scores.fuel_quantity += new_score as f32;
                         game_state.set(GameState::Landed);
