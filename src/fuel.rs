@@ -55,11 +55,14 @@ fn spawn_fuel_bar_text_system(mut commands: Commands, assets: ResMut<UiAssets>) 
     );
 }
 
-fn update_fuel_bar_system(mut query: Query<&mut Sprite, With<FuelBar>>, scores: Res<Scores>) {
-    let Ok(mut sprite) = query.get_single_mut() else {
+fn update_fuel_bar_system(
+    mut fuel_bar_sprite_query: Query<&mut Sprite, With<FuelBar>>,
+    scores: Res<Scores>,
+) {
+    let Ok(mut fuel_bar_sprite) = fuel_bar_sprite_query.get_single_mut() else {
         return;
     };
-    sprite.custom_size = Some(Vec2::new(scores.fuel_quantity, 15.0));
+    fuel_bar_sprite.custom_size = Some(Vec2::new(scores.fuel_quantity, 15.0));
 }
 
 // Components
