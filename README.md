@@ -29,11 +29,11 @@ gravity increases.
 
 #### Controls
 
-* press key `A` or arrow `LEFT` to push spaceship right
-* press key `D` or arrow `RIGHT` to push spaceship left
-* press key `2` to enable a big thrust up
-* press key `W` to enable a medium thrust up
-* press key `S` or `SPACE` to enable a small thrust up
+* press <kbd>A</kbd> or arrow <kbd>LEFT</kbd> to push spaceship right
+* press <kbd>D</kbd> or arrow <kbd>RIGHT</kbd> to push spaceship left
+* press <kbd>2</kbd> or <kbd>SPACE</kbd> to enable a big thrust up
+* press <kbd>W</kbd> or arrow <kbd>UP</kbd> to enable a medium thrust up
+* press <kbd>S</kbd> or arrow <kbd>DOWN</kbd> to enable a small thrust up
 
 ### References
 

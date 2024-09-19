@@ -24,12 +24,11 @@ fn spawn_spaceship_system(
 ) {
     let input_map = InputMap::new([
         (PlayerAction::MainThrusterBig, KeyCode::Digit2),
-        (PlayerAction::MainThrusterBig, KeyCode::Digit9),
+        (PlayerAction::MainThrusterBig, KeyCode::Space),
         (PlayerAction::MainThrusterMedium, KeyCode::KeyW),
-        (PlayerAction::MainThrusterMedium, KeyCode::KeyO),
-        (PlayerAction::MainThrusterMedium, KeyCode::Space),
+        (PlayerAction::MainThrusterMedium, KeyCode::ArrowUp),
         (PlayerAction::MainThrusterSmall, KeyCode::KeyS),
-        (PlayerAction::MainThrusterSmall, KeyCode::KeyL),
+        (PlayerAction::MainThrusterSmall, KeyCode::ArrowDown),
         (PlayerAction::LeftThruster, KeyCode::KeyA),
         (PlayerAction::LeftThruster, KeyCode::ArrowLeft),
         (PlayerAction::RightThruster, KeyCode::KeyD),
