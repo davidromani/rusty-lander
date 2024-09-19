@@ -5,7 +5,9 @@ use bevy::sprite::MaterialMesh2dBundle;
 use bevy::{ecs::query::Has, prelude::*};
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
+use crate::asset_loader::UiAssets;
 use crate::explosion::SpawnExplosionEvent;
+use crate::game::{Resettable, Scores, TextScoringAfterLanding, FUEL_QUANTITY};
 use crate::spaceship::Player;
 use crate::state::GameState;
 use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
@@ -105,8 +107,10 @@ fn initialize_landscape_system(
 fn player_landed_collisions_system(
     query: Query<(Entity, &CollidingEntities, &Transform, Has<ReadyToLand>), With<Player>>,
     platforms_query: Query<&Platform>,
+    assets: ResMut<UiAssets>,
     mut commands: Commands,
     mut game_state: ResMut<NextState<GameState>>,
+    mut scores: ResMut<Scores>,
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
 ) {
     for (entity, colliding_entities, transform, is_ready_to_land) in &query {
@@ -117,12 +121,62 @@ fn player_landed_collisions_system(
                     x: transform.translation.x,
                     y: transform.translation.y,
                 });
-                commands.entity(entity).despawn_recursive(); // TODO set invisible
+                commands.entity(entity).despawn_recursive();
                 game_state.set(GameState::Crashed);
             } else {
                 for &colliding_entity in colliding_entities.iter() {
                     if let Ok(platform) = platforms_query.get(colliding_entity) {
                         println!("Landed in platform factor {:?}", platform.factor);
+                        let mut new_score =
+                            platform.factor * scores.get_available_fuel_quantity() as i16;
+                        scores.score += new_score;
+                        if scores.hi_score < scores.score {
+                            scores.hi_score = scores.score;
+                        }
+                        commands.spawn((
+                            Resettable,
+                            TextScoringAfterLanding,
+                            TextBundle::from_section(
+                                (scores.get_available_fuel_quantity() as i16).to_string()
+                                    + " x "
+                                    + platform.factor.to_string().as_str()
+                                    + " = "
+                                    + new_score.to_string().as_str(),
+                                TextStyle {
+                                    font: assets.font_vt323.clone(),
+                                    font_size: 60.0,
+                                    ..default()
+                                },
+                            )
+                            .with_style(Style {
+                                position_type: PositionType::Absolute,
+                                top: Val::Px(30.0),
+                                left: Val::Px(88.0),
+                                ..default()
+                            }),
+                        ));
+                        commands.spawn((
+                            Resettable,
+                            TextScoringAfterLanding,
+                            TextBundle::from_section(
+                                "press space bar key to continue",
+                                TextStyle {
+                                    font: assets.font_vt323.clone(),
+                                    font_size: 30.0,
+                                    ..default()
+                                },
+                            )
+                            .with_style(Style {
+                                position_type: PositionType::Absolute,
+                                top: Val::Px(80.0),
+                                left: Val::Px(88.0),
+                                ..default()
+                            }),
+                        ));
+                        if new_score > FUEL_QUANTITY as i16 {
+                            new_score = FUEL_QUANTITY as i16;
+                        }
+                        scores.fuel_quantity += new_score as f32;
                         game_state.set(GameState::Landed);
                     } else {
                         println!("Landed outside a platform");
@@ -130,7 +184,7 @@ fn player_landed_collisions_system(
                             x: transform.translation.x,
                             y: transform.translation.y,
                         });
-                        commands.entity(entity).despawn_recursive(); // TODO set invisible
+                        commands.entity(entity).despawn_recursive();
                         game_state.set(GameState::Crashed);
                     }
                 }
@@ -142,5 +196,5 @@ fn player_landed_collisions_system(
 // Components
 #[derive(Component, Debug)]
 pub struct Platform {
-    factor: i8,
+    factor: i16,
 }
