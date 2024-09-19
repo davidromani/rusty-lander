@@ -6,6 +6,7 @@ Changelog
 * keep working
 * add README game instructions
 * improve keyboard control keys
+* render more accurate yellow speedometer bar
 
 ##### Version 0.02.000 (2024-09-19)
 
