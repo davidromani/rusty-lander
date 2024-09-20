@@ -63,10 +63,10 @@ fn main() {
         .add_plugins(FuelPlugin)
         /*.add_plugins(ParticlesThrusterPlugin)*/
         .add_plugins(SpeedometerPlugin)
-        /*.add_plugins(ColliderPlugin)
-        .add_plugins(SpaceshipPlugin) */
-        .add_plugins(GamePlugin) // post startup & update
-        /*.add_plugins(CharacterControllerPlugin) // update
-        .add_plugins(ExplosionPlugin) // update*/
+        .add_plugins(ColliderPlugin)
+        /*.add_plugins(SpaceshipPlugin) */
+        .add_plugins(GamePlugin)
+        /*.add_plugins(CharacterControllerPlugin)*/
+        .add_plugins(ExplosionPlugin)
         .run();
 }
