@@ -18,6 +18,10 @@ impl Plugin for GamePlugin {
             hi_score: 0,
             fuel_quantity: FUEL_QUANTITY,
         })
+        .add_systems(
+            OnEnter(AppState::Menu),
+            spawn_rusty_planet_menu_background_image_system,
+        )
         .add_systems(OnEnter(AppState::Game), spawn_background_image_system)
         .add_systems(OnEnter(AppState::Game), spawn_scores_text_system)
         .add_systems(
@@ -123,6 +127,23 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
             left: Val::Px(638.0),
             ..default()
         }),
+    ));
+}
+
+fn spawn_rusty_planet_menu_background_image_system(
+    mut commands: Commands,
+    scene_assets: Res<SceneAssets>,
+) {
+    commands.spawn((
+        StateScoped(AppState::Menu),
+        SpriteBundle {
+            texture: scene_assets.rusty_planet.clone(),
+            transform: Transform {
+                scale: Vec3::new(1.001, 1.001, 1.0),
+                ..default()
+            },
+            ..default()
+        },
     ));
 }
 
