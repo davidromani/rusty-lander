@@ -2,6 +2,7 @@ use avian2d::dynamics::rigid_body::LinearVelocity;
 use bevy::prelude::*;
 use bevy::sprite::*;
 
+use crate::menu::BLACK_COLOR;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
 
@@ -54,7 +55,7 @@ fn spawn_speed_bar_system(
         StateScoped(AppState::Game),
         MaterialMesh2dBundle {
             mesh: Mesh2dHandle(meshes.add(Rectangle::new(15.0, 2.0))),
-            material: materials.add(Color::BLACK),
+            material: materials.add(BLACK_COLOR),
             transform: Transform::from_translation(Vec3::new(620.0, 0.0, 5.0)),
             ..default()
         },

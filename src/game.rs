@@ -5,6 +5,7 @@ use rand::prelude::*;
 use std::f32::consts::TAU;
 
 use crate::asset_loader::{SceneAssets, UiAssets};
+use crate::menu::BLACK_COLOR;
 use crate::state::{AppState, GameState};
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
@@ -58,14 +59,27 @@ fn update_text_high_score_system(
 }
 
 fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
-    // black background UI
+    // black background UI horizontal
     commands.spawn((
         StateScoped(AppState::Game),
         SpriteBundle {
             transform: Transform::from_translation(Vec3::new(0.0, -330.0, 2.0)),
             sprite: Sprite {
-                color: Color::srgb(0.04, 0.04, 0.04),
+                color: BLACK_COLOR,
                 custom_size: Some(Vec2::new(1280.0, 60.0)),
+                ..default()
+            },
+            ..default()
+        },
+    ));
+    // black background UI vertical
+    commands.spawn((
+        StateScoped(AppState::Game),
+        SpriteBundle {
+            transform: Transform::from_translation(Vec3::new(620.0, 0.0, 2.0)),
+            sprite: Sprite {
+                color: BLACK_COLOR,
+                custom_size: Some(Vec2::new(40.0, 720.0)),
                 ..default()
             },
             ..default()
