@@ -2,7 +2,6 @@ use bevy::prelude::*;
 use std::f32::consts::TAU;
 
 use crate::asset_loader::SceneAssets;
-use crate::fuel::FuelBar;
 use crate::game::Scores;
 use crate::speedometer::SpeedBarBlackIndicator;
 use crate::state::{AppState, GameState};
@@ -37,6 +36,7 @@ fn catch_explosion_event_system(
             2.5,
         );
         commands.spawn((
+            StateScoped(AppState::Game),
             SpriteBundle {
                 sprite: Sprite {
                     custom_size: Some(start_size),
@@ -54,7 +54,6 @@ fn catch_explosion_event_system(
                 start_scale: 0.75,
                 end_scale,
             },
-            StateScoped(AppState::Game),
         ));
     }
 }
@@ -85,7 +84,6 @@ fn animate_explosion_system(
 
 fn catch_finished_explosion_event_system(
     event_reader: EventReader<FinishedExplosionEvent>,
-    mut fuel_bar_query: Query<Entity, With<FuelBar>>,
     mut speed_bar_black_indicator_query: Query<Entity, With<SpeedBarBlackIndicator>>,
     mut commands: Commands,
     mut scores: ResMut<Scores>,
@@ -96,14 +94,10 @@ fn catch_finished_explosion_event_system(
         if scores.fuel_quantity <= 0.0 {
             game_state.set(GameState::GameOver);
         } else {
-            let Ok(fuel_bar) = fuel_bar_query.get_single_mut() else {
-                return;
-            };
             let Ok(speed_bar_black_indicator) = speed_bar_black_indicator_query.get_single_mut()
             else {
                 return;
             };
-            commands.entity(fuel_bar).despawn_recursive();
             commands
                 .entity(speed_bar_black_indicator)
                 .despawn_recursive();

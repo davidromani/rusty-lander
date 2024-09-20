@@ -9,14 +9,14 @@ use crate::asset_loader::UiAssets;
 use crate::explosion::SpawnExplosionEvent;
 use crate::game::{Resettable, Scores, TextScoringAfterLanding};
 use crate::spaceship::Player;
-use crate::state::GameState;
+use crate::state::{AppState, GameState};
 use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
 
 pub struct ColliderPlugin;
 
 impl Plugin for ColliderPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Landing), initialize_landscape_system)
+        app.add_systems(OnEnter(AppState::Setup), initialize_landscape_system)
             .add_systems(
                 Update,
                 player_landed_collisions_system.run_if(in_state(GameState::Landing)),
@@ -41,12 +41,14 @@ fn initialize_landscape_system(
     ];
     let world_bounds_polyline = Collider::polyline(world_bounds_vertices, None);
     commands.spawn((
+        StateScoped(AppState::Game),
         RigidBody::Static,
         world_bounds_polyline,
         DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
     ));
     // platform x2
     commands.spawn((
+        StateScoped(AppState::Game),
         Collider::rectangle(100.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
@@ -60,6 +62,7 @@ fn initialize_landscape_system(
     ));
     // platform x5
     commands.spawn((
+        StateScoped(AppState::Game),
         Collider::rectangle(100.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
@@ -73,6 +76,7 @@ fn initialize_landscape_system(
     ));
     // platform x10
     commands.spawn((
+        StateScoped(AppState::Game),
         Collider::rectangle(60.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
@@ -89,6 +93,7 @@ fn initialize_landscape_system(
     let sprite_image = image_assets.get(&sprite_image_handle);
     let collider = single_heightfield_collider_translated(sprite_image.unwrap());
     commands.spawn((
+        StateScoped(AppState::Game),
         collider,
         RigidBody::Static,
         SpriteBundle {
@@ -122,7 +127,7 @@ fn player_landed_collisions_system(
     mut scores: ResMut<Scores>,
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
 ) {
-    for (entity, colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
+    for (_entity, colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
         if !colliding_entities.is_empty() {
             if !is_ready_to_land {
                 println!("Lander is not ready to land. Crash!");
@@ -130,7 +135,7 @@ fn player_landed_collisions_system(
                     x: transform.translation.x,
                     y: transform.translation.y,
                 });
-                commands.entity(entity).despawn_recursive();
+                // TODO hide spaceship sprite instead of -> commands.entity(entity).despawn_recursive();
                 game_state.set(GameState::Crashed);
             } else {
                 for &colliding_entity in colliding_entities.iter() {
@@ -196,7 +201,7 @@ fn player_landed_collisions_system(
                             x: transform.translation.x,
                             y: transform.translation.y,
                         });
-                        commands.entity(entity).despawn_recursive();
+                        // TODO hide spaceship sprite instead of -> commands.entity(entity).despawn_recursive();
                         game_state.set(GameState::Crashed);
                     }
                 }

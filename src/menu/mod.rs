@@ -27,7 +27,7 @@ pub enum MenuAction {
 pub struct MenuPlugin;
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::Setup), setup)
+        app.add_systems(OnEnter(AppState::Init), setup)
             .add_systems(OnEnter(AppState::Menu), spawn_main_menu)
             .add_systems(OnEnter(AppState::Credits), spawn_credits_menu)
             .add_systems(OnEnter(GameState::Paused), spawn_pause_menu)

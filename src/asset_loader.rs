@@ -9,7 +9,7 @@ impl Plugin for AssetsLoaderPlugin {
         app.init_resource::<SceneAssets>()
             .init_state::<SceneAssetState>()
             .add_systems(
-                OnEnter(AppState::Setup),
+                OnEnter(AppState::Init),
                 (load_assets_system, load_ui_assets_system),
             )
             .add_systems(
@@ -38,9 +38,9 @@ pub fn check_assets(
     if Some(LoadState::Loaded) != asset_server.get_load_state(&scene_assets.lander) {
         return;
     }
-    // all assets have loaded
+    // all assets have been loaded
     state.set(SceneAssetState::Loaded);
-    app_state.set(AppState::Menu);
+    app_state.set(AppState::Setup);
 }
 
 pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: Res<AssetServer>) {

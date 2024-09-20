@@ -5,10 +5,9 @@ use rand::prelude::*;
 use std::f32::consts::TAU;
 
 use crate::asset_loader::{SceneAssets, UiAssets};
-use crate::fuel::FuelBar;
 use crate::spaceship::Player;
 use crate::speedometer::SpeedBarBlackIndicator;
-use crate::state::GameState;
+use crate::state::{AppState, GameState};
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
 
@@ -22,7 +21,7 @@ impl Plugin for GamePlugin {
             fuel_quantity: FUEL_QUANTITY,
         })
         .add_systems(PostStartup, spawn_background_image_system) // runs only once at Startup sequence
-        .add_systems(OnEnter(GameState::Setup), spawn_scores_text_system)
+        .add_systems(OnEnter(AppState::Setup), spawn_scores_text_system)
         .add_systems(
             OnEnter(GameState::Landed),
             (update_text_score_system, update_text_high_score_system),
@@ -58,6 +57,7 @@ fn update_text_high_score_system(
 
 fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
     commands.spawn((
+        StateScoped(AppState::Game),
         Resettable,
         TextBundle::from_section(
             "Score",
@@ -74,6 +74,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         }),
     ));
     commands.spawn((
+        StateScoped(AppState::Game),
         Resettable,
         TextScore,
         TextBundle::from_section(
@@ -91,6 +92,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         }),
     ));
     commands.spawn((
+        StateScoped(AppState::Game),
         Resettable,
         TextBundle::from_section(
             "High Score",
@@ -107,6 +109,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         }),
     ));
     commands.spawn((
+        StateScoped(AppState::Game),
         Resettable,
         TextHiScore,
         TextBundle::from_section(
@@ -162,7 +165,6 @@ fn handle_any_key_has_been_pressed_system(
     inputs: Res<ButtonInput<KeyCode>>,
     resettable_text_query: Query<Entity, With<Resettable>>,
     mut spaceship_query: Query<Entity, With<Player>>,
-    mut fuel_bar_query: Query<Entity, With<FuelBar>>,
     mut speed_bar_black_indicator_query: Query<Entity, With<SpeedBarBlackIndicator>>,
     mut commands: Commands,
     mut game_state: ResMut<NextState<GameState>>,
@@ -175,14 +177,10 @@ fn handle_any_key_has_been_pressed_system(
         let Ok(spaceship) = spaceship_query.get_single_mut() else {
             return;
         };
-        let Ok(fuel_bar) = fuel_bar_query.get_single_mut() else {
-            return;
-        };
         let Ok(speed_bar_black_indicator) = speed_bar_black_indicator_query.get_single_mut() else {
             return;
         };
         commands.entity(spaceship).despawn_recursive();
-        commands.entity(fuel_bar).despawn_recursive();
         commands
             .entity(speed_bar_black_indicator)
             .despawn_recursive();

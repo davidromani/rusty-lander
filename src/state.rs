@@ -3,6 +3,7 @@ use bevy::prelude::*;
 #[derive(States, Debug, Copy, Clone, Hash, Eq, PartialEq, Default)]
 pub enum AppState {
     #[default]
+    Init,
     Setup,
     Menu,
     Game,
@@ -28,6 +29,24 @@ impl Plugin for StatesPlugin {
         app.init_state::<AppState>()
             .enable_state_scoped_entities::<AppState>()
             .add_sub_state::<GameState>()
-            .enable_state_scoped_entities::<GameState>();
+            .enable_state_scoped_entities::<GameState>()
+            .add_systems(
+                Update,
+                (
+                    transition_app_setup_to_menu_system.run_if(in_state(AppState::Setup)),
+                    transition_game_setup_to_running_system.run_if(in_state(GameState::Setup)),
+                ),
+            );
     }
+}
+
+// Systems
+fn transition_app_setup_to_menu_system(mut state: ResMut<NextState<AppState>>) {
+    state.set(AppState::Menu);
+}
+
+fn transition_game_setup_to_running_system(mut state: ResMut<NextState<GameState>>) {
+    // TODO set score = 0
+    // TODO translate spaceship sprite to initial position
+    state.set(GameState::Landing);
 }

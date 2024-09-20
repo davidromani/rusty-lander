@@ -3,14 +3,14 @@ use bevy::sprite::*;
 
 use crate::asset_loader::UiAssets;
 use crate::game::{Scores, FUEL_QUANTITY};
-use crate::state::GameState;
+use crate::state::{AppState, GameState};
 
 pub struct FuelPlugin;
 
 impl Plugin for FuelPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
-            OnEnter(GameState::Setup),
+            OnEnter(AppState::Setup),
             (spawn_fuel_bar_system, spawn_fuel_bar_text_system),
         )
         .add_systems(
@@ -23,6 +23,7 @@ impl Plugin for FuelPlugin {
 // Systems
 fn spawn_fuel_bar_system(mut commands: Commands) {
     commands.spawn((
+        StateScoped(AppState::Game),
         SpriteBundle {
             transform: Transform::from_translation(Vec3::new(-500.0, -340.0, 3.0)),
             sprite: Sprite {
@@ -38,7 +39,8 @@ fn spawn_fuel_bar_system(mut commands: Commands) {
 }
 
 fn spawn_fuel_bar_text_system(mut commands: Commands, assets: ResMut<UiAssets>) {
-    commands.spawn(
+    commands.spawn((
+        StateScoped(AppState::Game),
         TextBundle::from_section(
             "Fuel",
             TextStyle {
@@ -52,7 +54,7 @@ fn spawn_fuel_bar_text_system(mut commands: Commands, assets: ResMut<UiAssets>) 
             left: Val::Px(88.0),
             ..default()
         }),
-    );
+    ));
 }
 
 fn update_fuel_bar_system(
