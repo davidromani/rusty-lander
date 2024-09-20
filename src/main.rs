@@ -55,13 +55,13 @@ fn main() {
     // Resources
     app.insert_resource(Gravity(Vector::NEG_Y * 58.0));
     // Custom plugins
-    app.add_plugins(StatesPlugin) // update
-        .add_plugins(MenuPlugin) // update
-        .add_plugins(AssetsLoaderPlugin) // startup
-        .add_plugins(CameraPlugin) // startup
-        .add_plugins(DebugPlugin) // startup & update
-        /*.add_plugins(FuelPlugin) // startup & update
-        .add_plugins(ParticlesThrusterPlugin) // startup & update
+    app.add_plugins(StatesPlugin)
+        .add_plugins(MenuPlugin)
+        .add_plugins(AssetsLoaderPlugin)
+        .add_plugins(CameraPlugin)
+        .add_plugins(DebugPlugin)
+        .add_plugins(FuelPlugin)
+        /*.add_plugins(ParticlesThrusterPlugin) // startup & update
         .add_plugins(SpeedometerPlugin) // startup & update
         .add_plugins(ColliderPlugin) // post startup
         .add_plugins(SpaceshipPlugin) // post startup */
