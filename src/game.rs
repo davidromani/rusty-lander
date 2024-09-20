@@ -18,8 +18,8 @@ impl Plugin for GamePlugin {
             hi_score: 0,
             fuel_quantity: FUEL_QUANTITY,
         })
-        .add_systems(PostStartup, spawn_background_image_system) // runs only once at Startup sequence
-        .add_systems(OnEnter(AppState::Setup), spawn_scores_text_system)
+        .add_systems(OnEnter(AppState::Game), spawn_background_image_system)
+        .add_systems(OnEnter(AppState::Game), spawn_scores_text_system)
         .add_systems(
             OnEnter(GameState::Landed),
             (update_text_score_system, update_text_high_score_system),
@@ -54,84 +54,81 @@ fn update_text_high_score_system(
 }
 
 fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
-    commands
-        .spawn((
-            Resettable,
-            TextBundle::from_section(
-                "Score",
-                TextStyle {
-                    font: assets.font_vt323.clone(),
-                    ..default()
-                },
-            )
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                bottom: Val::Px(30.0),
-                left: Val::Px(88.0),
+    commands.spawn((
+        StateScoped(AppState::Game),
+        Resettable,
+        TextBundle::from_section(
+            "Score",
+            TextStyle {
+                font: assets.font_vt323.clone(),
                 ..default()
-            }),
-        ))
-        .insert(StateScoped(AppState::Game));
-    commands
-        .spawn((
-            Resettable,
-            TextScore,
-            TextBundle::from_section(
-                scores.score.to_string(),
-                TextStyle {
-                    font: assets.font_vt323.clone(),
-                    ..default()
-                },
-            )
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                bottom: Val::Px(30.0),
-                left: Val::Px(188.0),
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(30.0),
+            left: Val::Px(88.0),
+            ..default()
+        }),
+    ));
+    commands.spawn((
+        StateScoped(AppState::Game),
+        Resettable,
+        TextScore,
+        TextBundle::from_section(
+            scores.score.to_string(),
+            TextStyle {
+                font: assets.font_vt323.clone(),
                 ..default()
-            }),
-        ))
-        .insert(StateScoped(AppState::Game));
-    commands
-        .spawn((
-            Resettable,
-            TextBundle::from_section(
-                "High Score",
-                TextStyle {
-                    font: assets.font_vt323.clone(),
-                    ..default()
-                },
-            )
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                bottom: Val::Px(30.0),
-                left: Val::Px(500.0),
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(30.0),
+            left: Val::Px(188.0),
+            ..default()
+        }),
+    ));
+    commands.spawn((
+        StateScoped(AppState::Game),
+        Resettable,
+        TextBundle::from_section(
+            "High Score",
+            TextStyle {
+                font: assets.font_vt323.clone(),
                 ..default()
-            }),
-        ))
-        .insert(StateScoped(AppState::Game));
-    commands
-        .spawn((
-            Resettable,
-            TextHiScore,
-            TextBundle::from_section(
-                scores.hi_score.to_string(),
-                TextStyle {
-                    font: assets.font_vt323.clone(),
-                    ..default()
-                },
-            )
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                bottom: Val::Px(30.0),
-                left: Val::Px(638.0),
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(30.0),
+            left: Val::Px(500.0),
+            ..default()
+        }),
+    ));
+    commands.spawn((
+        StateScoped(AppState::Game),
+        Resettable,
+        TextHiScore,
+        TextBundle::from_section(
+            scores.hi_score.to_string(),
+            TextStyle {
+                font: assets.font_vt323.clone(),
                 ..default()
-            }),
-        ))
-        .insert(StateScoped(AppState::Game));
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            bottom: Val::Px(30.0),
+            left: Val::Px(638.0),
+            ..default()
+        }),
+    ));
 }
 
 fn spawn_background_image_system(mut commands: Commands, scene_assets: Res<SceneAssets>) {
     commands.spawn((
+        StateScoped(AppState::Game),
         SpriteBundle {
             texture: scene_assets.background.clone(),
             transform: Transform {

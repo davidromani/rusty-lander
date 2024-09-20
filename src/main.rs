@@ -60,13 +60,13 @@ fn main() {
         .add_plugins(AssetsLoaderPlugin) // startup
         .add_plugins(CameraPlugin) // startup
         .add_plugins(DebugPlugin) // startup & update
-        .add_plugins(FuelPlugin) // startup & update
+        /*.add_plugins(FuelPlugin) // startup & update
         .add_plugins(ParticlesThrusterPlugin) // startup & update
         .add_plugins(SpeedometerPlugin) // startup & update
         .add_plugins(ColliderPlugin) // post startup
-        .add_plugins(SpaceshipPlugin) // post startup
+        .add_plugins(SpaceshipPlugin) // post startup */
         .add_plugins(GamePlugin) // post startup & update
-        .add_plugins(CharacterControllerPlugin) // update
-        .add_plugins(ExplosionPlugin) // update
+        /*.add_plugins(CharacterControllerPlugin) // update
+        .add_plugins(ExplosionPlugin) // update*/
         .run();
 }

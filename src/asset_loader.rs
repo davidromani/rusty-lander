@@ -39,12 +39,14 @@ pub fn check_assets(
         return;
     }
     // all assets have been loaded
+    info!("transitioning from AppState::Init to -> AppState::Setup");
     state.set(SceneAssetState::Loaded);
     app_state.set(AppState::Setup);
 }
 
 pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: Res<AssetServer>) {
     *scene_assets = SceneAssets {
+        rusty_planet: asset_server.load("rusty_planet.png"),
         background: asset_server.load("background_space.png"),
         // landscape: asset_server.load("landscape.png"),
         landscape: asset_server.load("terrain.png"),
@@ -66,6 +68,7 @@ fn load_ui_assets_system(mut commands: Commands, asset_server: Res<AssetServer>)
 // Resources
 #[derive(Resource, Debug, Default)]
 pub struct SceneAssets {
+    pub rusty_planet: Handle<Image>,
     pub background: Handle<Image>,
     pub landscape: Handle<Image>,
     pub lander: Handle<Image>,
