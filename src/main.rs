@@ -61,10 +61,10 @@ fn main() {
         .add_plugins(CameraPlugin)
         .add_plugins(DebugPlugin)
         .add_plugins(FuelPlugin)
-        /*.add_plugins(ParticlesThrusterPlugin) // startup & update
-        .add_plugins(SpeedometerPlugin) // startup & update
-        .add_plugins(ColliderPlugin) // post startup
-        .add_plugins(SpaceshipPlugin) // post startup */
+        /*.add_plugins(ParticlesThrusterPlugin)*/
+        .add_plugins(SpeedometerPlugin)
+        /*.add_plugins(ColliderPlugin)
+        .add_plugins(SpaceshipPlugin) */
         .add_plugins(GamePlugin) // post startup & update
         /*.add_plugins(CharacterControllerPlugin) // update
         .add_plugins(ExplosionPlugin) // update*/

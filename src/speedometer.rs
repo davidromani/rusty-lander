@@ -9,7 +9,7 @@ pub struct SpeedometerPlugin;
 
 impl Plugin for SpeedometerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::Setup), spawn_speed_bar_system)
+        app.add_systems(OnEnter(AppState::Game), spawn_speed_bar_system)
             .add_systems(
                 Update,
                 update_fuel_bar_system.run_if(in_state(GameState::Landing)),
@@ -24,8 +24,9 @@ fn spawn_speed_bar_system(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     // green bar range
-    commands
-        .spawn((SpriteBundle {
+    commands.spawn((
+        StateScoped(AppState::Game),
+        SpriteBundle {
             transform: Transform::from_translation(Vec3::new(620.0, 0.0, 3.0)),
             sprite: Sprite {
                 color: Color::srgb(0.32, 0.75, 0.03),
@@ -33,11 +34,12 @@ fn spawn_speed_bar_system(
                 ..default()
             },
             ..default()
-        },))
-        .insert(StateScoped(AppState::Game));
+        },
+    ));
     // yellow range
-    commands
-        .spawn((SpriteBundle {
+    commands.spawn((
+        StateScoped(AppState::Game),
+        SpriteBundle {
             transform: Transform::from_translation(Vec3::new(620.0, -17.5, 4.0)),
             sprite: Sprite {
                 color: Color::srgb(0.77, 0.84, 0.11),
@@ -45,20 +47,19 @@ fn spawn_speed_bar_system(
                 ..default()
             },
             ..default()
-        },))
-        .insert(StateScoped(AppState::Game));
+        },
+    ));
     // black indicator
-    commands
-        .spawn((
-            MaterialMesh2dBundle {
-                mesh: Mesh2dHandle(meshes.add(Rectangle::new(15.0, 2.0))),
-                material: materials.add(Color::BLACK),
-                transform: Transform::from_translation(Vec3::new(620.0, 0.0, 5.0)),
-                ..default()
-            },
-            SpeedBarBlackIndicator,
-        ))
-        .insert(StateScoped(AppState::Game));
+    commands.spawn((
+        StateScoped(AppState::Game),
+        MaterialMesh2dBundle {
+            mesh: Mesh2dHandle(meshes.add(Rectangle::new(15.0, 2.0))),
+            material: materials.add(Color::BLACK),
+            transform: Transform::from_translation(Vec3::new(620.0, 0.0, 5.0)),
+            ..default()
+        },
+        SpeedBarBlackIndicator,
+    ));
 }
 
 fn update_fuel_bar_system(
