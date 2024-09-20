@@ -58,6 +58,20 @@ fn update_text_high_score_system(
 }
 
 fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
+    // black background UI
+    commands.spawn((
+        StateScoped(AppState::Game),
+        SpriteBundle {
+            transform: Transform::from_translation(Vec3::new(0.0, -330.0, 2.0)),
+            sprite: Sprite {
+                color: Color::srgb(0.04, 0.04, 0.04),
+                custom_size: Some(Vec2::new(1280.0, 60.0)),
+                ..default()
+            },
+            ..default()
+        },
+    ));
+    // scoring UI texts
     commands.spawn((
         StateScoped(AppState::Game),
         Resettable,
