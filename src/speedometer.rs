@@ -24,9 +24,8 @@ fn spawn_speed_bar_system(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     // green bar range
-    commands.spawn((
-        StateScoped(AppState::Game),
-        SpriteBundle {
+    commands
+        .spawn((SpriteBundle {
             transform: Transform::from_translation(Vec3::new(620.0, 0.0, 3.0)),
             sprite: Sprite {
                 color: Color::srgb(0.32, 0.75, 0.03),
@@ -34,12 +33,11 @@ fn spawn_speed_bar_system(
                 ..default()
             },
             ..default()
-        },
-    ));
+        },))
+        .insert(StateScoped(AppState::Game));
     // yellow range
-    commands.spawn((
-        StateScoped(AppState::Game),
-        SpriteBundle {
+    commands
+        .spawn((SpriteBundle {
             transform: Transform::from_translation(Vec3::new(620.0, -17.5, 4.0)),
             sprite: Sprite {
                 color: Color::srgb(0.77, 0.84, 0.11),
@@ -47,19 +45,20 @@ fn spawn_speed_bar_system(
                 ..default()
             },
             ..default()
-        },
-    ));
+        },))
+        .insert(StateScoped(AppState::Game));
     // black indicator
-    commands.spawn((
-        StateScoped(AppState::Game),
-        MaterialMesh2dBundle {
-            mesh: Mesh2dHandle(meshes.add(Rectangle::new(15.0, 2.0))),
-            material: materials.add(Color::BLACK),
-            transform: Transform::from_translation(Vec3::new(620.0, 0.0, 5.0)),
-            ..default()
-        },
-        SpeedBarBlackIndicator,
-    ));
+    commands
+        .spawn((
+            MaterialMesh2dBundle {
+                mesh: Mesh2dHandle(meshes.add(Rectangle::new(15.0, 2.0))),
+                material: materials.add(Color::BLACK),
+                transform: Transform::from_translation(Vec3::new(620.0, 0.0, 5.0)),
+                ..default()
+            },
+            SpeedBarBlackIndicator,
+        ))
+        .insert(StateScoped(AppState::Game));
 }
 
 fn update_fuel_bar_system(

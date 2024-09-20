@@ -40,73 +40,78 @@ fn initialize_landscape_system(
         Vector::new(630.0, 360.0),
     ];
     let world_bounds_polyline = Collider::polyline(world_bounds_vertices, None);
-    commands.spawn((
-        StateScoped(AppState::Game),
-        RigidBody::Static,
-        world_bounds_polyline,
-        DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
-    ));
+    commands
+        .spawn((
+            RigidBody::Static,
+            world_bounds_polyline,
+            DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
+        ))
+        .insert(StateScoped(AppState::Game));
     // platform x2
-    commands.spawn((
-        StateScoped(AppState::Game),
-        Collider::rectangle(100.0, 8.0),
-        RigidBody::Static,
-        MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(100.0, 8.0)).into(),
-            material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(100.0, 55.0, 1.0),
-            ..default()
-        },
-        Platform { factor: 2 },
-        DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
-    ));
+    commands
+        .spawn((
+            Collider::rectangle(100.0, 8.0),
+            RigidBody::Static,
+            MaterialMesh2dBundle {
+                mesh: meshes.add(Rectangle::new(100.0, 8.0)).into(),
+                material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
+                transform: Transform::from_xyz(100.0, 55.0, 1.0),
+                ..default()
+            },
+            Platform { factor: 2 },
+            DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
+        ))
+        .insert(StateScoped(AppState::Game));
     // platform x5
-    commands.spawn((
-        StateScoped(AppState::Game),
-        Collider::rectangle(100.0, 8.0),
-        RigidBody::Static,
-        MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(100.0, 8.0)).into(),
-            material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(-260.0, -220.0, 1.0),
-            ..default()
-        },
-        Platform { factor: 5 },
-        DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
-    ));
+    commands
+        .spawn((
+            Collider::rectangle(100.0, 8.0),
+            RigidBody::Static,
+            MaterialMesh2dBundle {
+                mesh: meshes.add(Rectangle::new(100.0, 8.0)).into(),
+                material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
+                transform: Transform::from_xyz(-260.0, -220.0, 1.0),
+                ..default()
+            },
+            Platform { factor: 5 },
+            DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
+        ))
+        .insert(StateScoped(AppState::Game));
     // platform x10
-    commands.spawn((
-        StateScoped(AppState::Game),
-        Collider::rectangle(60.0, 8.0),
-        RigidBody::Static,
-        MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(60.0, 8.0)).into(),
-            material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(200.0, -95.0, 1.0),
-            ..default()
-        },
-        Platform { factor: 10 },
-        DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
-    ));
+    commands
+        .spawn((
+            Collider::rectangle(60.0, 8.0),
+            RigidBody::Static,
+            MaterialMesh2dBundle {
+                mesh: meshes.add(Rectangle::new(60.0, 8.0)).into(),
+                material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
+                transform: Transform::from_xyz(200.0, -95.0, 1.0),
+                ..default()
+            },
+            Platform { factor: 10 },
+            DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
+        ))
+        .insert(StateScoped(AppState::Game));
     // land
     let sprite_image_handle = scene_assets.landscape.clone();
     let sprite_image = image_assets.get(&sprite_image_handle);
     let collider = single_heightfield_collider_translated(sprite_image.unwrap());
-    commands.spawn((
-        StateScoped(AppState::Game),
-        collider,
-        RigidBody::Static,
-        SpriteBundle {
-            texture: sprite_image_handle,
-            transform: Transform {
-                translation: Vec3::new(0.0, -240.0, 1.0),
-                scale: Vec3::new(2.5, 1.0, 1.0),
+    commands
+        .spawn((
+            collider,
+            RigidBody::Static,
+            SpriteBundle {
+                texture: sprite_image_handle,
+                transform: Transform {
+                    translation: Vec3::new(0.0, -240.0, 1.0),
+                    scale: Vec3::new(2.5, 1.0, 1.0),
+                    ..default()
+                },
                 ..default()
             },
-            ..default()
-        },
-        DebugRender::default().with_collider_color(css::VIOLET.into()),
-    ));
+            DebugRender::default().with_collider_color(css::VIOLET.into()),
+        ))
+        .insert(StateScoped(AppState::Game));
 }
 
 fn player_landed_collisions_system(

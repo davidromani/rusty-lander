@@ -3,7 +3,6 @@ use std::f32::consts::TAU;
 
 use crate::asset_loader::SceneAssets;
 use crate::game::Scores;
-use crate::speedometer::SpeedBarBlackIndicator;
 use crate::state::{AppState, GameState};
 
 pub struct ExplosionPlugin;
@@ -35,26 +34,27 @@ fn catch_explosion_event_system(
             3.5,
             2.5,
         );
-        commands.spawn((
-            StateScoped(AppState::Game),
-            SpriteBundle {
-                sprite: Sprite {
-                    custom_size: Some(start_size),
+        commands
+            .spawn((
+                SpriteBundle {
+                    sprite: Sprite {
+                        custom_size: Some(start_size),
+                        ..default()
+                    },
+                    transform: Transform {
+                        translation: Vec3::new(event.x, event.y, 10.0),
+                        ..default()
+                    },
+                    texture,
                     ..default()
                 },
-                transform: Transform {
-                    translation: Vec3::new(event.x, event.y, 10.0),
-                    ..default()
+                Explosion {
+                    timer: Timer::from_seconds(duration, TimerMode::Once),
+                    start_scale: 0.75,
+                    end_scale,
                 },
-                texture,
-                ..default()
-            },
-            Explosion {
-                timer: Timer::from_seconds(duration, TimerMode::Once),
-                start_scale: 0.75,
-                end_scale,
-            },
-        ));
+            ))
+            .insert(StateScoped(AppState::Game));
     }
 }
 
@@ -84,8 +84,6 @@ fn animate_explosion_system(
 
 fn catch_finished_explosion_event_system(
     event_reader: EventReader<FinishedExplosionEvent>,
-    mut speed_bar_black_indicator_query: Query<Entity, With<SpeedBarBlackIndicator>>,
-    mut commands: Commands,
     mut scores: ResMut<Scores>,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
@@ -94,13 +92,6 @@ fn catch_finished_explosion_event_system(
         if scores.fuel_quantity <= 0.0 {
             game_state.set(GameState::GameOver);
         } else {
-            let Ok(speed_bar_black_indicator) = speed_bar_black_indicator_query.get_single_mut()
-            else {
-                return;
-            };
-            commands
-                .entity(speed_bar_black_indicator)
-                .despawn_recursive();
             game_state.set(GameState::Setup);
         }
     }

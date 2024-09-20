@@ -56,76 +56,80 @@ fn update_text_high_score_system(
 }
 
 fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
-    commands.spawn((
-        StateScoped(AppState::Game),
-        Resettable,
-        TextBundle::from_section(
-            "Score",
-            TextStyle {
-                font: assets.font_vt323.clone(),
+    commands
+        .spawn((
+            Resettable,
+            TextBundle::from_section(
+                "Score",
+                TextStyle {
+                    font: assets.font_vt323.clone(),
+                    ..default()
+                },
+            )
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                bottom: Val::Px(30.0),
+                left: Val::Px(88.0),
                 ..default()
-            },
-        )
-        .with_style(Style {
-            position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(88.0),
-            ..default()
-        }),
-    ));
-    commands.spawn((
-        StateScoped(AppState::Game),
-        Resettable,
-        TextScore,
-        TextBundle::from_section(
-            scores.score.to_string(),
-            TextStyle {
-                font: assets.font_vt323.clone(),
+            }),
+        ))
+        .insert(StateScoped(AppState::Game));
+    commands
+        .spawn((
+            Resettable,
+            TextScore,
+            TextBundle::from_section(
+                scores.score.to_string(),
+                TextStyle {
+                    font: assets.font_vt323.clone(),
+                    ..default()
+                },
+            )
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                bottom: Val::Px(30.0),
+                left: Val::Px(188.0),
                 ..default()
-            },
-        )
-        .with_style(Style {
-            position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(188.0),
-            ..default()
-        }),
-    ));
-    commands.spawn((
-        StateScoped(AppState::Game),
-        Resettable,
-        TextBundle::from_section(
-            "High Score",
-            TextStyle {
-                font: assets.font_vt323.clone(),
+            }),
+        ))
+        .insert(StateScoped(AppState::Game));
+    commands
+        .spawn((
+            Resettable,
+            TextBundle::from_section(
+                "High Score",
+                TextStyle {
+                    font: assets.font_vt323.clone(),
+                    ..default()
+                },
+            )
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                bottom: Val::Px(30.0),
+                left: Val::Px(500.0),
                 ..default()
-            },
-        )
-        .with_style(Style {
-            position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(500.0),
-            ..default()
-        }),
-    ));
-    commands.spawn((
-        StateScoped(AppState::Game),
-        Resettable,
-        TextHiScore,
-        TextBundle::from_section(
-            scores.hi_score.to_string(),
-            TextStyle {
-                font: assets.font_vt323.clone(),
+            }),
+        ))
+        .insert(StateScoped(AppState::Game));
+    commands
+        .spawn((
+            Resettable,
+            TextHiScore,
+            TextBundle::from_section(
+                scores.hi_score.to_string(),
+                TextStyle {
+                    font: assets.font_vt323.clone(),
+                    ..default()
+                },
+            )
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                bottom: Val::Px(30.0),
+                left: Val::Px(638.0),
                 ..default()
-            },
-        )
-        .with_style(Style {
-            position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(638.0),
-            ..default()
-        }),
-    ));
+            }),
+        ))
+        .insert(StateScoped(AppState::Game));
 }
 
 fn spawn_background_image_system(mut commands: Commands, scene_assets: Res<SceneAssets>) {
@@ -164,8 +168,6 @@ fn handle_exit_key_pressed_system(mut exit: EventWriter<AppExit>) {
 fn handle_any_key_has_been_pressed_system(
     inputs: Res<ButtonInput<KeyCode>>,
     resettable_text_query: Query<Entity, With<Resettable>>,
-    mut spaceship_query: Query<Entity, With<Player>>,
-    mut speed_bar_black_indicator_query: Query<Entity, With<SpeedBarBlackIndicator>>,
     mut commands: Commands,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
@@ -174,16 +176,6 @@ fn handle_any_key_has_been_pressed_system(
         for entity in resettable_text_query.iter() {
             commands.entity(entity).despawn_recursive();
         }
-        let Ok(spaceship) = spaceship_query.get_single_mut() else {
-            return;
-        };
-        let Ok(speed_bar_black_indicator) = speed_bar_black_indicator_query.get_single_mut() else {
-            return;
-        };
-        commands.entity(spaceship).despawn_recursive();
-        commands
-            .entity(speed_bar_black_indicator)
-            .despawn_recursive();
         game_state.set(GameState::Setup);
     }
 }

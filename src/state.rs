@@ -48,5 +48,6 @@ fn transition_app_setup_to_menu_system(mut state: ResMut<NextState<AppState>>) {
 fn transition_game_setup_to_running_system(mut state: ResMut<NextState<GameState>>) {
     // TODO set score = 0
     // TODO translate spaceship sprite to initial position
+    // TODO hide texts
     state.set(GameState::Landing);
 }
