@@ -23,6 +23,7 @@ impl Plugin for AssetsLoaderPlugin {
 pub fn check_assets(
     asset_server: Res<AssetServer>,
     scene_assets: Res<SceneAssets>,
+    mut commands: Commands,
     mut state: ResMut<NextState<SceneAssetState>>,
     mut app_state: ResMut<NextState<AppState>>,
 ) {
@@ -40,13 +41,24 @@ pub fn check_assets(
     }
     // all assets have been loaded
     info!("transitioning from AppState::Init to -> AppState::Setup");
+    commands.spawn((
+        StateScoped(AppState::Menu),
+        SpriteBundle {
+            texture: scene_assets.rusty_planet.clone(),
+            transform: Transform {
+                scale: Vec3::new(1.1, 1.1, 1.0),
+                ..default()
+            },
+            ..default()
+        },
+    ));
     state.set(SceneAssetState::Loaded);
     app_state.set(AppState::Setup);
 }
 
 pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: Res<AssetServer>) {
     *scene_assets = SceneAssets {
-        rusty_planet: asset_server.load("rusty_planet.png"),
+        rusty_planet: asset_server.load("rusty_planet.jpg"),
         background: asset_server.load("background_space.png"),
         // landscape: asset_server.load("landscape.png"),
         landscape: asset_server.load("terrain.png"),
