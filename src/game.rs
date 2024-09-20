@@ -5,8 +5,6 @@ use rand::prelude::*;
 use std::f32::consts::TAU;
 
 use crate::asset_loader::{SceneAssets, UiAssets};
-use crate::spaceship::Player;
-use crate::speedometer::SpeedBarBlackIndicator;
 use crate::state::{AppState, GameState};
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
