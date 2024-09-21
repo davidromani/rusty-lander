@@ -118,8 +118,8 @@ fn spawn_pause_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
 
 fn spawn_instructions_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
     let entity = MenuHandler {
-        main_text: "Instructions".into(),
-        main_text_color: PRIMARY_COLOR,
+        main_text: "".into(),
+        main_text_color: GREY_COLOR,
         main_text_blink: false,
         selected_id: 0,
         entries: vec!["Menu".into(), "Exit".into()],
@@ -133,7 +133,7 @@ fn spawn_instructions_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
             NodeBundle {
                 style: Style {
                     width: Val::Percent(100.0),
-                    height: Val::Percent(100.0),
+                    height: Val::Percent(70.0),
                     align_items: AlignItems::Center,
                     justify_content: JustifyContent::Center,
                     flex_direction: FlexDirection::Column,
@@ -146,7 +146,7 @@ fn spawn_instructions_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         .with_children(|parent| {
             parent.spawn((TextBundle {
                 style: Style {
-                    margin: UiRect::all(Val::Px(100.0)),
+                    margin: UiRect::all(Val::Px(25.0)),
                     ..default()
                 },
                 text: Text::from_section(
@@ -154,7 +154,22 @@ fn spawn_instructions_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                     TextStyle {
                         font: assets.font_kenvector.clone(),
                         font_size: 25.0,
-                        color: PRIMARY_COLOR,
+                        color: Color::WHITE,
+                    },
+                ),
+                ..default()
+            },));
+            parent.spawn((TextBundle {
+                style: Style {
+                    margin: UiRect::all(Val::Px(25.0)),
+                    ..default()
+                },
+                text: Text::from_section(
+                    "Press A or arrow LEFT key to push spaceship right.\nPress D or arrow RIGHT key to push spaceship left.\nPress 2 or SPACE key to enable a big thrust up.\nPress W or arrow UP key to enable a medium thrust up.\nPress S or arrow DOWN key to enable a small thrust up.",
+                    TextStyle {
+                        font: assets.font_kenvector.clone(),
+                        font_size: 25.0,
+                        color: Color::WHITE,
                     },
                 ),
                 ..default()
