@@ -53,7 +53,14 @@ fn catch_spaceship_just_landed_event_system(
     for event in events_reader.read() {
         let platform = event.platform.clone();
         let linear_velocity = event.linear_velocity.clone();
-        let mut new_score = platform.factor * ((14.57 * linear_velocity.y) as i16 + 720);
+        let points = (14.57 * linear_velocity.y) as i16 + 720;
+        let mut new_score = platform.factor * points;
+        info!(
+            "{:?} * {:?} = {:?}",
+            platform.factor,
+            ((14.57 * linear_velocity.y) as i16 + 720),
+            new_score
+        );
         scores.score += new_score;
         if scores.hi_score < scores.score {
             scores.hi_score = scores.score;
@@ -62,7 +69,7 @@ fn catch_spaceship_just_landed_event_system(
             Resettable,
             TextScoringAfterLanding,
             TextBundle::from_section(
-                (scores.get_available_fuel_quantity() as i16).to_string()
+                points.to_string()
                     + " x "
                     + platform.factor.to_string().as_str()
                     + " = "

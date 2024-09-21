@@ -8,6 +8,8 @@ Changelog
 ##### Version 0.04.000 (WIP)
 
 * add game menu instructions section
+* fix problem with hidden score text after update
+* fix bad scoring calculation after landed
 
 ##### Version 0.03.000 (2024-09-21)
 
