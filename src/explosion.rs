@@ -24,10 +24,10 @@ impl Plugin for ExplosionPlugin {
 
 fn catch_explosion_event_system(
     mut commands: Commands,
-    mut event_reader: EventReader<SpawnExplosionEvent>,
+    mut events_reader: EventReader<SpawnExplosionEvent>,
     scene_assets: Res<SceneAssets>,
 ) {
-    for event in event_reader.read() {
+    for event in events_reader.read() {
         let (texture, start_size, end_scale, duration) = (
             scene_assets.explosion.clone(),
             Vec2::new(211.0, 195.0),

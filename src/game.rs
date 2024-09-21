@@ -1,3 +1,4 @@
+use avian2d::prelude::LinearVelocity;
 use bevy::app::AppExit;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
@@ -5,6 +6,8 @@ use rand::prelude::*;
 use std::f32::consts::TAU;
 
 use crate::asset_loader::{SceneAssets, UiAssets};
+use crate::collider::Platform;
+use crate::explosion::SpawnExplosionEvent;
 use crate::menu::BLACK_COLOR;
 use crate::state::{AppState, GameState};
 
@@ -19,20 +22,21 @@ impl Plugin for GamePlugin {
             hi_score: 0,
             fuel_quantity: FUEL_QUANTITY,
         })
+        .add_event::<SpaceshipJustLandedEvent>()
         .add_systems(
             OnEnter(AppState::Menu),
             spawn_rusty_planet_menu_background_image_system,
         )
-        .add_systems(OnEnter(AppState::Game), spawn_background_image_system)
-        .add_systems(OnEnter(AppState::Game), spawn_scores_text_system)
         .add_systems(
-            OnEnter(GameState::Landed),
-            (update_text_score_system, update_text_high_score_system),
+            OnEnter(AppState::Game),
+            (spawn_background_image_system, spawn_scores_text_system),
         )
+        .add_systems(OnEnter(GameState::Landed), update_scoring_text_system)
         .add_systems(
             Update,
             (
                 rotate_background_image_system,
+                catch_spaceship_just_landed_event_system.run_if(in_state(GameState::Landed)),
                 handle_any_key_has_been_pressed_system.run_if(in_state(GameState::Landed)),
                 handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape)),
             ),
@@ -41,21 +45,80 @@ impl Plugin for GamePlugin {
 }
 
 // Systems
-fn update_text_score_system(mut query: Query<&mut Text, With<TextScore>>, scores: Res<Scores>) {
-    let Ok(mut score) = query.get_single_mut() else {
-        return;
-    };
-    score.sections[0].value = scores.score.to_string();
+fn catch_spaceship_just_landed_event_system(
+    assets: ResMut<UiAssets>,
+    mut events_reader: EventReader<SpaceshipJustLandedEvent>,
+    mut commands: Commands,
+    mut scores: ResMut<Scores>,
+) {
+    for event in events_reader.read() {
+        let platform = event.platform.clone();
+        let linear_velocity = event.linear_velocity.clone();
+        let mut new_score = platform.factor * ((14.57 * linear_velocity.y) as i16 + 720);
+        scores.score += new_score;
+        if scores.hi_score < scores.score {
+            scores.hi_score = scores.score;
+        }
+        commands.spawn((
+            Resettable,
+            TextScoringAfterLanding,
+            TextBundle::from_section(
+                (scores.get_available_fuel_quantity() as i16).to_string()
+                    + " x "
+                    + platform.factor.to_string().as_str()
+                    + " = "
+                    + new_score.to_string().as_str(),
+                TextStyle {
+                    font: assets.font_vt323.clone(),
+                    font_size: 60.0,
+                    ..default()
+                },
+            )
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                top: Val::Px(30.0),
+                left: Val::Px(88.0),
+                ..default()
+            }),
+        ));
+        commands.spawn((
+            Resettable,
+            TextScoringAfterLanding,
+            TextBundle::from_section(
+                "press space bar key to continue",
+                TextStyle {
+                    font: assets.font_vt323.clone(),
+                    font_size: 30.0,
+                    ..default()
+                },
+            )
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                top: Val::Px(80.0),
+                left: Val::Px(88.0),
+                ..default()
+            }),
+        ));
+        if new_score > scores.get_available_fuel_quantity() as i16 {
+            new_score = scores.get_available_fuel_quantity() as i16;
+        }
+        scores.fuel_quantity += new_score as f32;
+    }
 }
 
-fn update_text_high_score_system(
-    mut query: Query<&mut Text, With<TextHiScore>>,
+fn update_scoring_text_system(
     scores: Res<Scores>,
+    mut score_text_query: Query<&mut Text, With<TextScore>>,
+    mut hi_score_text_query: Query<&mut Text, With<TextScore>>,
 ) {
-    let Ok(mut score) = query.get_single_mut() else {
+    let Ok(mut score_text) = score_text_query.get_single_mut() else {
         return;
     };
-    score.sections[0].value = scores.hi_score.to_string();
+    let Ok(mut hi_score_text) = hi_score_text_query.get_single_mut() else {
+        return;
+    };
+    score_text.sections[0].value = scores.score.to_string();
+    hi_score_text.sections[0].value = scores.hi_score.to_string();
 }
 
 fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
@@ -222,6 +285,13 @@ fn handle_any_key_has_been_pressed_system(
         }
         game_state.set(GameState::Setup);
     }
+}
+
+// Events
+#[derive(Event)]
+pub struct SpaceshipJustLandedEvent {
+    pub platform: Platform,
+    pub linear_velocity: LinearVelocity,
 }
 
 // Components
