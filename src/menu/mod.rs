@@ -31,6 +31,7 @@ impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::Init), setup)
             .add_systems(OnEnter(AppState::Menu), spawn_main_menu)
+            .add_systems(OnEnter(AppState::Instructions), spawn_instructions_menu)
             .add_systems(OnEnter(AppState::Credits), spawn_credits_menu)
             .add_systems(OnEnter(GameState::Paused), spawn_pause_menu)
             .add_systems(OnEnter(GameState::GameOver), spawn_game_over_menu)
@@ -71,7 +72,12 @@ fn spawn_main_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         main_text_color: SECONDARY_COLOR,
         main_text_blink: false,
         selected_id: 0,
-        entries: vec!["Play".into(), "Credits".into(), "Exit".into()],
+        entries: vec![
+            "Play".into(),
+            "Instructions".into(),
+            "Credits".into(),
+            "Exit".into(),
+        ],
     }
     .spawn(&mut commands, assets.font_kenvector.clone());
     commands.entity(entity).insert(StateScoped(AppState::Menu));
@@ -110,6 +116,52 @@ fn spawn_pause_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         .insert(StateScoped(GameState::Paused));
 }
 
+fn spawn_instructions_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
+    let entity = MenuHandler {
+        main_text: "Instructions".into(),
+        main_text_color: PRIMARY_COLOR,
+        main_text_blink: false,
+        selected_id: 0,
+        entries: vec!["Menu".into(), "Exit".into()],
+    }
+    .spawn(&mut commands, assets.font_kenvector.clone());
+    commands
+        .entity(entity)
+        .insert(StateScoped(AppState::Instructions));
+    commands
+        .spawn((
+            NodeBundle {
+                style: Style {
+                    width: Val::Percent(100.0),
+                    height: Val::Percent(100.0),
+                    align_items: AlignItems::Center,
+                    justify_content: JustifyContent::Center,
+                    flex_direction: FlexDirection::Column,
+                    ..default()
+                },
+                ..default()
+            },
+            StateScoped(AppState::Instructions),
+        ))
+        .with_children(|parent| {
+            parent.spawn((TextBundle {
+                style: Style {
+                    margin: UiRect::all(Val::Px(100.0)),
+                    ..default()
+                },
+                text: Text::from_section(
+                    "Land on one of three platforms. Vertical velocity must come within the yellow area of the scale. The score, according to the velocity, is multiplied by the number under platform. You'll be refueled on a successful landing. Every landing the gravity increases.",
+                    TextStyle {
+                        font: assets.font_kenvector.clone(),
+                        font_size: 25.0,
+                        color: PRIMARY_COLOR,
+                    },
+                ),
+                ..default()
+            },));
+        });
+}
+
 fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
     let entity = MenuHandler {
         main_text: "".into(),
@@ -140,7 +192,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
         .with_children(|parent| {
             parent.spawn((TextBundle {
                 style: Style {
-                    margin: UiRect::all(Val::Px(10.)),
+                    margin: UiRect::all(Val::Px(10.0)),
                     ..default()
                 },
                 text: Text::from_section(
@@ -180,7 +232,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
             },));
             parent.spawn((TextBundle {
                 style: Style {
-                    margin: UiRect::all(Val::Px(10.)),
+                    margin: UiRect::all(Val::Px(10.0)),
                     ..default()
                 },
                 text: Text::from_section(
@@ -195,7 +247,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
             },));
             parent.spawn((TextBundle {
                 style: Style {
-                    margin: UiRect::all(Val::Px(10.)),
+                    margin: UiRect::all(Val::Px(10.0)),
                     ..default()
                 },
                 text: Text::from_sections([

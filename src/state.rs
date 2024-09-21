@@ -8,6 +8,7 @@ pub enum AppState {
     Setup,
     Menu,
     Game,
+    Instructions,
     Credits,
 }
 
