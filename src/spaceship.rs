@@ -7,6 +7,8 @@ use crate::asset_loader::SceneAssets;
 use crate::movement::*;
 use crate::state::AppState;
 
+pub const INITIAL_SPACESHIP_POSITION: Vec3 = Vec3::new(-200.0, 300.0, 2.0);
+
 pub struct SpaceshipPlugin;
 
 impl Plugin for SpaceshipPlugin {
@@ -50,7 +52,7 @@ fn spawn_spaceship_system(
         GravityScale(1.0),
         SpriteBundle {
             texture: sprite_image_handle,
-            transform: Transform::from_xyz(-200.0, 300.0, 2.0),
+            transform: Transform::from_translation(INITIAL_SPACESHIP_POSITION),
             ..default()
         },
         InputManagerBundle::<PlayerAction> {

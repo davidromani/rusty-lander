@@ -1,3 +1,4 @@
+use crate::spaceship::{Player, INITIAL_SPACESHIP_POSITION};
 use bevy::prelude::*;
 
 #[derive(States, Debug, Copy, Clone, Hash, Eq, PartialEq, Default)]
@@ -46,10 +47,15 @@ fn transition_app_setup_to_menu_system(mut state: ResMut<NextState<AppState>>) {
     state.set(AppState::Menu);
 }
 
-fn transition_game_setup_to_running_system(mut state: ResMut<NextState<GameState>>) {
-    // TODO set score = 0
-    // TODO translate spaceship sprite to initial position
-    // TODO hide texts
+fn transition_game_setup_to_running_system(
+    mut state: ResMut<NextState<GameState>>,
+    mut spaceship_transform_query: Query<&mut Transform, With<Player>>,
+) {
     info!("transitioning from GameState::Setup to -> GameState::Landing");
+    let Ok(mut spaceship_transform) = spaceship_transform_query.get_single_mut() else {
+        return;
+    };
+    spaceship_transform.translation.x = INITIAL_SPACESHIP_POSITION.x;
+    spaceship_transform.translation.y = INITIAL_SPACESHIP_POSITION.y;
     state.set(GameState::Landing);
 }
