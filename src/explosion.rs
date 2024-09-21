@@ -93,6 +93,7 @@ fn catch_finished_explosion_event_system(
     if !event_reader.is_empty() {
         scores.fuel_quantity -= 100.0;
         if scores.fuel_quantity <= 0.0 {
+            scores.score = 0;
             game_state.set(GameState::GameOver);
         } else {
             game_state.set(GameState::Setup);
