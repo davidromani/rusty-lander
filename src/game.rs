@@ -108,7 +108,7 @@ fn catch_spaceship_just_landed_event_system(
 fn update_scoring_text_system(
     scores: Res<Scores>,
     mut score_text_query: Query<&mut Text, (With<TextScore>, Without<TextHiScore>)>,
-    mut hi_score_text_query: Query<&mut Text, (With<TextHiScore>, With<TextScore>)>,
+    mut hi_score_text_query: Query<&mut Text, (With<TextHiScore>, Without<TextScore>)>,
 ) {
     let Ok(mut score_text) = score_text_query.get_single_mut() else {
         return;
@@ -150,7 +150,6 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     // scoring UI texts
     commands.spawn((
         StateScoped(AppState::Game),
-        Resettable,
         TextBundle::from_section(
             "Score",
             TextStyle {
@@ -167,7 +166,6 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     ));
     commands.spawn((
         StateScoped(AppState::Game),
-        Resettable,
         TextScore,
         TextBundle::from_section(
             scores.score.to_string(),
@@ -185,7 +183,6 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     ));
     commands.spawn((
         StateScoped(AppState::Game),
-        Resettable,
         TextBundle::from_section(
             "High Score",
             TextStyle {
@@ -202,7 +199,6 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     ));
     commands.spawn((
         StateScoped(AppState::Game),
-        Resettable,
         TextHiScore,
         TextBundle::from_section(
             scores.hi_score.to_string(),
