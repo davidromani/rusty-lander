@@ -5,7 +5,7 @@ Changelog
 
 * keep working
 
-##### Version 0.03.000 (WIP)
+##### Version 0.03.000 (2024-09-21)
 
 * add README game instructions
 * improve keyboard control keys
