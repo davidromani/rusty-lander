@@ -53,7 +53,7 @@ fn catch_spaceship_just_landed_event_system(
     for event in events_reader.read() {
         let platform = event.platform.clone();
         let linear_velocity = event.linear_velocity.clone();
-        let points = (14.57 * linear_velocity.y) as i16 + 720;
+        let points = (14.57 * linear_velocity.y) as i32 + 720;
         let mut new_score = platform.factor * points;
         scores.score += new_score;
         if scores.hi_score < scores.score {
@@ -99,10 +99,10 @@ fn catch_spaceship_just_landed_event_system(
                 ..default()
             }),
         ));
-        if new_score > scores.get_available_fuel_quantity() as i16 {
-            new_score = scores.get_available_fuel_quantity() as i16;
+        if new_score > scores.get_available_fuel_quantity() as i32 {
+            new_score = scores.get_available_fuel_quantity() as i32;
         }
-        scores.fuel_quantity += new_score as f32;
+        scores.fuel_quantity += (new_score as f32) / 5.0;
     }
 }
 
@@ -314,8 +314,8 @@ pub struct Resettable;
 // Resources (global scope allocated data)
 #[derive(Resource, Debug)]
 pub struct Scores {
-    pub score: i16,
-    pub hi_score: i16,
+    pub score: i32,
+    pub hi_score: i32,
     pub fuel_quantity: f32,
 }
 

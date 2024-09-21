@@ -162,5 +162,5 @@ fn player_landed_collisions_system(
 // Components
 #[derive(Component, Clone, Debug)]
 pub struct Platform {
-    pub factor: i16,
+    pub factor: i32,
 }
