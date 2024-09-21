@@ -1,4 +1,5 @@
 use crate::spaceship::{Player, INITIAL_SPACESHIP_POSITION};
+use avian2d::prelude::LinearVelocity;
 use bevy::prelude::*;
 
 #[derive(States, Debug, Copy, Clone, Hash, Eq, PartialEq, Default)]
@@ -51,12 +52,18 @@ fn transition_app_setup_to_menu_system(mut state: ResMut<NextState<AppState>>) {
 fn transition_game_setup_to_running_system(
     mut state: ResMut<NextState<GameState>>,
     mut spaceship_transform_query: Query<&mut Transform, With<Player>>,
+    mut spaceship_linear_velocity_query: Query<&mut LinearVelocity, With<Player>>,
 ) {
     info!("transitioning from GameState::Setup to -> GameState::Landing");
     let Ok(mut spaceship_transform) = spaceship_transform_query.get_single_mut() else {
         return;
     };
+    let Ok(mut spaceship_linear_velocity) = spaceship_linear_velocity_query.get_single_mut() else {
+        return;
+    };
     spaceship_transform.translation.x = INITIAL_SPACESHIP_POSITION.x;
     spaceship_transform.translation.y = INITIAL_SPACESHIP_POSITION.y;
+    spaceship_linear_velocity.x = 80.0;
+    spaceship_linear_velocity.y = 0.0;
     state.set(GameState::Landing);
 }

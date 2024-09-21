@@ -55,12 +55,6 @@ fn catch_spaceship_just_landed_event_system(
         let linear_velocity = event.linear_velocity.clone();
         let points = (14.57 * linear_velocity.y) as i16 + 720;
         let mut new_score = platform.factor * points;
-        info!(
-            "{:?} * {:?} = {:?}",
-            platform.factor,
-            ((14.57 * linear_velocity.y) as i16 + 720),
-            new_score
-        );
         scores.score += new_score;
         if scores.hi_score < scores.score {
             scores.hi_score = scores.score;
