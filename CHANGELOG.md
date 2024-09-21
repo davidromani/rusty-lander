@@ -1,13 +1,19 @@
 Changelog
 =========
 
-##### Version 0.02.001 (WIP)
+##### Version 0.03.001 (WIP)
 
 * keep working
+
+##### Version 0.03.000 (WIP)
+
 * add README game instructions
 * improve keyboard control keys
 * render more accurate yellow speedometer bar
 * better computed score after landing
+* add rusty planet main menu screen
+* better state scoped spawning systems
+* add background UI black bars
 
 ##### Version 0.02.000 (2024-09-19)
 
