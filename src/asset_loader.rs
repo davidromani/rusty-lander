@@ -9,7 +9,7 @@ impl Plugin for AssetsLoaderPlugin {
         app.init_resource::<SceneAssets>()
             .init_state::<SceneAssetState>()
             .add_systems(
-                OnEnter(AppState::Setup),
+                OnEnter(AppState::Init),
                 (load_assets_system, load_ui_assets_system),
             )
             .add_systems(
@@ -38,13 +38,15 @@ pub fn check_assets(
     if Some(LoadState::Loaded) != asset_server.get_load_state(&scene_assets.lander) {
         return;
     }
-    // all assets have loaded
+    // all assets have been loaded
+    info!("transitioning from AppState::Init to -> AppState::Setup");
     state.set(SceneAssetState::Loaded);
-    app_state.set(AppState::Menu);
+    app_state.set(AppState::Setup);
 }
 
 pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: Res<AssetServer>) {
     *scene_assets = SceneAssets {
+        rusty_planet: asset_server.load("rusty_planet.jpg"),
         background: asset_server.load("background_space.png"),
         // landscape: asset_server.load("landscape.png"),
         landscape: asset_server.load("terrain.png"),
@@ -66,6 +68,7 @@ fn load_ui_assets_system(mut commands: Commands, asset_server: Res<AssetServer>)
 // Resources
 #[derive(Resource, Debug, Default)]
 pub struct SceneAssets {
+    pub rusty_planet: Handle<Image>,
     pub background: Handle<Image>,
     pub landscape: Handle<Image>,
     pub lander: Handle<Image>,

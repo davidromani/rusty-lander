@@ -5,14 +5,16 @@ use leafwing_input_manager::prelude::*;
 
 use crate::asset_loader::SceneAssets;
 use crate::movement::*;
-use crate::state::GameState;
+use crate::state::AppState;
+
+pub const INITIAL_SPACESHIP_POSITION: Vec3 = Vec3::new(-200.0, 300.0, 2.0);
 
 pub struct SpaceshipPlugin;
 
 impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(InputManagerPlugin::<PlayerAction>::default());
-        app.add_systems(OnEnter(GameState::Landing), spawn_spaceship_system);
+        app.add_systems(OnEnter(AppState::Game), spawn_spaceship_system);
     }
 }
 
@@ -24,12 +26,11 @@ fn spawn_spaceship_system(
 ) {
     let input_map = InputMap::new([
         (PlayerAction::MainThrusterBig, KeyCode::Digit2),
-        (PlayerAction::MainThrusterBig, KeyCode::Digit9),
+        (PlayerAction::MainThrusterBig, KeyCode::Space),
         (PlayerAction::MainThrusterMedium, KeyCode::KeyW),
-        (PlayerAction::MainThrusterMedium, KeyCode::KeyO),
-        (PlayerAction::MainThrusterMedium, KeyCode::Space),
+        (PlayerAction::MainThrusterMedium, KeyCode::ArrowUp),
         (PlayerAction::MainThrusterSmall, KeyCode::KeyS),
-        (PlayerAction::MainThrusterSmall, KeyCode::KeyL),
+        (PlayerAction::MainThrusterSmall, KeyCode::ArrowDown),
         (PlayerAction::LeftThruster, KeyCode::KeyA),
         (PlayerAction::LeftThruster, KeyCode::ArrowLeft),
         (PlayerAction::RightThruster, KeyCode::KeyD),
@@ -39,6 +40,7 @@ fn spawn_spaceship_system(
     let sprite_image = image_assets.get(&sprite_image_handle);
     let collider = single_convex_polyline_collider_translated(sprite_image.unwrap()).unwrap();
     commands.spawn((
+        StateScoped(AppState::Game),
         CharacterControllerBundle::new(collider).with_movement(
             550.0, // before 1250.0
             0.97,  // before 0.92
@@ -50,7 +52,7 @@ fn spawn_spaceship_system(
         GravityScale(1.0),
         SpriteBundle {
             texture: sprite_image_handle,
-            transform: Transform::from_xyz(-200.0, 300.0, 2.0),
+            transform: Transform::from_translation(INITIAL_SPACESHIP_POSITION),
             ..default()
         },
         InputManagerBundle::<PlayerAction> {

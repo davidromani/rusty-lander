@@ -13,8 +13,10 @@ pub use handler::*;
 pub use interaction::*;
 
 const PRIMARY_COLOR: Color = Color::srgb(0.54, 0.13, 0.07);
+const SECONDARY_COLOR: Color = Color::srgb(0.45, 0.68, 0.74);
 const GREY_COLOR: Color = Color::srgb(0.5, 0.5, 0.5);
 const DARK_GREY_COLOR: Color = Color::srgb(0.15, 0.15, 0.15);
+pub const BLACK_COLOR: Color = Color::srgb(0.04, 0.04, 0.04);
 
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
 pub enum MenuAction {
@@ -27,7 +29,7 @@ pub enum MenuAction {
 pub struct MenuPlugin;
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(AppState::Setup), setup)
+        app.add_systems(OnEnter(AppState::Init), setup)
             .add_systems(OnEnter(AppState::Menu), spawn_main_menu)
             .add_systems(OnEnter(AppState::Credits), spawn_credits_menu)
             .add_systems(OnEnter(GameState::Paused), spawn_pause_menu)
@@ -66,7 +68,7 @@ fn setup(mut commands: Commands) {
 fn spawn_main_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
     let entity = MenuHandler {
         main_text: MAIN_TITLE.to_string(),
-        main_text_color: PRIMARY_COLOR,
+        main_text_color: SECONDARY_COLOR,
         main_text_blink: false,
         selected_id: 0,
         entries: vec!["Play".into(), "Credits".into(), "Exit".into()],
