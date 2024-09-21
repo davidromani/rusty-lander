@@ -108,8 +108,8 @@ fn catch_spaceship_just_landed_event_system(
 
 fn update_scoring_text_system(
     scores: Res<Scores>,
-    mut score_text_query: Query<&mut Text, With<TextScore>>,
-    mut hi_score_text_query: Query<&mut Text, With<TextScore>>,
+    mut score_text_query: Query<&mut Text, (With<TextScore>, Without<TextHiScore>)>,
+    mut hi_score_text_query: Query<&mut Text, (With<TextHiScore>, With<TextScore>)>,
 ) {
     let Ok(mut score_text) = score_text_query.get_single_mut() else {
         return;
