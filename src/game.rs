@@ -7,7 +7,6 @@ use std::f32::consts::TAU;
 
 use crate::asset_loader::{SceneAssets, UiAssets};
 use crate::collider::Platform;
-use crate::explosion::SpawnExplosionEvent;
 use crate::menu::BLACK_COLOR;
 use crate::state::{AppState, GameState};
 
@@ -283,6 +282,7 @@ fn handle_any_key_has_been_pressed_system(
         for entity in resettable_text_query.iter() {
             commands.entity(entity).despawn_recursive();
         }
+        // TODO move spaceship to initial position
         game_state.set(GameState::Setup);
     }
 }
