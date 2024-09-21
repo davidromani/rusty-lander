@@ -111,7 +111,6 @@ fn initialize_landscape_system(
 fn player_landed_collisions_system(
     query: Query<
         (
-            Entity,
             &CollidingEntities,
             &LinearVelocity,
             &Transform,
@@ -124,7 +123,7 @@ fn player_landed_collisions_system(
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
     mut spaceship_just_landed_spawn_events: EventWriter<SpaceshipJustLandedEvent>,
 ) {
-    for (_entity, colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
+    for (colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
         if !colliding_entities.is_empty() {
             if !is_ready_to_land {
                 info!("Lander is not ready to land. Crash!");

@@ -30,11 +30,11 @@ impl Plugin for GamePlugin {
             OnEnter(AppState::Game),
             (spawn_background_image_system, spawn_scores_text_system),
         )
-        .add_systems(OnEnter(GameState::Landed), update_scoring_text_system)
         .add_systems(
             Update,
             (
                 rotate_background_image_system,
+                update_scoring_text_system.run_if(in_state(GameState::Landed)),
                 catch_spaceship_just_landed_event_system.run_if(in_state(GameState::Landed)),
                 handle_any_key_has_been_pressed_system.run_if(in_state(GameState::Landed)),
                 handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape)),
