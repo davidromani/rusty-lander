@@ -2,14 +2,15 @@ use avian2d::dynamics::rigid_body::LinearVelocity;
 use bevy::prelude::*;
 use bevy::sprite::*;
 
+use crate::menu::BLACK_COLOR;
 use crate::spaceship::Player;
-use crate::state::GameState;
+use crate::state::{AppState, GameState};
 
 pub struct SpeedometerPlugin;
 
 impl Plugin for SpeedometerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Setup), spawn_speed_bar_system)
+        app.add_systems(OnEnter(AppState::Game), spawn_speed_bar_system)
             .add_systems(
                 Update,
                 update_fuel_bar_system.run_if(in_state(GameState::Landing)),
@@ -24,30 +25,37 @@ fn spawn_speed_bar_system(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     // green bar range
-    commands.spawn(SpriteBundle {
-        transform: Transform::from_translation(Vec3::new(620.0, 0.0, 3.0)),
-        sprite: Sprite {
-            color: Color::srgb(0.32, 0.75, 0.03),
-            custom_size: Some(Vec2::new(15.0, 600.0)),
+    commands.spawn((
+        StateScoped(AppState::Game),
+        SpriteBundle {
+            transform: Transform::from_translation(Vec3::new(620.0, 0.0, 3.0)),
+            sprite: Sprite {
+                color: Color::srgb(0.32, 0.75, 0.03),
+                custom_size: Some(Vec2::new(15.0, 600.0)),
+                ..default()
+            },
             ..default()
         },
-        ..default()
-    });
+    ));
     // yellow range
-    commands.spawn(SpriteBundle {
-        transform: Transform::from_translation(Vec3::new(620.0, -17.5, 4.0)),
-        sprite: Sprite {
-            color: Color::srgb(0.77, 0.84, 0.11),
-            custom_size: Some(Vec2::new(15.0, 35.0)),
+    commands.spawn((
+        StateScoped(AppState::Game),
+        SpriteBundle {
+            transform: Transform::from_translation(Vec3::new(620.0, -17.5, 4.0)),
+            sprite: Sprite {
+                color: Color::srgb(0.77, 0.84, 0.11),
+                custom_size: Some(Vec2::new(15.0, 35.0)),
+                ..default()
+            },
             ..default()
         },
-        ..default()
-    });
+    ));
     // black indicator
     commands.spawn((
+        StateScoped(AppState::Game),
         MaterialMesh2dBundle {
             mesh: Mesh2dHandle(meshes.add(Rectangle::new(15.0, 2.0))),
-            material: materials.add(Color::BLACK),
+            material: materials.add(BLACK_COLOR),
             transform: Transform::from_translation(Vec3::new(620.0, 0.0, 5.0)),
             ..default()
         },

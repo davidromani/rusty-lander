@@ -5,18 +5,17 @@ use bevy::sprite::MaterialMesh2dBundle;
 use bevy::{ecs::query::Has, prelude::*};
 use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
-use crate::asset_loader::UiAssets;
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::{Resettable, Scores, TextScoringAfterLanding};
+use crate::game::SpaceshipJustLandedEvent;
 use crate::spaceship::Player;
-use crate::state::GameState;
+use crate::state::{AppState, GameState};
 use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
 
 pub struct ColliderPlugin;
 
 impl Plugin for ColliderPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Landing), initialize_landscape_system)
+        app.add_systems(OnEnter(AppState::Game), initialize_landscape_system)
             .add_systems(
                 Update,
                 player_landed_collisions_system.run_if(in_state(GameState::Landing)),
@@ -34,19 +33,21 @@ fn initialize_landscape_system(
 ) {
     // world bounds collider
     let world_bounds_vertices = vec![
-        Vector::new(-630.0, 360.0),
-        Vector::new(-630.0, -300.0),
-        Vector::new(630.0, -300.0),
-        Vector::new(630.0, 360.0),
+        Vector::new(-676.0, 360.0),
+        Vector::new(-676.0, -300.0),
+        Vector::new(600.0, -300.0),
+        Vector::new(600.0, 360.0),
     ];
     let world_bounds_polyline = Collider::polyline(world_bounds_vertices, None);
     commands.spawn((
+        StateScoped(AppState::Game),
         RigidBody::Static,
         world_bounds_polyline,
         DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
     ));
     // platform x2
     commands.spawn((
+        StateScoped(AppState::Game),
         Collider::rectangle(100.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
@@ -60,6 +61,7 @@ fn initialize_landscape_system(
     ));
     // platform x5
     commands.spawn((
+        StateScoped(AppState::Game),
         Collider::rectangle(100.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
@@ -73,6 +75,7 @@ fn initialize_landscape_system(
     ));
     // platform x10
     commands.spawn((
+        StateScoped(AppState::Game),
         Collider::rectangle(60.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
@@ -89,6 +92,7 @@ fn initialize_landscape_system(
     let sprite_image = image_assets.get(&sprite_image_handle);
     let collider = single_heightfield_collider_translated(sprite_image.unwrap());
     commands.spawn((
+        StateScoped(AppState::Game),
         collider,
         RigidBody::Static,
         SpriteBundle {
@@ -116,87 +120,39 @@ fn player_landed_collisions_system(
         With<Player>,
     >,
     platforms_query: Query<&Platform>,
-    assets: ResMut<UiAssets>,
-    mut commands: Commands,
     mut game_state: ResMut<NextState<GameState>>,
-    mut scores: ResMut<Scores>,
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
+    mut spaceship_just_landed_spawn_events: EventWriter<SpaceshipJustLandedEvent>,
 ) {
-    for (entity, colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
+    for (_entity, colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
         if !colliding_entities.is_empty() {
             if !is_ready_to_land {
-                println!("Lander is not ready to land. Crash!");
+                info!("Lander is not ready to land. Crash!");
                 explosion_spawn_events.send(SpawnExplosionEvent {
                     x: transform.translation.x,
                     y: transform.translation.y,
                 });
-                commands.entity(entity).despawn_recursive();
+                // TODO hide spaceship sprite instead of -> commands.entity(entity).despawn_recursive();
                 game_state.set(GameState::Crashed);
             } else {
                 for &colliding_entity in colliding_entities.iter() {
                     if let Ok(platform) = platforms_query.get(colliding_entity) {
-                        println!(
+                        info!(
                             "Landed in platform factor {:?} with linear velocity {:?}",
                             platform.factor, linear_velocity.y
                         );
-                        let mut new_score =
-                            platform.factor * ((14.57 * linear_velocity.y) as i16 + 720);
-                        scores.score += new_score;
-                        if scores.hi_score < scores.score {
-                            scores.hi_score = scores.score;
-                        }
-                        commands.spawn((
-                            Resettable,
-                            TextScoringAfterLanding,
-                            TextBundle::from_section(
-                                (scores.get_available_fuel_quantity() as i16).to_string()
-                                    + " x "
-                                    + platform.factor.to_string().as_str()
-                                    + " = "
-                                    + new_score.to_string().as_str(),
-                                TextStyle {
-                                    font: assets.font_vt323.clone(),
-                                    font_size: 60.0,
-                                    ..default()
-                                },
-                            )
-                            .with_style(Style {
-                                position_type: PositionType::Absolute,
-                                top: Val::Px(30.0),
-                                left: Val::Px(88.0),
-                                ..default()
-                            }),
-                        ));
-                        commands.spawn((
-                            Resettable,
-                            TextScoringAfterLanding,
-                            TextBundle::from_section(
-                                "press space bar key to continue",
-                                TextStyle {
-                                    font: assets.font_vt323.clone(),
-                                    font_size: 30.0,
-                                    ..default()
-                                },
-                            )
-                            .with_style(Style {
-                                position_type: PositionType::Absolute,
-                                top: Val::Px(80.0),
-                                left: Val::Px(88.0),
-                                ..default()
-                            }),
-                        ));
-                        if new_score > scores.get_available_fuel_quantity() as i16 {
-                            new_score = scores.get_available_fuel_quantity() as i16;
-                        }
-                        scores.fuel_quantity += new_score as f32;
+                        spaceship_just_landed_spawn_events.send(SpaceshipJustLandedEvent {
+                            platform: platform.clone(),
+                            linear_velocity: linear_velocity.clone(),
+                        });
                         game_state.set(GameState::Landed);
                     } else {
-                        println!("Landed outside a platform");
+                        info!("Landed outside a platform");
                         explosion_spawn_events.send(SpawnExplosionEvent {
                             x: transform.translation.x,
                             y: transform.translation.y,
                         });
-                        commands.entity(entity).despawn_recursive();
+                        // TODO hide spaceship sprite instead of -> commands.entity(entity).despawn_recursive();
                         game_state.set(GameState::Crashed);
                     }
                 }
@@ -206,7 +162,7 @@ fn player_landed_collisions_system(
 }
 
 // Components
-#[derive(Component, Debug)]
+#[derive(Component, Clone, Debug)]
 pub struct Platform {
-    factor: i16,
+    pub factor: i16,
 }
