@@ -1,9 +1,13 @@
 Changelog
 =========
 
-##### Version 0.03.001 (WIP)
+##### Version 0.04.001 (WIP)
 
 * keep working
+
+##### Version 0.04.000 (WIP)
+
+* add game menu instructions section
 
 ##### Version 0.03.000 (2024-09-21)
 
