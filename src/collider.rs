@@ -33,10 +33,10 @@ fn initialize_landscape_system(
 ) {
     // world bounds collider
     let world_bounds_vertices = vec![
-        Vector::new(-676.0, 360.0),
+        Vector::new(-676.0, 10360.0),
         Vector::new(-676.0, -300.0),
         Vector::new(600.0, -300.0),
-        Vector::new(600.0, 360.0),
+        Vector::new(600.0, 10360.0),
     ];
     let world_bounds_polyline = Collider::polyline(world_bounds_vertices, None);
     commands.spawn((
