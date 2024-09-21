@@ -66,7 +66,7 @@ fn main() {
         .add_plugins(ColliderPlugin)
         .add_plugins(SpaceshipPlugin)
         .add_plugins(GamePlugin)
-        /*.add_plugins(CharacterControllerPlugin)*/
+        .add_plugins(CharacterControllerPlugin)
         .add_plugins(ExplosionPlugin)
         .run();
 }

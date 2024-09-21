@@ -1,3 +1,4 @@
+use avian2d::prelude::{Physics, PhysicsTime};
 use bevy::prelude::*;
 use std::f32::consts::TAU;
 
@@ -23,9 +24,10 @@ impl Plugin for ExplosionPlugin {
 }
 
 fn catch_explosion_event_system(
+    scene_assets: Res<SceneAssets>,
     mut commands: Commands,
     mut events_reader: EventReader<SpawnExplosionEvent>,
-    scene_assets: Res<SceneAssets>,
+    mut physics_time: ResMut<Time<Physics>>,
 ) {
     for event in events_reader.read() {
         let (texture, start_size, end_scale, duration) = (
@@ -34,27 +36,27 @@ fn catch_explosion_event_system(
             3.5,
             2.5,
         );
-        commands
-            .spawn((
-                SpriteBundle {
-                    sprite: Sprite {
-                        custom_size: Some(start_size),
-                        ..default()
-                    },
-                    transform: Transform {
-                        translation: Vec3::new(event.x, event.y, 10.0),
-                        ..default()
-                    },
-                    texture,
+        commands.spawn((
+            StateScoped(AppState::Game),
+            SpriteBundle {
+                sprite: Sprite {
+                    custom_size: Some(start_size),
                     ..default()
                 },
-                Explosion {
-                    timer: Timer::from_seconds(duration, TimerMode::Once),
-                    start_scale: 0.75,
-                    end_scale,
+                transform: Transform {
+                    translation: Vec3::new(event.x, event.y, 10.0),
+                    ..default()
                 },
-            ))
-            .insert(StateScoped(AppState::Game));
+                texture,
+                ..default()
+            },
+            Explosion {
+                timer: Timer::from_seconds(duration, TimerMode::Once),
+                start_scale: 0.75,
+                end_scale,
+            },
+        ));
+        physics_time.pause();
     }
 }
 
