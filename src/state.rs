@@ -53,6 +53,7 @@ fn transition_game_setup_to_running_system(
     mut state: ResMut<NextState<GameState>>,
     mut spaceship_transform_query: Query<&mut Transform, With<Player>>,
     mut spaceship_linear_velocity_query: Query<&mut LinearVelocity, With<Player>>,
+    mut spaceship_visibility_query: Query<&mut Visibility, With<Player>>,
 ) {
     info!("transitioning from GameState::Setup to -> GameState::Landing");
     let Ok(mut spaceship_transform) = spaceship_transform_query.get_single_mut() else {
@@ -65,5 +66,7 @@ fn transition_game_setup_to_running_system(
     spaceship_transform.translation.y = INITIAL_SPACESHIP_POSITION.y;
     spaceship_linear_velocity.x = 80.0;
     spaceship_linear_velocity.y = 0.0;
+    let mut spaceship_visibility = spaceship_visibility_query.single_mut();
+    *spaceship_visibility = Visibility::Visible;
     state.set(GameState::Landing);
 }

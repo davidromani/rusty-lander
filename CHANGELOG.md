@@ -10,6 +10,7 @@ Changelog
 * add game menu instructions section
 * fix problem with hidden score text after update
 * fix bad scoring calculation after landed
+* fix double crash problem
 
 ##### Version 0.03.000 (2024-09-21)
 

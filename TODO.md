@@ -3,7 +3,6 @@ TODO
 
 * animate refuel bar after landing
 * increase gravity after each successful landing
-* fix double crash problem
 * fix speedometer mark after landed
 * replace landscape by the original one
 * make high score persistent
