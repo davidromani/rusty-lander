@@ -12,7 +12,7 @@ pub struct SpaceshipPlugin;
 impl Plugin for SpaceshipPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(InputManagerPlugin::<PlayerAction>::default());
-        app.add_systems(OnEnter(AppState::Setup), spawn_spaceship_system);
+        app.add_systems(OnEnter(AppState::Game), spawn_spaceship_system);
     }
 }
 
@@ -37,29 +37,28 @@ fn spawn_spaceship_system(
     let sprite_image_handle = scene_assets.lander.clone();
     let sprite_image = image_assets.get(&sprite_image_handle);
     let collider = single_convex_polyline_collider_translated(sprite_image.unwrap()).unwrap();
-    commands
-        .spawn((
-            CharacterControllerBundle::new(collider).with_movement(
-                550.0, // before 1250.0
-                0.97,  // before 0.92
-                4.9,   // before 60.0
-            ),
-            Friction::ZERO,
-            Restitution::PERFECTLY_ELASTIC.with_combine_rule(CoefficientCombine::Multiply),
-            ColliderDensity(2.0),
-            GravityScale(1.0),
-            SpriteBundle {
-                texture: sprite_image_handle,
-                transform: Transform::from_xyz(-200.0, 300.0, 2.0),
-                ..default()
-            },
-            InputManagerBundle::<PlayerAction> {
-                action_state: ActionState::default(),
-                input_map,
-            },
-            Player,
-        ))
-        .insert(StateScoped(AppState::Game));
+    commands.spawn((
+        StateScoped(AppState::Game),
+        CharacterControllerBundle::new(collider).with_movement(
+            550.0, // before 1250.0
+            0.97,  // before 0.92
+            4.9,   // before 60.0
+        ),
+        Friction::ZERO,
+        Restitution::PERFECTLY_ELASTIC.with_combine_rule(CoefficientCombine::Multiply),
+        ColliderDensity(2.0),
+        GravityScale(1.0),
+        SpriteBundle {
+            texture: sprite_image_handle,
+            transform: Transform::from_xyz(-200.0, 300.0, 2.0),
+            ..default()
+        },
+        InputManagerBundle::<PlayerAction> {
+            action_state: ActionState::default(),
+            input_map,
+        },
+        Player,
+    ));
 }
 
 // Actions
