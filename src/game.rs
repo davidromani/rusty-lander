@@ -226,7 +226,7 @@ fn spawn_rusty_planet_menu_background_image_system(
         SpriteBundle {
             texture: scene_assets.rusty_planet.clone(),
             transform: Transform {
-                scale: Vec3::new(1.07, 1.07, 1.0),
+                scale: Vec3::new(0.85, 0.84, 1.0),
                 ..default()
             },
             ..default()

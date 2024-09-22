@@ -56,7 +56,7 @@ fn initialize_landscape_system(
         RigidBody::Static,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(185.0, 8.0)).into(),
-            material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
+            material: materials.add(Color::srgba(0.3, 0.3, 0.3, 1.0)),
             transform: Transform::from_xyz(132.0, 164.0, 1.0),
             ..default()
         },
@@ -70,7 +70,7 @@ fn initialize_landscape_system(
         RigidBody::Static,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(200.0, 8.0)).into(),
-            material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
+            material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
             transform: Transform::from_xyz(-269.0, -222.0, 1.0),
             ..default()
         },
@@ -84,7 +84,7 @@ fn initialize_landscape_system(
         RigidBody::Static,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(120.0, 8.0)).into(),
-            material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
+            material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.5)),
             transform: Transform::from_xyz(248.0, -104.0, 1.0),
             ..default()
         },
