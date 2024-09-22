@@ -55,7 +55,7 @@ fn initialize_landscape_system(
         Collider::rectangle(185.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(100.0, 8.0)).into(),
+            mesh: meshes.add(Rectangle::new(185.0, 8.0)).into(),
             material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
             transform: Transform::from_xyz(132.0, 164.0, 1.0),
             ..default()
@@ -69,7 +69,7 @@ fn initialize_landscape_system(
         Collider::rectangle(200.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(100.0, 8.0)).into(),
+            mesh: meshes.add(Rectangle::new(200.0, 8.0)).into(),
             material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
             transform: Transform::from_xyz(-269.0, -222.0, 1.0),
             ..default()
@@ -83,7 +83,7 @@ fn initialize_landscape_system(
         Collider::rectangle(120.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(60.0, 8.0)).into(),
+            mesh: meshes.add(Rectangle::new(120.0, 8.0)).into(),
             material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
             transform: Transform::from_xyz(248.0, -104.0, 1.0),
             ..default()
