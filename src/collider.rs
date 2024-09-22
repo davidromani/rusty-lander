@@ -37,10 +37,10 @@ fn initialize_landscape_system(
 ) {
     // world bounds collider
     let world_bounds_vertices = vec![
-        Vector::new(-500.0, 10360.0),
-        Vector::new(-500.0, -300.0),
-        Vector::new(492.0, -300.0),
-        Vector::new(492.0, 10360.0),
+        Vector::new(-547.0, 10360.0),
+        Vector::new(-547.0, -300.0),
+        Vector::new(482.0, -300.0),
+        Vector::new(482.0, 10360.0),
     ];
     let world_bounds_polyline = Collider::polyline(world_bounds_vertices, None);
     commands.spawn((
@@ -57,7 +57,7 @@ fn initialize_landscape_system(
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(185.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
-            transform: Transform::from_xyz(132.0, 164.0, 1.0),
+            transform: Transform::from_xyz(114.0, 164.0, 1.0),
             ..default()
         },
         Platform { factor: 2 },
@@ -71,7 +71,7 @@ fn initialize_landscape_system(
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(200.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
-            transform: Transform::from_xyz(-269.0, -222.0, 1.0),
+            transform: Transform::from_xyz(-287.0, -222.0, 1.0),
             ..default()
         },
         Platform { factor: 5 },
@@ -85,7 +85,7 @@ fn initialize_landscape_system(
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(120.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
-            transform: Transform::from_xyz(248.0, -104.0, 1.0),
+            transform: Transform::from_xyz(230.0, -104.0, 1.0),
             ..default()
         },
         Platform { factor: 10 },
@@ -120,7 +120,7 @@ fn initialize_landscape_system(
         SpriteBundle {
             texture: sprite_image_handle,
             transform: Transform {
-                translation: Vec3::new(0.0, 0.0, 1.0),
+                translation: Vec3::new(-18.0, 0.0, 1.0),
                 scale: Vec3::new(1.0, 1.0, 1.0),
                 ..default()
             },
@@ -135,7 +135,7 @@ fn initialize_landscape_system(
         RigidBody::Static,
         SpriteBundle {
             transform: Transform {
-                translation: Vec3::new(-495.0, 306.0, 1.0),
+                translation: Vec3::new(-513.0, 306.0, 1.0),
                 scale: Vec3::new(1.45, 1.46, 1.0),
                 ..default()
             },
