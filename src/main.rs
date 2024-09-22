@@ -27,7 +27,7 @@ use collider::ColliderPlugin;
 use debug::DebugPlugin;
 use explosion::ExplosionPlugin;
 use fuel::FuelPlugin;
-use game::{GamePlugin, WorldBoundsVertices2D, WorldBoundsVertices3D};
+use game::{GamePlugin, WorldBoundsVertices2D};
 use menu::{MenuAction, MenuPlugin};
 use movement::CharacterControllerPlugin;
 use particles_thruster::ParticlesThrusterPlugin;
@@ -40,7 +40,6 @@ const MAIN_TITLE: &str = "Rusty Lander";
 fn main() {
     let mut current_point: Vec2 = Vec2::new(0.0, 0.0);
     let mut world_bounds_resource_2d = WorldBoundsVertices2D { data: vec![] };
-    let mut world_bounds_resource_3d = WorldBoundsVertices3D { data: vec![] };
     let path = "assets/svg/landscape.svg";
     let mut content = String::new();
     for event in svg::open(path, &mut content).unwrap() {
@@ -51,30 +50,17 @@ fn main() {
                 for command in data.iter() {
                     match command {
                         Command::Move(_position, params) => {
-                            //println!("move points {:?}", params);
                             current_point.x = params[0];
                             current_point.y = params[1];
                             world_bounds_resource_2d.data.push(current_point);
-                            world_bounds_resource_3d.data.push(Vec3::new(
-                                current_point.x,
-                                current_point.y,
-                                0.0,
-                            ));
                         }
                         Command::CubicCurve(_position, params) => {
-                            //println!("curve points len {:?}", params.len());
                             let chunks = params.chunks_exact(2);
                             for chunk in chunks {
-                                //println!("item {:?} {:?}", chunk[0], chunk[1]);
                                 let mut next_point = current_point;
                                 next_point.x += chunk[0];
                                 next_point.y -= chunk[1];
                                 world_bounds_resource_2d.data.push(next_point);
-                                world_bounds_resource_3d.data.push(Vec3::new(
-                                    next_point.x,
-                                    next_point.y,
-                                    0.0,
-                                ));
                                 current_point = next_point;
                             }
                         }
@@ -106,8 +92,7 @@ fn main() {
     app.add_plugins(PhysicsDebugPlugin::default());
     // Resources
     app.insert_resource(Gravity(Vector::NEG_Y * 58.0))
-        .insert_resource(world_bounds_resource_2d)
-        .insert_resource(world_bounds_resource_3d);
+        .insert_resource(world_bounds_resource_2d);
     // Custom plugins
     app.add_plugins(StatesPlugin)
         .add_plugins(MenuPlugin)

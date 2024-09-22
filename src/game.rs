@@ -20,6 +20,7 @@ impl Plugin for GamePlugin {
             score: 0,
             hi_score: 0,
             fuel_quantity: FUEL_QUANTITY,
+            gravity: 1.0,
         })
         .add_event::<SpaceshipJustLandedEvent>()
         .add_systems(
@@ -147,6 +148,24 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
             },
             ..default()
         },
+    ));
+    // speedometer UI texts
+    commands.spawn((
+        StateScoped(AppState::Game),
+        TextBundle::from_section(
+            "m/s",
+            TextStyle {
+                font: assets.font_vt323.clone(),
+                font_size: 9.0,
+                ..default()
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            top: Val::Px(33.0),
+            left: Val::Px(20.0),
+            ..default()
+        }),
     ));
     // scoring UI texts
     commands.spawn((
@@ -317,16 +336,12 @@ pub struct WorldBoundsVertices2D {
     pub data: Vec<Vec2>,
 }
 
-#[derive(Resource)]
-pub struct WorldBoundsVertices3D {
-    pub data: Vec<Vec3>,
-}
-
 #[derive(Resource, Debug)]
 pub struct Scores {
     pub score: i32,
     pub hi_score: i32,
     pub fuel_quantity: f32,
+    pub gravity: f32,
 }
 
 impl Scores {

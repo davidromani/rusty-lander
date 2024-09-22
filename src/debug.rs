@@ -28,8 +28,8 @@ fn handle_debug_key_pressed_system(
 ) {
     info!("Debug key 1 has been pressed");
     info!(
-        "Current score = {:?} · Hi score = {:?} · Fuel = {:?}",
-        scores.score, scores.hi_score, scores.fuel_quantity
+        "Current score = {:?} · Hi score = {:?} · Fuel = {:?} · Gravity = {:?}",
+        scores.score, scores.hi_score, scores.fuel_quantity, scores.gravity
     );
     let Ok(linear_velocity) = query.get_single() else {
         return;

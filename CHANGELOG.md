@@ -7,7 +7,7 @@ Changelog
 
 ##### Version 0.05.000 (WIP)
 
-* keep working
+* increase gravity after each successful landing
 
 ##### Version 0.04.000 (2024-09-22)
 
