@@ -74,16 +74,18 @@ fn main() {
     let mut app = App::new();
     // Bevy, Avian2d & Leafwing plugins
     app.add_plugins((
-        DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                title: MAIN_TITLE.to_string(),
-                resolution: WindowResolution::new(1024.0, 720.0),
-                resizable: false,
-                focused: true,
+        DefaultPlugins
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: MAIN_TITLE.to_string(),
+                    resolution: WindowResolution::new(1024.0, 720.0),
+                    resizable: false,
+                    focused: true,
+                    ..default()
+                }),
                 ..default()
-            }),
-            ..default()
-        }),
+            })
+            .set(ImagePlugin::default_nearest()),
         PhysicsPlugins::default().with_length_unit(20.0),
         InputManagerPlugin::<MenuAction>::default(),
     ));
