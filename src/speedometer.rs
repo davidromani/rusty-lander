@@ -13,7 +13,7 @@ impl Plugin for SpeedometerPlugin {
         app.add_systems(OnEnter(AppState::Game), spawn_speed_bar_system)
             .add_systems(
                 Update,
-                update_fuel_bar_system.run_if(in_state(GameState::Landing)),
+                update_speed_bar_black_indicator_system.run_if(in_state(GameState::Landing)),
             );
     }
 }
@@ -63,7 +63,7 @@ fn spawn_speed_bar_system(
     ));
 }
 
-fn update_fuel_bar_system(
+fn update_speed_bar_black_indicator_system(
     mut query_speed_bar_black_indicators: Query<&mut Transform, With<SpeedBarBlackIndicator>>,
     mut query_player_linear_velocities: Query<&LinearVelocity, With<Player>>,
 ) {
