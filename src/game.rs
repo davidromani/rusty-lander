@@ -313,8 +313,13 @@ pub struct Resettable;
 
 // Resources (global scope allocated data)
 #[derive(Resource)]
-pub struct WorldBoundsVertices {
+pub struct WorldBoundsVertices2D {
     pub data: Vec<Vec2>,
+}
+
+#[derive(Resource)]
+pub struct WorldBoundsVertices3D {
+    pub data: Vec<Vec3>,
 }
 
 #[derive(Resource, Debug)]

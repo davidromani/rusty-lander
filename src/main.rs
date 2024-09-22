@@ -12,7 +12,6 @@ mod spaceship;
 mod speedometer;
 mod state;
 
-use avian2d::parry::na::DimAdd;
 use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
@@ -22,14 +21,13 @@ use svg::node::element::path::{Command, Data};
 use svg::node::element::tag::Path;
 use svg::parser::Event;
 
-use crate::game::WorldBoundsVertices;
 use asset_loader::AssetsLoaderPlugin;
 use camera::CameraPlugin;
 use collider::ColliderPlugin;
 use debug::DebugPlugin;
 use explosion::ExplosionPlugin;
 use fuel::FuelPlugin;
-use game::GamePlugin;
+use game::{GamePlugin, WorldBoundsVertices2D, WorldBoundsVertices3D};
 use menu::{MenuAction, MenuPlugin};
 use movement::CharacterControllerPlugin;
 use particles_thruster::ParticlesThrusterPlugin;
@@ -41,7 +39,8 @@ const MAIN_TITLE: &str = "Rusty Lander";
 
 fn main() {
     let mut current_point: Vec2 = Vec2::new(0.0, 0.0);
-    let mut world_bounds_resource = WorldBoundsVertices { data: vec![] };
+    let mut world_bounds_resource_2d = WorldBoundsVertices2D { data: vec![] };
+    let mut world_bounds_resource_3d = WorldBoundsVertices3D { data: vec![] };
     let path = "assets/svg/landscape.svg";
     let mut content = String::new();
     for event in svg::open(path, &mut content).unwrap() {
@@ -55,17 +54,27 @@ fn main() {
                             //println!("move points {:?}", params);
                             current_point.x = params[0];
                             current_point.y = params[1];
-                            world_bounds_resource.data.push(current_point);
+                            world_bounds_resource_2d.data.push(current_point);
+                            world_bounds_resource_3d.data.push(Vec3::new(
+                                current_point.x,
+                                current_point.y,
+                                0.0,
+                            ));
                         }
                         Command::CubicCurve(_position, params) => {
                             //println!("curve points len {:?}", params.len());
-                            let mut chunks = params.chunks_exact(2);
+                            let chunks = params.chunks_exact(2);
                             for chunk in chunks {
                                 //println!("item {:?} {:?}", chunk[0], chunk[1]);
                                 let mut next_point = current_point;
                                 next_point.x += chunk[0];
                                 next_point.y -= chunk[1];
-                                world_bounds_resource.data.push(next_point);
+                                world_bounds_resource_2d.data.push(next_point);
+                                world_bounds_resource_3d.data.push(Vec3::new(
+                                    next_point.x,
+                                    next_point.y,
+                                    0.0,
+                                ));
                                 current_point = next_point;
                             }
                         }
@@ -97,7 +106,8 @@ fn main() {
     app.add_plugins(PhysicsDebugPlugin::default());
     // Resources
     app.insert_resource(Gravity(Vector::NEG_Y * 58.0))
-        .insert_resource(world_bounds_resource);
+        .insert_resource(world_bounds_resource_2d)
+        .insert_resource(world_bounds_resource_3d);
     // Custom plugins
     app.add_plugins(StatesPlugin)
         .add_plugins(MenuPlugin)

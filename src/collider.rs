@@ -1,14 +1,18 @@
 use avian2d::math::Vector;
 use avian2d::prelude::*;
 use bevy::color::palettes::css;
+use bevy::render::render_asset::RenderAssetUsages;
+use bevy::render::render_resource::PrimitiveTopology;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy::{ecs::query::Has, prelude::*};
 
+use crate::asset_loader::SceneAssets;
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::{SpaceshipJustLandedEvent, WorldBoundsVertices};
+use crate::game::{SpaceshipJustLandedEvent, WorldBoundsVertices2D, WorldBoundsVertices3D};
+use crate::menu::PRIMARY_COLOR;
+use crate::movement::ReadyToLand;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
-use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
 
 pub struct ColliderPlugin;
 
@@ -27,7 +31,8 @@ fn initialize_landscape_system(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    landscape_world_bounds_vertices: Res<WorldBoundsVertices>,
+    landscape_world_bounds_vertices_2d: Res<WorldBoundsVertices2D>,
+    landscape_world_bounds_vertices_3d: Res<WorldBoundsVertices3D>,
     scene_assets: Res<SceneAssets>,
 ) {
     // world bounds collider
@@ -87,6 +92,29 @@ fn initialize_landscape_system(
         DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
     // land image
+    let mut land = Mesh::new(
+        PrimitiveTopology::LineStrip,
+        RenderAssetUsages::RENDER_WORLD,
+    );
+    land.insert_attribute(
+        Mesh::ATTRIBUTE_POSITION,
+        landscape_world_bounds_vertices_3d.data.clone(),
+    );
+    commands.spawn((
+        // The `Handle<Mesh>` needs to be wrapped in a `Mesh2dHandle` to use 2d rendering instead of 3d
+        MaterialMesh2dBundle {
+            mesh: meshes.add(land).into(),
+            material: materials.add(PRIMARY_COLOR),
+            transform: Transform {
+                translation: Vec3::new(-495.0, 306.0, 1.0),
+                scale: Vec3::new(1.45, 1.46, 1.0),
+                ..default()
+            },
+            ..default()
+        },
+        // This bundle's components are needed for something to be rendered
+        //SpatialBundle::INHERITED_IDENTITY,
+    ));
     let sprite_image_handle = scene_assets.landscape.clone();
     commands.spawn((
         StateScoped(AppState::Game),
@@ -102,7 +130,7 @@ fn initialize_landscape_system(
         },
     ));
     // land collider
-    let collider = Collider::polyline(landscape_world_bounds_vertices.data.clone(), None);
+    let collider = Collider::polyline(landscape_world_bounds_vertices_2d.data.clone(), None);
     commands.spawn((
         StateScoped(AppState::Game),
         collider,

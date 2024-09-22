@@ -12,10 +12,10 @@ use crate::MAIN_TITLE;
 pub use handler::*;
 pub use interaction::*;
 
-const PRIMARY_COLOR: Color = Color::srgb(0.54, 0.13, 0.07);
-const SECONDARY_COLOR: Color = Color::srgb(0.45, 0.68, 0.74);
-const GREY_COLOR: Color = Color::srgb(0.5, 0.5, 0.5);
-const DARK_GREY_COLOR: Color = Color::srgb(0.15, 0.15, 0.15);
+pub const PRIMARY_COLOR: Color = Color::srgb(0.54, 0.13, 0.07);
+pub const SECONDARY_COLOR: Color = Color::srgb(0.45, 0.68, 0.74);
+pub const GREY_COLOR: Color = Color::srgb(0.5, 0.5, 0.5);
+pub const DARK_GREY_COLOR: Color = Color::srgb(0.15, 0.15, 0.15);
 pub const BLACK_COLOR: Color = Color::srgb(0.04, 0.04, 0.04);
 
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug, Reflect)]
