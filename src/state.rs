@@ -64,7 +64,7 @@ fn transition_game_setup_to_running_system(
     };
     spaceship_transform.translation.x = INITIAL_SPACESHIP_POSITION.x;
     spaceship_transform.translation.y = INITIAL_SPACESHIP_POSITION.y;
-    spaceship_linear_velocity.x = 80.0;
+    spaceship_linear_velocity.x = 120.0;
     spaceship_linear_velocity.y = 0.0;
     let mut spaceship_visibility = spaceship_visibility_query.single_mut();
     *spaceship_visibility = Visibility::Visible;

@@ -1,15 +1,15 @@
 use avian2d::math::Vector;
 use avian2d::prelude::*;
 use bevy::color::palettes::css;
-use bevy::render::render_asset::RenderAssetUsages;
-use bevy::render::render_resource::PrimitiveTopology;
+//use bevy::render::render_asset::RenderAssetUsages;
+//use bevy::render::render_resource::PrimitiveTopology;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy::{ecs::query::Has, prelude::*};
 
 use crate::asset_loader::SceneAssets;
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::{SpaceshipJustLandedEvent, WorldBoundsVertices2D, WorldBoundsVertices3D};
-use crate::menu::PRIMARY_COLOR;
+use crate::game::{SpaceshipJustLandedEvent, WorldBoundsVertices2D}; //, WorldBoundsVertices3D};
+                                                                    //use crate::menu::PRIMARY_COLOR;
 use crate::movement::ReadyToLand;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
@@ -32,7 +32,7 @@ fn initialize_landscape_system(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     landscape_world_bounds_vertices_2d: Res<WorldBoundsVertices2D>,
-    landscape_world_bounds_vertices_3d: Res<WorldBoundsVertices3D>,
+    //landscape_world_bounds_vertices_3d: Res<WorldBoundsVertices3D>,
     scene_assets: Res<SceneAssets>,
 ) {
     // world bounds collider
