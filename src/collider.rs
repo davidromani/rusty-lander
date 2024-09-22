@@ -32,10 +32,10 @@ fn initialize_landscape_system(
 ) {
     // world bounds collider
     let world_bounds_vertices = vec![
-        Vector::new(-676.0, 10360.0),
-        Vector::new(-676.0, -300.0),
-        Vector::new(600.0, -300.0),
-        Vector::new(600.0, 10360.0),
+        Vector::new(-500.0, 10360.0),
+        Vector::new(-500.0, -300.0),
+        Vector::new(492.0, -300.0),
+        Vector::new(492.0, 10360.0),
     ];
     let world_bounds_polyline = Collider::polyline(world_bounds_vertices, None);
     commands.spawn((
@@ -47,12 +47,12 @@ fn initialize_landscape_system(
     // platform x2
     commands.spawn((
         StateScoped(AppState::Game),
-        Collider::rectangle(100.0, 8.0),
+        Collider::rectangle(185.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(100.0, 8.0)).into(),
             material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(100.0, 55.0, 1.0),
+            transform: Transform::from_xyz(132.0, 164.0, 1.0),
             ..default()
         },
         Platform { factor: 2 },
@@ -61,12 +61,12 @@ fn initialize_landscape_system(
     // platform x5
     commands.spawn((
         StateScoped(AppState::Game),
-        Collider::rectangle(100.0, 8.0),
+        Collider::rectangle(200.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(100.0, 8.0)).into(),
             material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(-260.0, -220.0, 1.0),
+            transform: Transform::from_xyz(-269.0, -222.0, 1.0),
             ..default()
         },
         Platform { factor: 5 },
@@ -75,12 +75,12 @@ fn initialize_landscape_system(
     // platform x10
     commands.spawn((
         StateScoped(AppState::Game),
-        Collider::rectangle(60.0, 8.0),
+        Collider::rectangle(120.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(60.0, 8.0)).into(),
             material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(200.0, -95.0, 1.0),
+            transform: Transform::from_xyz(248.0, -102.0, 1.0),
             ..default()
         },
         Platform { factor: 10 },
@@ -109,8 +109,8 @@ fn initialize_landscape_system(
         RigidBody::Static,
         SpriteBundle {
             transform: Transform {
-                translation: Vec3::new(-495.0, 206.0, 1.0),
-                scale: Vec3::new(2.8, 2.8, 1.0),
+                translation: Vec3::new(-495.0, 306.0, 1.0),
+                scale: Vec3::new(1.45, 1.45, 1.0),
                 ..default()
             },
             ..default()
