@@ -92,7 +92,7 @@ fn initialize_landscape_system(
         DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
     // land image
-    let mut land = Mesh::new(
+    /*let mut land = Mesh::new(
         PrimitiveTopology::LineStrip,
         RenderAssetUsages::RENDER_WORLD,
     );
@@ -112,9 +112,7 @@ fn initialize_landscape_system(
             },
             ..default()
         },
-        // This bundle's components are needed for something to be rendered
-        //SpatialBundle::INHERITED_IDENTITY,
-    ));
+    ));*/
     let sprite_image_handle = scene_assets.landscape.clone();
     commands.spawn((
         StateScoped(AppState::Game),
