@@ -3918,6 +3918,7 @@ dependencies = [
  "iyes_perf_ui",
  "leafwing-input-manager",
  "rand",
+ "svg",
 ]
 
 [[package]]
@@ -4136,6 +4137,12 @@ name = "static_assertions"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
+
+[[package]]
+name = "svg"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "700efb40f3f559c23c18b446e8ed62b08b56b2bb3197b36d57e0470b4102779e"
 
 [[package]]
 name = "svg_fmt"
