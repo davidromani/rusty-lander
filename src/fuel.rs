@@ -51,7 +51,7 @@ fn spawn_fuel_bar_text_system(mut commands: Commands, assets: ResMut<UiAssets>) 
         .with_style(Style {
             position_type: PositionType::Absolute,
             bottom: Val::Px(10.0),
-            left: Val::Px(88.0),
+            left: Val::Px(20.0),
             ..default()
         }),
     ));

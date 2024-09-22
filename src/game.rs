@@ -160,8 +160,8 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(88.0),
+            bottom: Val::Px(33.0),
+            left: Val::Px(20.0),
             ..default()
         }),
     ));
@@ -177,8 +177,8 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(188.0),
+            bottom: Val::Px(33.0),
+            left: Val::Px(120.0),
             ..default()
         }),
     ));
@@ -193,8 +193,8 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(500.0),
+            bottom: Val::Px(33.0),
+            left: Val::Px(400.0),
             ..default()
         }),
     ));
@@ -210,8 +210,8 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(638.0),
+            bottom: Val::Px(33.0),
+            left: Val::Px(538.0),
             ..default()
         }),
     ));
