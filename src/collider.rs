@@ -1,15 +1,12 @@
 use avian2d::math::Vector;
 use avian2d::prelude::*;
 use bevy::color::palettes::css;
-//use bevy::render::render_asset::RenderAssetUsages;
-//use bevy::render::render_resource::PrimitiveTopology;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy::{ecs::query::Has, prelude::*};
 
 use crate::asset_loader::SceneAssets;
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::{SpaceshipJustLandedEvent, WorldBoundsVertices2D}; //, WorldBoundsVertices3D};
-                                                                    //use crate::menu::PRIMARY_COLOR;
+use crate::game::{SpaceshipJustLandedEvent, WorldBoundsVertices2D};
 use crate::movement::ReadyToLand;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
@@ -20,7 +17,7 @@ impl Plugin for ColliderPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::Game), initialize_landscape_system)
             .add_systems(
-                Update,
+                FixedUpdate,
                 player_landed_collisions_system.run_if(in_state(GameState::Landing)),
             );
     }
