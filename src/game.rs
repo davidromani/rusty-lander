@@ -312,6 +312,11 @@ pub struct TextScoringAfterLanding;
 pub struct Resettable;
 
 // Resources (global scope allocated data)
+#[derive(Resource)]
+pub struct WorldBoundsVertices {
+    pub data: Vec<Vec2>,
+}
+
 #[derive(Resource, Debug)]
 pub struct Scores {
     pub score: i32,

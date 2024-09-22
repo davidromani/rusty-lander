@@ -3,10 +3,9 @@ use avian2d::prelude::*;
 use bevy::color::palettes::css;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy::{ecs::query::Has, prelude::*};
-use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::SpaceshipJustLandedEvent;
+use crate::game::{SpaceshipJustLandedEvent, WorldBoundsVertices};
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
 use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
@@ -28,8 +27,8 @@ fn initialize_landscape_system(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    landscape_world_bounds_vertices: Res<WorldBoundsVertices>,
     scene_assets: Res<SceneAssets>,
-    image_assets: Res<Assets<Image>>,
 ) {
     // world bounds collider
     let world_bounds_vertices = vec![
@@ -87,24 +86,36 @@ fn initialize_landscape_system(
         Platform { factor: 10 },
         DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
-    // land
+    // land image
     let sprite_image_handle = scene_assets.landscape.clone();
-    let sprite_image = image_assets.get(&sprite_image_handle);
-    let collider = single_heightfield_collider_translated(sprite_image.unwrap());
+    commands.spawn((
+        StateScoped(AppState::Game),
+        RigidBody::Static,
+        SpriteBundle {
+            texture: sprite_image_handle,
+            transform: Transform {
+                translation: Vec3::new(0.0, 0.0, 1.0),
+                scale: Vec3::new(1.0, 1.0, 1.0),
+                ..default()
+            },
+            ..default()
+        },
+    ));
+    // land collider
+    let collider = Collider::polyline(landscape_world_bounds_vertices.data.clone(), None);
     commands.spawn((
         StateScoped(AppState::Game),
         collider,
         RigidBody::Static,
         SpriteBundle {
-            texture: sprite_image_handle,
             transform: Transform {
-                translation: Vec3::new(0.0, -240.0, 1.0),
-                scale: Vec3::new(2.5, 1.0, 1.0),
+                translation: Vec3::new(-495.0, 206.0, 1.0),
+                scale: Vec3::new(2.8, 2.8, 1.0),
                 ..default()
             },
             ..default()
         },
-        DebugRender::default().with_collider_color(css::VIOLET.into()),
+        DebugRender::default().with_collider_color(css::STEEL_BLUE.into()),
     ));
 }
 
