@@ -15,6 +15,7 @@ mod state;
 use avian2d::parry::na::DimAdd;
 use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
+use bevy::window::WindowResolution;
 use leafwing_input_manager::plugin::InputManagerPlugin;
 use std::string::ToString;
 use svg::node::element::path::{Command, Data};
@@ -81,6 +82,7 @@ fn main() {
         DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: MAIN_TITLE.to_string(),
+                resolution: WindowResolution::new(1024.0, 720.0),
                 resizable: false,
                 focused: true,
                 ..default()

@@ -80,7 +80,7 @@ fn initialize_landscape_system(
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(60.0, 8.0)).into(),
             material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(248.0, -102.0, 1.0),
+            transform: Transform::from_xyz(248.0, -104.0, 1.0),
             ..default()
         },
         Platform { factor: 10 },
@@ -110,7 +110,7 @@ fn initialize_landscape_system(
         SpriteBundle {
             transform: Transform {
                 translation: Vec3::new(-495.0, 306.0, 1.0),
-                scale: Vec3::new(1.45, 1.45, 1.0),
+                scale: Vec3::new(1.45, 1.46, 1.0),
                 ..default()
             },
             ..default()

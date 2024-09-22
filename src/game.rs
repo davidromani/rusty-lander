@@ -129,7 +129,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
             transform: Transform::from_translation(Vec3::new(0.0, -330.0, 2.0)),
             sprite: Sprite {
                 color: BLACK_COLOR,
-                custom_size: Some(Vec2::new(1280.0, 60.0)),
+                custom_size: Some(Vec2::new(1024.0, 60.0)),
                 ..default()
             },
             ..default()
@@ -139,7 +139,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     commands.spawn((
         StateScoped(AppState::Game),
         SpriteBundle {
-            transform: Transform::from_translation(Vec3::new(620.0, 0.0, 2.0)),
+            transform: Transform::from_translation(Vec3::new(510.0, 0.0, 2.0)),
             sprite: Sprite {
                 color: BLACK_COLOR,
                 custom_size: Some(Vec2::new(40.0, 720.0)),
