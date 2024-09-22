@@ -5,12 +5,17 @@ Changelog
 
 * keep working
 
-##### Version 0.04.000 (WIP)
+##### Version 0.04.000 (2024-09-22)
 
 * add game menu instructions section
 * fix problem with hidden score text after update
 * fix bad scoring calculation after landed
 * fix double crash problem
+* fix problem during update_scoring_text_system execution, score always updated after the following landing
+* add more difficult, divide by 5 refuel quantity
+* add WorldBoundsVertices resource from SVG
+* better aspect ratio window fit
+* better background image
 
 ##### Version 0.03.000 (2024-09-21)
 
