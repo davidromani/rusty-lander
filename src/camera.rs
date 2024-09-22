@@ -9,7 +9,7 @@ impl Plugin for CameraPlugin {
             .add_plugins(bevy::diagnostic::EntityCountDiagnosticsPlugin)
             .add_plugins(bevy::diagnostic::SystemInformationDiagnosticsPlugin)
             .add_plugins(PerfUiPlugin)
-            .add_systems(Startup, (spawn_camera_system, spawn_debug_ui_system));
+            .add_systems(Startup, (spawn_camera_system)); //, spawn_debug_ui_system));
     }
 }
 

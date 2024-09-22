@@ -1,4 +1,4 @@
-use avian2d::prelude::LinearVelocity;
+use avian2d::prelude::{GravityScale, LinearVelocity};
 use bevy::app::AppExit;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
@@ -8,6 +8,7 @@ use std::f32::consts::TAU;
 use crate::asset_loader::{SceneAssets, UiAssets};
 use crate::collider::Platform;
 use crate::menu::BLACK_COLOR;
+use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
@@ -37,7 +38,7 @@ impl Plugin for GamePlugin {
                 rotate_background_image_system,
                 update_scoring_text_system.run_if(in_state(GameState::Landed)),
                 catch_spaceship_just_landed_event_system.run_if(in_state(GameState::Landed)),
-                handle_any_key_has_been_pressed_system.run_if(in_state(GameState::Landed)),
+                handle_any_control_key_has_been_pressed_system.run_if(in_state(GameState::Landed)),
                 handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape)),
             ),
         );
@@ -48,6 +49,7 @@ impl Plugin for GamePlugin {
 fn catch_spaceship_just_landed_event_system(
     assets: ResMut<UiAssets>,
     mut events_reader: EventReader<SpaceshipJustLandedEvent>,
+    mut spaceship_gravity_query: Query<&mut GravityScale, With<Player>>,
     mut commands: Commands,
     mut scores: ResMut<Scores>,
 ) {
@@ -86,7 +88,7 @@ fn catch_spaceship_just_landed_event_system(
             Resettable,
             TextScoringAfterLanding,
             TextBundle::from_section(
-                "press space bar key to continue",
+                "press control key to continue",
                 TextStyle {
                     font: assets.font_vt323.clone(),
                     font_size: 30.0,
@@ -104,6 +106,11 @@ fn catch_spaceship_just_landed_event_system(
             new_score = scores.get_available_fuel_quantity() as i32;
         }
         scores.fuel_quantity += (new_score as f32) / 5.0;
+        let Ok(mut spaceship_gravity) = spaceship_gravity_query.get_single_mut() else {
+            return;
+        };
+        scores.gravity += 0.1;
+        spaceship_gravity.0 = scores.gravity;
     }
 }
 
@@ -156,14 +163,14 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
             "m/s",
             TextStyle {
                 font: assets.font_vt323.clone(),
-                font_size: 9.0,
+                font_size: 20.0,
                 ..default()
             },
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            top: Val::Px(33.0),
-            left: Val::Px(20.0),
+            top: Val::Px(36.0),
+            right: Val::Px(16.0),
             ..default()
         }),
     ));
@@ -287,14 +294,13 @@ fn handle_exit_key_pressed_system(mut exit: EventWriter<AppExit>) {
     exit.send(AppExit::Success);
 }
 
-fn handle_any_key_has_been_pressed_system(
+fn handle_any_control_key_has_been_pressed_system(
     inputs: Res<ButtonInput<KeyCode>>,
     resettable_text_query: Query<Entity, With<Resettable>>,
     mut commands: Commands,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    if inputs.just_pressed(KeyCode::Space) {
-        info!("space key has been pressed");
+    if inputs.just_pressed(KeyCode::ControlLeft) || inputs.just_pressed(KeyCode::ControlRight) {
         for entity in resettable_text_query.iter() {
             commands.entity(entity).despawn_recursive();
         }
