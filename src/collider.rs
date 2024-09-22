@@ -1,15 +1,18 @@
 use avian2d::math::Vector;
 use avian2d::prelude::*;
 use bevy::color::palettes::css;
+//use bevy::render::render_asset::RenderAssetUsages;
+//use bevy::render::render_resource::PrimitiveTopology;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy::{ecs::query::Has, prelude::*};
-use bevy_collider_gen::avian2d::single_heightfield_collider_translated;
 
+use crate::asset_loader::SceneAssets;
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::SpaceshipJustLandedEvent;
+use crate::game::{SpaceshipJustLandedEvent, WorldBoundsVertices2D}; //, WorldBoundsVertices3D};
+                                                                    //use crate::menu::PRIMARY_COLOR;
+use crate::movement::ReadyToLand;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
-use crate::{asset_loader::SceneAssets, movement::ReadyToLand};
 
 pub struct ColliderPlugin;
 
@@ -28,15 +31,16 @@ fn initialize_landscape_system(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    landscape_world_bounds_vertices_2d: Res<WorldBoundsVertices2D>,
+    //landscape_world_bounds_vertices_3d: Res<WorldBoundsVertices3D>,
     scene_assets: Res<SceneAssets>,
-    image_assets: Res<Assets<Image>>,
 ) {
     // world bounds collider
     let world_bounds_vertices = vec![
-        Vector::new(-676.0, 360.0),
-        Vector::new(-676.0, -300.0),
-        Vector::new(600.0, -300.0),
-        Vector::new(600.0, 360.0),
+        Vector::new(-500.0, 10360.0),
+        Vector::new(-500.0, -300.0),
+        Vector::new(492.0, -300.0),
+        Vector::new(492.0, 10360.0),
     ];
     let world_bounds_polyline = Collider::polyline(world_bounds_vertices, None);
     commands.spawn((
@@ -48,12 +52,12 @@ fn initialize_landscape_system(
     // platform x2
     commands.spawn((
         StateScoped(AppState::Game),
-        Collider::rectangle(100.0, 8.0),
+        Collider::rectangle(185.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(100.0, 8.0)).into(),
-            material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(100.0, 55.0, 1.0),
+            mesh: meshes.add(Rectangle::new(185.0, 8.0)).into(),
+            material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
+            transform: Transform::from_xyz(132.0, 164.0, 1.0),
             ..default()
         },
         Platform { factor: 2 },
@@ -62,12 +66,12 @@ fn initialize_landscape_system(
     // platform x5
     commands.spawn((
         StateScoped(AppState::Game),
-        Collider::rectangle(100.0, 8.0),
+        Collider::rectangle(200.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(100.0, 8.0)).into(),
-            material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(-260.0, -220.0, 1.0),
+            mesh: meshes.add(Rectangle::new(200.0, 8.0)).into(),
+            material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
+            transform: Transform::from_xyz(-269.0, -222.0, 1.0),
             ..default()
         },
         Platform { factor: 5 },
@@ -76,42 +80,74 @@ fn initialize_landscape_system(
     // platform x10
     commands.spawn((
         StateScoped(AppState::Game),
-        Collider::rectangle(60.0, 8.0),
+        Collider::rectangle(120.0, 8.0),
         RigidBody::Static,
         MaterialMesh2dBundle {
-            mesh: meshes.add(Rectangle::new(60.0, 8.0)).into(),
-            material: materials.add(Color::srgb(0.3, 0.3, 0.3)),
-            transform: Transform::from_xyz(200.0, -95.0, 1.0),
+            mesh: meshes.add(Rectangle::new(120.0, 8.0)).into(),
+            material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
+            transform: Transform::from_xyz(248.0, -104.0, 1.0),
             ..default()
         },
         Platform { factor: 10 },
         DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
-    // land
+    // land image
+    /*let mut land = Mesh::new(
+        PrimitiveTopology::LineStrip,
+        RenderAssetUsages::RENDER_WORLD,
+    );
+    land.insert_attribute(
+        Mesh::ATTRIBUTE_POSITION,
+        landscape_world_bounds_vertices_3d.data.clone(),
+    );
+    commands.spawn((
+        // The `Handle<Mesh>` needs to be wrapped in a `Mesh2dHandle` to use 2d rendering instead of 3d
+        MaterialMesh2dBundle {
+            mesh: meshes.add(land).into(),
+            material: materials.add(PRIMARY_COLOR),
+            transform: Transform {
+                translation: Vec3::new(-495.0, 306.0, 1.0),
+                scale: Vec3::new(1.45, 1.46, 1.0),
+                ..default()
+            },
+            ..default()
+        },
+    ));*/
     let sprite_image_handle = scene_assets.landscape.clone();
-    let sprite_image = image_assets.get(&sprite_image_handle);
-    let collider = single_heightfield_collider_translated(sprite_image.unwrap());
+    commands.spawn((
+        StateScoped(AppState::Game),
+        RigidBody::Static,
+        SpriteBundle {
+            texture: sprite_image_handle,
+            transform: Transform {
+                translation: Vec3::new(0.0, 0.0, 1.0),
+                scale: Vec3::new(1.0, 1.0, 1.0),
+                ..default()
+            },
+            ..default()
+        },
+    ));
+    // land collider
+    let collider = Collider::polyline(landscape_world_bounds_vertices_2d.data.clone(), None);
     commands.spawn((
         StateScoped(AppState::Game),
         collider,
         RigidBody::Static,
         SpriteBundle {
-            texture: sprite_image_handle,
             transform: Transform {
-                translation: Vec3::new(0.0, -240.0, 1.0),
-                scale: Vec3::new(2.5, 1.0, 1.0),
+                translation: Vec3::new(-495.0, 306.0, 1.0),
+                scale: Vec3::new(1.45, 1.46, 1.0),
                 ..default()
             },
             ..default()
         },
-        DebugRender::default().with_collider_color(css::VIOLET.into()),
+        DebugRender::default().with_collider_color(css::STEEL_BLUE.into()),
     ));
 }
 
 fn player_landed_collisions_system(
     query: Query<
         (
-            Entity,
             &CollidingEntities,
             &LinearVelocity,
             &Transform,
@@ -124,7 +160,7 @@ fn player_landed_collisions_system(
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
     mut spaceship_just_landed_spawn_events: EventWriter<SpaceshipJustLandedEvent>,
 ) {
-    for (_entity, colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
+    for (colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
         if !colliding_entities.is_empty() {
             if !is_ready_to_land {
                 info!("Lander is not ready to land. Crash!");
@@ -132,7 +168,6 @@ fn player_landed_collisions_system(
                     x: transform.translation.x,
                     y: transform.translation.y,
                 });
-                // TODO hide spaceship sprite instead of -> commands.entity(entity).despawn_recursive();
                 game_state.set(GameState::Crashed);
             } else {
                 for &colliding_entity in colliding_entities.iter() {
@@ -152,7 +187,6 @@ fn player_landed_collisions_system(
                             x: transform.translation.x,
                             y: transform.translation.y,
                         });
-                        // TODO hide spaceship sprite instead of -> commands.entity(entity).despawn_recursive();
                         game_state.set(GameState::Crashed);
                     }
                 }
@@ -164,5 +198,5 @@ fn player_landed_collisions_system(
 // Components
 #[derive(Component, Clone, Debug)]
 pub struct Platform {
-    pub factor: i16,
+    pub factor: i32,
 }

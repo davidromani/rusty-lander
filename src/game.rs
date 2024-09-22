@@ -30,11 +30,11 @@ impl Plugin for GamePlugin {
             OnEnter(AppState::Game),
             (spawn_background_image_system, spawn_scores_text_system),
         )
-        .add_systems(OnEnter(GameState::Landed), update_scoring_text_system)
         .add_systems(
             Update,
             (
                 rotate_background_image_system,
+                update_scoring_text_system.run_if(in_state(GameState::Landed)),
                 catch_spaceship_just_landed_event_system.run_if(in_state(GameState::Landed)),
                 handle_any_key_has_been_pressed_system.run_if(in_state(GameState::Landed)),
                 handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape)),
@@ -53,7 +53,8 @@ fn catch_spaceship_just_landed_event_system(
     for event in events_reader.read() {
         let platform = event.platform.clone();
         let linear_velocity = event.linear_velocity.clone();
-        let mut new_score = platform.factor * ((14.57 * linear_velocity.y) as i16 + 720);
+        let points = (14.57 * linear_velocity.y) as i32 + 720;
+        let mut new_score = platform.factor * points;
         scores.score += new_score;
         if scores.hi_score < scores.score {
             scores.hi_score = scores.score;
@@ -62,7 +63,7 @@ fn catch_spaceship_just_landed_event_system(
             Resettable,
             TextScoringAfterLanding,
             TextBundle::from_section(
-                (scores.get_available_fuel_quantity() as i16).to_string()
+                points.to_string()
                     + " x "
                     + platform.factor.to_string().as_str()
                     + " = "
@@ -98,17 +99,17 @@ fn catch_spaceship_just_landed_event_system(
                 ..default()
             }),
         ));
-        if new_score > scores.get_available_fuel_quantity() as i16 {
-            new_score = scores.get_available_fuel_quantity() as i16;
+        if new_score > scores.get_available_fuel_quantity() as i32 {
+            new_score = scores.get_available_fuel_quantity() as i32;
         }
-        scores.fuel_quantity += new_score as f32;
+        scores.fuel_quantity += (new_score as f32) / 5.0;
     }
 }
 
 fn update_scoring_text_system(
     scores: Res<Scores>,
     mut score_text_query: Query<&mut Text, (With<TextScore>, Without<TextHiScore>)>,
-    mut hi_score_text_query: Query<&mut Text, (With<TextHiScore>, With<TextScore>)>,
+    mut hi_score_text_query: Query<&mut Text, (With<TextHiScore>, Without<TextScore>)>,
 ) {
     let Ok(mut score_text) = score_text_query.get_single_mut() else {
         return;
@@ -128,7 +129,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
             transform: Transform::from_translation(Vec3::new(0.0, -330.0, 2.0)),
             sprite: Sprite {
                 color: BLACK_COLOR,
-                custom_size: Some(Vec2::new(1280.0, 60.0)),
+                custom_size: Some(Vec2::new(1024.0, 60.0)),
                 ..default()
             },
             ..default()
@@ -138,7 +139,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     commands.spawn((
         StateScoped(AppState::Game),
         SpriteBundle {
-            transform: Transform::from_translation(Vec3::new(620.0, 0.0, 2.0)),
+            transform: Transform::from_translation(Vec3::new(510.0, 0.0, 2.0)),
             sprite: Sprite {
                 color: BLACK_COLOR,
                 custom_size: Some(Vec2::new(40.0, 720.0)),
@@ -150,7 +151,6 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     // scoring UI texts
     commands.spawn((
         StateScoped(AppState::Game),
-        Resettable,
         TextBundle::from_section(
             "Score",
             TextStyle {
@@ -167,7 +167,6 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     ));
     commands.spawn((
         StateScoped(AppState::Game),
-        Resettable,
         TextScore,
         TextBundle::from_section(
             scores.score.to_string(),
@@ -185,7 +184,6 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     ));
     commands.spawn((
         StateScoped(AppState::Game),
-        Resettable,
         TextBundle::from_section(
             "High Score",
             TextStyle {
@@ -202,7 +200,6 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     ));
     commands.spawn((
         StateScoped(AppState::Game),
-        Resettable,
         TextHiScore,
         TextBundle::from_section(
             scores.hi_score.to_string(),
@@ -229,7 +226,7 @@ fn spawn_rusty_planet_menu_background_image_system(
         SpriteBundle {
             texture: scene_assets.rusty_planet.clone(),
             transform: Transform {
-                scale: Vec3::new(1.07, 1.07, 1.0),
+                scale: Vec3::new(0.85, 0.84, 1.0),
                 ..default()
             },
             ..default()
@@ -315,10 +312,20 @@ pub struct TextScoringAfterLanding;
 pub struct Resettable;
 
 // Resources (global scope allocated data)
+#[derive(Resource)]
+pub struct WorldBoundsVertices2D {
+    pub data: Vec<Vec2>,
+}
+
+#[derive(Resource)]
+pub struct WorldBoundsVertices3D {
+    pub data: Vec<Vec3>,
+}
+
 #[derive(Resource, Debug)]
 pub struct Scores {
-    pub score: i16,
-    pub hi_score: i16,
+    pub score: i32,
+    pub hi_score: i32,
     pub fuel_quantity: f32,
 }
 

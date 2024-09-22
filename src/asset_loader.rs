@@ -48,8 +48,8 @@ pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: R
     *scene_assets = SceneAssets {
         rusty_planet: asset_server.load("rusty_planet.jpg"),
         background: asset_server.load("background_space.png"),
-        // landscape: asset_server.load("landscape.png"),
-        landscape: asset_server.load("terrain.png"),
+        landscape: asset_server.load("landscape.png"),
+        //landscape: asset_server.load("terrain.png"),
         lander: asset_server.load("spaceship.png"),
         // lander: asset_server.load("lander.png"),
         explosion: asset_server.load("explosion.png"),

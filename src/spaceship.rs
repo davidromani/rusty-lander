@@ -7,7 +7,7 @@ use crate::asset_loader::SceneAssets;
 use crate::movement::*;
 use crate::state::AppState;
 
-pub const INITIAL_SPACESHIP_POSITION: Vec3 = Vec3::new(-200.0, 300.0, 2.0);
+pub const INITIAL_SPACESHIP_POSITION: Vec3 = Vec3::new(-300.0, 300.0, 2.0);
 
 pub struct SpaceshipPlugin;
 

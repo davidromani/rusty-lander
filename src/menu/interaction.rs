@@ -19,6 +19,9 @@ pub fn main_menu_input_system(
                         next_app_state.set(AppState::Game);
                     }
                     1 => {
+                        next_app_state.set(AppState::Instructions);
+                    }
+                    2 => {
                         next_app_state.set(AppState::Credits);
                     }
                     _ => {
@@ -26,7 +29,7 @@ pub fn main_menu_input_system(
                     }
                 }
             }
-            if app_state.get() == &AppState::Credits {
+            if app_state.get() == &AppState::Instructions || app_state.get() == &AppState::Credits {
                 match menu.selected_id {
                     0 => {
                         next_app_state.set(AppState::Menu);

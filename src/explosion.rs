@@ -1,9 +1,9 @@
-use avian2d::prelude::{Physics, PhysicsTime};
 use bevy::prelude::*;
 use std::f32::consts::TAU;
 
 use crate::asset_loader::SceneAssets;
 use crate::game::Scores;
+use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
 
 pub struct ExplosionPlugin;
@@ -26,8 +26,8 @@ impl Plugin for ExplosionPlugin {
 fn catch_explosion_event_system(
     scene_assets: Res<SceneAssets>,
     mut commands: Commands,
+    mut spaceship_visibility_query: Query<&mut Visibility, With<Player>>,
     mut events_reader: EventReader<SpawnExplosionEvent>,
-    mut physics_time: ResMut<Time<Physics>>,
 ) {
     for event in events_reader.read() {
         let (texture, start_size, end_scale, duration) = (
@@ -56,7 +56,8 @@ fn catch_explosion_event_system(
                 end_scale,
             },
         ));
-        physics_time.pause();
+        let mut spaceship_visibility = spaceship_visibility_query.single_mut();
+        *spaceship_visibility = Visibility::Hidden;
     }
 }
 
@@ -92,6 +93,7 @@ fn catch_finished_explosion_event_system(
     if !event_reader.is_empty() {
         scores.fuel_quantity -= 100.0;
         if scores.fuel_quantity <= 0.0 {
+            scores.score = 0;
             game_state.set(GameState::GameOver);
         } else {
             game_state.set(GameState::Setup);
