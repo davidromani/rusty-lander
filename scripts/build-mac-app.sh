@@ -1,3 +1,5 @@
+#!/bin/bash
+
 APP_NAME="Rusty Lander"
 RUST_CRATE_NAME="rusty-lander"
 mkdir -p "${APP_NAME}.app/Contents/MacOS"

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 SOURCE_IMAGE="rusty_planet_mac_app_icon.png"
 mkdir -p AppIcon.iconset
 sips -z 16 16     "${SOURCE_IMAGE}" --out AppIcon.iconset/icon_16x16.png

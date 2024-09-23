@@ -3,5 +3,6 @@ rusty_planet_mac_app_icon.png
 /target
 /.fleet
 /.vscode
+/build/mac
 /AppIcon.iconset
 /Rusty\ Lander.app
