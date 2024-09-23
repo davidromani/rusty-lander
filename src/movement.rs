@@ -58,7 +58,7 @@ pub struct JumpImpulse(Scalar);
 #[derive(Bundle)]
 pub struct CharacterControllerBundle {
     character_controller: CharacterController,
-    rigid_body: RigidBody::Dynamic,
+    rigid_body: RigidBody,
     collider: Collider,
     ground_caster: ShapeCaster,
     locked_axes: LockedAxes,

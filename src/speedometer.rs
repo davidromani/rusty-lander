@@ -50,11 +50,21 @@ fn spawn_speed_bar_system(
             ..default()
         },
     ));
-    // black indicator
+    // red zero mark
     commands.spawn((
         StateScoped(AppState::Game),
         MaterialMesh2dBundle {
             transform: Transform::from_translation(Vec3::new(485.0, 0.0, 5.0)),
+            mesh: Mesh2dHandle(meshes.add(Rectangle::new(15.0, 1.0))),
+            material: materials.add(Color::srgb(1.0, 0.0, 0.0)),
+            ..default()
+        },
+    ));
+    // black indicator
+    commands.spawn((
+        StateScoped(AppState::Game),
+        MaterialMesh2dBundle {
+            transform: Transform::from_translation(Vec3::new(485.0, 0.0, 6.0)),
             mesh: Mesh2dHandle(meshes.add(Rectangle::new(15.0, 2.0))),
             material: materials.add(BLACK_COLOR),
             ..default()
