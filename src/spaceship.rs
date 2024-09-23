@@ -49,7 +49,7 @@ fn spawn_spaceship_system(
             4.9,   // before 60.0
         ),
         Friction::ZERO,
-        Restitution::PERFECTLY_ELASTIC.with_combine_rule(CoefficientCombine::Multiply),
+        Restitution::new(0.0).with_combine_rule(CoefficientCombine::Min),
         ColliderDensity(2.0),
         GravityScale(scores.gravity),
         SpriteBundle {
