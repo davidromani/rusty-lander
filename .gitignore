@@ -1,5 +1,7 @@
 .DS_Store
+rusty_planet_mac_app_icon.png
 /target
 /.fleet
 /.vscode
+/AppIcon.iconset
 /Rusty\ Lander.app
