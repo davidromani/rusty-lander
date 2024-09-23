@@ -1,7 +1,7 @@
-use crate::game::Scores;
-use crate::spaceship::{Player, INITIAL_SPACESHIP_POSITION};
-use avian2d::prelude::{GravityScale, LinearVelocity};
+use avian2d::prelude::LinearVelocity;
 use bevy::prelude::*;
+
+use crate::spaceship::{Player, INITIAL_SPACESHIP_POSITION};
 
 #[derive(States, Debug, Copy, Clone, Hash, Eq, PartialEq, Default)]
 pub enum AppState {
