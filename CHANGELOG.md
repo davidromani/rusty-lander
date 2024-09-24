@@ -8,6 +8,7 @@ Changelog
 ##### Version 0.05.000 (WIP)
 
 * increase gravity after each successful landing
+* show out of fuel message
 
 ##### Version 0.04.000 (2024-09-22)
 

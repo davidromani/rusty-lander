@@ -1,7 +1,6 @@
 TODO
 ====
 
-* show out of fuel message
 * animate refuel bar after landing
 * fix speedometer mark after landed
 * make high score persistent

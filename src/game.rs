@@ -24,6 +24,7 @@ impl Plugin for GamePlugin {
             gravity: 1.0,
         })
         .add_event::<SpaceshipJustLandedEvent>()
+        .add_event::<OutOfFuelEvent>()
         .add_systems(
             OnEnter(AppState::Menu),
             spawn_rusty_planet_menu_background_image_system,
@@ -38,6 +39,7 @@ impl Plugin for GamePlugin {
                 rotate_background_image_system,
                 update_scoring_text_system.run_if(in_state(GameState::Landed)),
                 catch_spaceship_just_landed_event_system.run_if(in_state(GameState::Landed)),
+                catch_out_of_fuel_event_system.run_if(in_state(GameState::Landing)),
                 handle_any_control_key_has_been_pressed_system.run_if(in_state(GameState::Landed)),
                 handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape)),
             ),
@@ -111,6 +113,33 @@ fn catch_spaceship_just_landed_event_system(
         };
         scores.gravity += 0.1;
         spaceship_gravity.0 = scores.gravity;
+    }
+}
+
+fn catch_out_of_fuel_event_system(
+    assets: ResMut<UiAssets>,
+    mut events_reader: EventReader<OutOfFuelEvent>,
+    mut commands: Commands,
+) {
+    for _event in events_reader.read() {
+        commands.spawn((
+            StateScoped(GameState::Landing),
+            Resettable,
+            TextBundle::from_section(
+                "Out of fuel",
+                TextStyle {
+                    font: assets.font_vt323.clone(),
+                    font_size: 30.0,
+                    ..default()
+                },
+            )
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                top: Val::Px(80.0),
+                left: Val::Px(488.0),
+                ..default()
+            }),
+        ));
     }
 }
 
@@ -314,6 +343,9 @@ pub struct SpaceshipJustLandedEvent {
     pub platform: Platform,
     pub linear_velocity: LinearVelocity,
 }
+
+#[derive(Event)]
+pub struct OutOfFuelEvent;
 
 // Components
 #[derive(Component)]
