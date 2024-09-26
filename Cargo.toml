@@ -16,7 +16,7 @@ bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] }
 iyes_perf_ui = "0.3"
 leafwing-input-manager = "0.15"
 rand = "0.8"
-svg = "0.17.0"
+svg = "0.17"
 
 [workspace]
 resolver = "2" # Important! wgpu/Bevy needs this!
