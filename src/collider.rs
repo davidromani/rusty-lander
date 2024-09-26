@@ -29,7 +29,6 @@ fn initialize_landscape_system(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     landscape_world_bounds_vertices_2d: Res<WorldBoundsVertices2D>,
-    //landscape_world_bounds_vertices_3d: Res<WorldBoundsVertices3D>,
     scene_assets: Res<SceneAssets>,
 ) {
     // world bounds collider
@@ -89,27 +88,6 @@ fn initialize_landscape_system(
         DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
     // land image
-    /*let mut land = Mesh::new(
-        PrimitiveTopology::LineStrip,
-        RenderAssetUsages::RENDER_WORLD,
-    );
-    land.insert_attribute(
-        Mesh::ATTRIBUTE_POSITION,
-        landscape_world_bounds_vertices_3d.data.clone(),
-    );
-    commands.spawn((
-        // The `Handle<Mesh>` needs to be wrapped in a `Mesh2dHandle` to use 2d rendering instead of 3d
-        MaterialMesh2dBundle {
-            mesh: meshes.add(land).into(),
-            material: materials.add(PRIMARY_COLOR),
-            transform: Transform {
-                translation: Vec3::new(-495.0, 306.0, 1.0),
-                scale: Vec3::new(1.45, 1.46, 1.0),
-                ..default()
-            },
-            ..default()
-        },
-    ));*/
     let sprite_image_handle = scene_assets.landscape.clone();
     commands.spawn((
         StateScoped(AppState::Game),
