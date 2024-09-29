@@ -27,7 +27,7 @@ use collider::ColliderPlugin;
 use debug::DebugPlugin;
 use explosion::ExplosionPlugin;
 use fuel::FuelPlugin;
-use game::{GamePlugin, WorldBoundsVertices2D};
+use game::{GamePlugin, InGameSet, WorldBoundsVertices2D};
 use menu::{MenuAction, MenuPlugin};
 use movement::CharacterControllerPlugin;
 use particles_thruster::ParticlesThrusterPlugin;
@@ -95,6 +95,16 @@ fn main() {
     // Resources
     app.insert_resource(Gravity(Vector::NEG_Y * 58.0))
         .insert_resource(world_bounds_resource_2d);
+    // System ordering
+    app.configure_sets(
+        FixedUpdate,
+        (
+            InGameSet::Collisions,
+            InGameSet::Physics,
+            InGameSet::SpeedBar,
+        )
+            .chain(),
+    );
     // Custom plugins
     app.add_plugins(StatesPlugin)
         .add_plugins(MenuPlugin)
