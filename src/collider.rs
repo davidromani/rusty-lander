@@ -44,6 +44,7 @@ fn initialize_landscape_system(
     commands.spawn((
         StateScoped(AppState::Game),
         RigidBody::Static,
+        Sensor,
         world_bounds_polyline,
         DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
     ));
@@ -52,6 +53,7 @@ fn initialize_landscape_system(
         StateScoped(AppState::Game),
         Collider::rectangle(185.0, 8.0),
         RigidBody::Static,
+        Sensor,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(185.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
@@ -66,6 +68,7 @@ fn initialize_landscape_system(
         StateScoped(AppState::Game),
         Collider::rectangle(200.0, 8.0),
         RigidBody::Static,
+        Sensor,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(200.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
@@ -80,6 +83,7 @@ fn initialize_landscape_system(
         StateScoped(AppState::Game),
         Collider::rectangle(120.0, 8.0),
         RigidBody::Static,
+        Sensor,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(120.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
@@ -109,6 +113,7 @@ fn initialize_landscape_system(
         StateScoped(AppState::Game),
         collider,
         RigidBody::Static,
+        Sensor,
         SpriteBundle {
             transform: Transform {
                 translation: Vec3::new(-513.0, 306.0, 1.0),
