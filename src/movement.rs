@@ -2,7 +2,7 @@ use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-use crate::game::{OutOfFuelEvent, Scores};
+use crate::game::{InGameSet, OutOfFuelEvent, Scores};
 use crate::spaceship::PlayerAction;
 use crate::state::GameState;
 
@@ -34,7 +34,8 @@ impl Plugin for CharacterControllerPlugin {
                 apply_movement_damping_system,
             )
                 .chain()
-                .run_if(in_state(GameState::Landing)),
+                .run_if(in_state(GameState::Landing))
+                .in_set(InGameSet::Physics),
         );
     }
 }
