@@ -6,7 +6,7 @@ use bevy::{ecs::query::Has, prelude::*};
 
 use crate::asset_loader::SceneAssets;
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::{SpaceshipJustLandedEvent, WorldBoundsVertices2D};
+use crate::game::{InGameSet, SpaceshipJustLandedEvent, WorldBoundsVertices2D};
 use crate::movement::ReadyToLand;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
@@ -18,7 +18,9 @@ impl Plugin for ColliderPlugin {
         app.add_systems(OnEnter(AppState::Game), initialize_landscape_system)
             .add_systems(
                 FixedUpdate,
-                player_landed_collisions_system.run_if(in_state(GameState::Landing)),
+                player_landed_collisions_system
+                    .run_if(in_state(GameState::Landing))
+                    .in_set(InGameSet::Collisions),
             );
     }
 }
@@ -91,7 +93,6 @@ fn initialize_landscape_system(
     let sprite_image_handle = scene_assets.landscape.clone();
     commands.spawn((
         StateScoped(AppState::Game),
-        RigidBody::Static,
         SpriteBundle {
             texture: sprite_image_handle,
             transform: Transform {
@@ -134,9 +135,11 @@ fn player_landed_collisions_system(
     mut game_state: ResMut<NextState<GameState>>,
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
     mut spaceship_just_landed_spawn_events: EventWriter<SpaceshipJustLandedEvent>,
+    mut physics_time: ResMut<Time<Physics>>,
 ) {
     for (colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
         if !colliding_entities.is_empty() {
+            physics_time.pause();
             if !is_ready_to_land {
                 info!("Lander is not ready to land. Crash!");
                 explosion_spawn_events.send(SpawnExplosionEvent {
@@ -166,6 +169,7 @@ fn player_landed_collisions_system(
                     }
                 }
             }
+            info!("Linear velocity Y: {:?}", linear_velocity.y);
         }
     }
 }
