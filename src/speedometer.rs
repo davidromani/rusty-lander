@@ -1,10 +1,10 @@
-use avian2d::dynamics::rigid_body::LinearVelocity;
-use bevy::prelude::*;
-use bevy::sprite::*;
-
+use crate::game::InGameSet;
 use crate::menu::BLACK_COLOR;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
+use avian2d::dynamics::rigid_body::LinearVelocity;
+use bevy::prelude::*;
+use bevy::sprite::*;
 
 pub struct SpeedometerPlugin;
 
@@ -12,8 +12,10 @@ impl Plugin for SpeedometerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::Game), spawn_speed_bar_system)
             .add_systems(
-                Update,
-                update_fuel_bar_system.run_if(in_state(GameState::Landing)),
+                FixedUpdate,
+                update_speed_bar_black_indicator_system
+                    .run_if(in_state(GameState::Landing))
+                    .in_set(InGameSet::SpeedBar),
             );
     }
 }
@@ -28,7 +30,7 @@ fn spawn_speed_bar_system(
     commands.spawn((
         StateScoped(AppState::Game),
         SpriteBundle {
-            transform: Transform::from_translation(Vec3::new(510.0, 0.0, 3.0)),
+            transform: Transform::from_translation(Vec3::new(485.0, 0.0, 3.0)),
             sprite: Sprite {
                 color: Color::srgb(0.32, 0.75, 0.03),
                 custom_size: Some(Vec2::new(15.0, 600.0)),
@@ -41,7 +43,7 @@ fn spawn_speed_bar_system(
     commands.spawn((
         StateScoped(AppState::Game),
         SpriteBundle {
-            transform: Transform::from_translation(Vec3::new(510.0, -17.5, 4.0)),
+            transform: Transform::from_translation(Vec3::new(485.0, -17.5, 4.0)),
             sprite: Sprite {
                 color: Color::srgb(0.77, 0.84, 0.11),
                 custom_size: Some(Vec2::new(15.0, 35.0)),
@@ -54,16 +56,16 @@ fn spawn_speed_bar_system(
     commands.spawn((
         StateScoped(AppState::Game),
         MaterialMesh2dBundle {
+            transform: Transform::from_translation(Vec3::new(485.0, 0.0, 6.0)),
             mesh: Mesh2dHandle(meshes.add(Rectangle::new(15.0, 2.0))),
             material: materials.add(BLACK_COLOR),
-            transform: Transform::from_translation(Vec3::new(510.0, 0.0, 5.0)),
             ..default()
         },
         SpeedBarBlackIndicator,
     ));
 }
 
-fn update_fuel_bar_system(
+fn update_speed_bar_black_indicator_system(
     mut query_speed_bar_black_indicators: Query<&mut Transform, With<SpeedBarBlackIndicator>>,
     mut query_player_linear_velocities: Query<&LinearVelocity, With<Player>>,
 ) {

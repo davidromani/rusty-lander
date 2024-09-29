@@ -4,6 +4,7 @@ use bevy_collider_gen::avian2d::single_convex_polyline_collider_translated;
 use leafwing_input_manager::prelude::*;
 
 use crate::asset_loader::SceneAssets;
+use crate::game::Scores;
 use crate::movement::*;
 use crate::state::AppState;
 
@@ -23,6 +24,7 @@ fn spawn_spaceship_system(
     mut commands: Commands,
     scene_assets: Res<SceneAssets>,
     image_assets: Res<Assets<Image>>,
+    scores: Res<Scores>,
 ) {
     let input_map = InputMap::new([
         (PlayerAction::MainThrusterBig, KeyCode::Digit2),
@@ -43,13 +45,13 @@ fn spawn_spaceship_system(
         StateScoped(AppState::Game),
         CharacterControllerBundle::new(collider).with_movement(
             550.0, // before 1250.0
-            0.97,  // before 0.92
+            0.965, // before 0.92
             4.9,   // before 60.0
         ),
         Friction::ZERO,
-        Restitution::PERFECTLY_ELASTIC.with_combine_rule(CoefficientCombine::Multiply),
+        Restitution::new(0.0).with_combine_rule(CoefficientCombine::Min),
         ColliderDensity(2.0),
-        GravityScale(1.0),
+        GravityScale(scores.gravity),
         SpriteBundle {
             texture: sprite_image_handle,
             transform: Transform::from_translation(INITIAL_SPACESHIP_POSITION),

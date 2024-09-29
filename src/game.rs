@@ -1,4 +1,4 @@
-use avian2d::prelude::LinearVelocity;
+use avian2d::prelude::{GravityScale, LinearVelocity};
 use bevy::app::AppExit;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
@@ -8,6 +8,7 @@ use std::f32::consts::TAU;
 use crate::asset_loader::{SceneAssets, UiAssets};
 use crate::collider::Platform;
 use crate::menu::BLACK_COLOR;
+use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
@@ -20,8 +21,10 @@ impl Plugin for GamePlugin {
             score: 0,
             hi_score: 0,
             fuel_quantity: FUEL_QUANTITY,
+            gravity: 1.0,
         })
         .add_event::<SpaceshipJustLandedEvent>()
+        .add_event::<OutOfFuelEvent>()
         .add_systems(
             OnEnter(AppState::Menu),
             spawn_rusty_planet_menu_background_image_system,
@@ -36,7 +39,8 @@ impl Plugin for GamePlugin {
                 rotate_background_image_system,
                 update_scoring_text_system.run_if(in_state(GameState::Landed)),
                 catch_spaceship_just_landed_event_system.run_if(in_state(GameState::Landed)),
-                handle_any_key_has_been_pressed_system.run_if(in_state(GameState::Landed)),
+                catch_out_of_fuel_event_system.run_if(in_state(GameState::Landing)),
+                handle_any_control_key_has_been_pressed_system.run_if(in_state(GameState::Landed)),
                 handle_exit_key_pressed_system.run_if(input_just_pressed(KeyCode::Escape)),
             ),
         );
@@ -47,6 +51,7 @@ impl Plugin for GamePlugin {
 fn catch_spaceship_just_landed_event_system(
     assets: ResMut<UiAssets>,
     mut events_reader: EventReader<SpaceshipJustLandedEvent>,
+    mut spaceship_gravity_query: Query<&mut GravityScale, With<Player>>,
     mut commands: Commands,
     mut scores: ResMut<Scores>,
 ) {
@@ -85,7 +90,7 @@ fn catch_spaceship_just_landed_event_system(
             Resettable,
             TextScoringAfterLanding,
             TextBundle::from_section(
-                "press space bar key to continue",
+                "press enter key to continue",
                 TextStyle {
                     font: assets.font_vt323.clone(),
                     font_size: 30.0,
@@ -103,6 +108,38 @@ fn catch_spaceship_just_landed_event_system(
             new_score = scores.get_available_fuel_quantity() as i32;
         }
         scores.fuel_quantity += (new_score as f32) / 5.0;
+        let Ok(mut spaceship_gravity) = spaceship_gravity_query.get_single_mut() else {
+            return;
+        };
+        scores.gravity += 0.1;
+        spaceship_gravity.0 = scores.gravity;
+    }
+}
+
+fn catch_out_of_fuel_event_system(
+    assets: ResMut<UiAssets>,
+    mut events_reader: EventReader<OutOfFuelEvent>,
+    mut commands: Commands,
+) {
+    for _event in events_reader.read() {
+        commands.spawn((
+            StateScoped(GameState::Landing),
+            Resettable,
+            TextBundle::from_section(
+                "Out of fuel",
+                TextStyle {
+                    font: assets.font_vt323.clone(),
+                    font_size: 30.0,
+                    ..default()
+                },
+            )
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                top: Val::Px(80.0),
+                left: Val::Px(488.0),
+                ..default()
+            }),
+        ));
     }
 }
 
@@ -139,14 +176,32 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     commands.spawn((
         StateScoped(AppState::Game),
         SpriteBundle {
-            transform: Transform::from_translation(Vec3::new(510.0, 0.0, 2.0)),
+            transform: Transform::from_translation(Vec3::new(485.0, 0.0, 2.0)),
             sprite: Sprite {
                 color: BLACK_COLOR,
-                custom_size: Some(Vec2::new(40.0, 720.0)),
+                custom_size: Some(Vec2::new(50.0, 720.0)),
                 ..default()
             },
             ..default()
         },
+    ));
+    // speedometer UI texts
+    commands.spawn((
+        StateScoped(AppState::Game),
+        TextBundle::from_section(
+            "m/s",
+            TextStyle {
+                font: assets.font_vt323.clone(),
+                font_size: 20.0,
+                ..default()
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            top: Val::Px(36.0),
+            right: Val::Px(16.0),
+            ..default()
+        }),
     ));
     // scoring UI texts
     commands.spawn((
@@ -160,8 +215,8 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(88.0),
+            bottom: Val::Px(33.0),
+            left: Val::Px(20.0),
             ..default()
         }),
     ));
@@ -177,8 +232,8 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(188.0),
+            bottom: Val::Px(33.0),
+            left: Val::Px(120.0),
             ..default()
         }),
     ));
@@ -193,8 +248,8 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(500.0),
+            bottom: Val::Px(33.0),
+            left: Val::Px(400.0),
             ..default()
         }),
     ));
@@ -210,8 +265,8 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         )
         .with_style(Style {
             position_type: PositionType::Absolute,
-            bottom: Val::Px(30.0),
-            left: Val::Px(638.0),
+            bottom: Val::Px(33.0),
+            left: Val::Px(538.0),
             ..default()
         }),
     ));
@@ -268,19 +323,29 @@ fn handle_exit_key_pressed_system(mut exit: EventWriter<AppExit>) {
     exit.send(AppExit::Success);
 }
 
-fn handle_any_key_has_been_pressed_system(
+fn handle_any_control_key_has_been_pressed_system(
     inputs: Res<ButtonInput<KeyCode>>,
     resettable_text_query: Query<Entity, With<Resettable>>,
     mut commands: Commands,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    if inputs.just_pressed(KeyCode::Space) {
-        info!("space key has been pressed");
+    if inputs.just_pressed(KeyCode::ControlLeft)
+        || inputs.just_pressed(KeyCode::ControlRight)
+        || inputs.just_pressed(KeyCode::Enter)
+    {
         for entity in resettable_text_query.iter() {
             commands.entity(entity).despawn_recursive();
         }
         game_state.set(GameState::Setup);
     }
+}
+
+// Sets
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub enum InGameSet {
+    Physics,
+    Collisions,
+    SpeedBar,
 }
 
 // Events
@@ -289,6 +354,9 @@ pub struct SpaceshipJustLandedEvent {
     pub platform: Platform,
     pub linear_velocity: LinearVelocity,
 }
+
+#[derive(Event)]
+pub struct OutOfFuelEvent;
 
 // Components
 #[derive(Component)]
@@ -317,16 +385,12 @@ pub struct WorldBoundsVertices2D {
     pub data: Vec<Vec2>,
 }
 
-#[derive(Resource)]
-pub struct WorldBoundsVertices3D {
-    pub data: Vec<Vec3>,
-}
-
 #[derive(Resource, Debug)]
 pub struct Scores {
     pub score: i32,
     pub hi_score: i32,
     pub fuel_quantity: f32,
+    pub gravity: f32,
 }
 
 impl Scores {

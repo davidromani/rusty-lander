@@ -2,7 +2,7 @@ use avian2d::{math::*, prelude::*};
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-use crate::game::Scores;
+use crate::game::{InGameSet, OutOfFuelEvent, Scores};
 use crate::spaceship::PlayerAction;
 use crate::state::GameState;
 
@@ -27,14 +27,15 @@ impl Plugin for CharacterControllerPlugin {
             },
         )
         .add_systems(
-            Update,
+            FixedUpdate,
             (
                 update_ready_to_land_system,
                 movement_system,
                 apply_movement_damping_system,
             )
                 .chain()
-                .run_if(in_state(GameState::Landing)),
+                .run_if(in_state(GameState::Landing))
+                .in_set(InGameSet::Physics),
         );
     }
 }
@@ -129,6 +130,7 @@ fn update_ready_to_land_system(
 
 fn movement_system(
     time: Res<Time>,
+    mut out_of_fuel_events: EventWriter<OutOfFuelEvent>,
     mut scores: ResMut<Scores>,
     mut controllers: Query<(
         &ActionState<PlayerAction>,
@@ -160,6 +162,9 @@ fn movement_system(
             if action_state.pressed(&PlayerAction::MainThrusterSmall) {
                 linear_velocity.y += jump_impulse.0 * SMALL_THRUST;
                 scores.fuel_quantity -= 20.0 * time.delta_seconds();
+            }
+            if scores.fuel_quantity < 0.0 {
+                out_of_fuel_events.send(OutOfFuelEvent {});
             }
         }
     }

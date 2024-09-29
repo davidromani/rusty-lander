@@ -1,15 +1,12 @@
 use avian2d::math::Vector;
 use avian2d::prelude::*;
 use bevy::color::palettes::css;
-//use bevy::render::render_asset::RenderAssetUsages;
-//use bevy::render::render_resource::PrimitiveTopology;
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy::{ecs::query::Has, prelude::*};
 
 use crate::asset_loader::SceneAssets;
 use crate::explosion::SpawnExplosionEvent;
-use crate::game::{SpaceshipJustLandedEvent, WorldBoundsVertices2D}; //, WorldBoundsVertices3D};
-                                                                    //use crate::menu::PRIMARY_COLOR;
+use crate::game::{InGameSet, SpaceshipJustLandedEvent, WorldBoundsVertices2D};
 use crate::movement::ReadyToLand;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
@@ -20,8 +17,10 @@ impl Plugin for ColliderPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::Game), initialize_landscape_system)
             .add_systems(
-                Update,
-                player_landed_collisions_system.run_if(in_state(GameState::Landing)),
+                FixedUpdate,
+                player_landed_collisions_system
+                    .run_if(in_state(GameState::Landing))
+                    .in_set(InGameSet::Collisions),
             );
     }
 }
@@ -32,20 +31,20 @@ fn initialize_landscape_system(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     landscape_world_bounds_vertices_2d: Res<WorldBoundsVertices2D>,
-    //landscape_world_bounds_vertices_3d: Res<WorldBoundsVertices3D>,
     scene_assets: Res<SceneAssets>,
 ) {
     // world bounds collider
     let world_bounds_vertices = vec![
-        Vector::new(-500.0, 10360.0),
-        Vector::new(-500.0, -300.0),
-        Vector::new(492.0, -300.0),
-        Vector::new(492.0, 10360.0),
+        Vector::new(-547.0, 10360.0),
+        Vector::new(-547.0, -300.0),
+        Vector::new(482.0, -300.0),
+        Vector::new(482.0, 10360.0),
     ];
     let world_bounds_polyline = Collider::polyline(world_bounds_vertices, None);
     commands.spawn((
         StateScoped(AppState::Game),
         RigidBody::Static,
+        Sensor,
         world_bounds_polyline,
         DebugRender::default().with_collider_color(css::INDIAN_RED.into()),
     ));
@@ -54,10 +53,11 @@ fn initialize_landscape_system(
         StateScoped(AppState::Game),
         Collider::rectangle(185.0, 8.0),
         RigidBody::Static,
+        Sensor,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(185.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
-            transform: Transform::from_xyz(132.0, 164.0, 1.0),
+            transform: Transform::from_xyz(114.0, 164.0, 1.0),
             ..default()
         },
         Platform { factor: 2 },
@@ -68,10 +68,11 @@ fn initialize_landscape_system(
         StateScoped(AppState::Game),
         Collider::rectangle(200.0, 8.0),
         RigidBody::Static,
+        Sensor,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(200.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
-            transform: Transform::from_xyz(-269.0, -222.0, 1.0),
+            transform: Transform::from_xyz(-287.0, -222.0, 1.0),
             ..default()
         },
         Platform { factor: 5 },
@@ -82,45 +83,24 @@ fn initialize_landscape_system(
         StateScoped(AppState::Game),
         Collider::rectangle(120.0, 8.0),
         RigidBody::Static,
+        Sensor,
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(120.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
-            transform: Transform::from_xyz(248.0, -104.0, 1.0),
+            transform: Transform::from_xyz(230.0, -104.0, 1.0),
             ..default()
         },
         Platform { factor: 10 },
         DebugRender::default().with_collider_color(css::SPRING_GREEN.into()),
     ));
     // land image
-    /*let mut land = Mesh::new(
-        PrimitiveTopology::LineStrip,
-        RenderAssetUsages::RENDER_WORLD,
-    );
-    land.insert_attribute(
-        Mesh::ATTRIBUTE_POSITION,
-        landscape_world_bounds_vertices_3d.data.clone(),
-    );
-    commands.spawn((
-        // The `Handle<Mesh>` needs to be wrapped in a `Mesh2dHandle` to use 2d rendering instead of 3d
-        MaterialMesh2dBundle {
-            mesh: meshes.add(land).into(),
-            material: materials.add(PRIMARY_COLOR),
-            transform: Transform {
-                translation: Vec3::new(-495.0, 306.0, 1.0),
-                scale: Vec3::new(1.45, 1.46, 1.0),
-                ..default()
-            },
-            ..default()
-        },
-    ));*/
     let sprite_image_handle = scene_assets.landscape.clone();
     commands.spawn((
         StateScoped(AppState::Game),
-        RigidBody::Static,
         SpriteBundle {
             texture: sprite_image_handle,
             transform: Transform {
-                translation: Vec3::new(0.0, 0.0, 1.0),
+                translation: Vec3::new(-18.0, 0.0, 1.0),
                 scale: Vec3::new(1.0, 1.0, 1.0),
                 ..default()
             },
@@ -133,9 +113,10 @@ fn initialize_landscape_system(
         StateScoped(AppState::Game),
         collider,
         RigidBody::Static,
+        Sensor,
         SpriteBundle {
             transform: Transform {
-                translation: Vec3::new(-495.0, 306.0, 1.0),
+                translation: Vec3::new(-513.0, 306.0, 1.0),
                 scale: Vec3::new(1.45, 1.46, 1.0),
                 ..default()
             },
@@ -159,9 +140,11 @@ fn player_landed_collisions_system(
     mut game_state: ResMut<NextState<GameState>>,
     mut explosion_spawn_events: EventWriter<SpawnExplosionEvent>,
     mut spaceship_just_landed_spawn_events: EventWriter<SpaceshipJustLandedEvent>,
+    mut physics_time: ResMut<Time<Physics>>,
 ) {
     for (colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
         if !colliding_entities.is_empty() {
+            physics_time.pause();
             if !is_ready_to_land {
                 info!("Lander is not ready to land. Crash!");
                 explosion_spawn_events.send(SpawnExplosionEvent {
@@ -191,6 +174,7 @@ fn player_landed_collisions_system(
                     }
                 }
             }
+            info!("Linear velocity Y: {:?}", linear_velocity.y);
         }
     }
 }
