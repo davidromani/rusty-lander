@@ -1,10 +1,10 @@
-use avian2d::dynamics::rigid_body::LinearVelocity;
-use bevy::prelude::*;
-use bevy::sprite::*;
-
+use crate::game::InGameSet;
 use crate::menu::BLACK_COLOR;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
+use avian2d::dynamics::rigid_body::LinearVelocity;
+use bevy::prelude::*;
+use bevy::sprite::*;
 
 pub struct SpeedometerPlugin;
 
@@ -12,8 +12,10 @@ impl Plugin for SpeedometerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::Game), spawn_speed_bar_system)
             .add_systems(
-                Update,
-                update_speed_bar_black_indicator_system.run_if(in_state(GameState::Landing)),
+                FixedUpdate,
+                update_speed_bar_black_indicator_system
+                    .run_if(in_state(GameState::Landing))
+                    .in_set(InGameSet::SpeedBar),
             );
     }
 }

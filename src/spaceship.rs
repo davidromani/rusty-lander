@@ -45,7 +45,7 @@ fn spawn_spaceship_system(
         StateScoped(AppState::Game),
         CharacterControllerBundle::new(collider).with_movement(
             550.0, // before 1250.0
-            0.97,  // before 0.92
+            0.965, // before 0.92
             4.9,   // before 60.0
         ),
         Friction::ZERO,

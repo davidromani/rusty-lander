@@ -1,8 +1,8 @@
-use avian2d::prelude::LinearVelocity;
+use avian2d::prelude::{LinearVelocity, Physics, PhysicsTime};
 use bevy::prelude::*;
 
-use crate::spaceship::{Player, INITIAL_SPACESHIP_POSITION};
 use crate::game::Resettable;
+use crate::spaceship::{Player, INITIAL_SPACESHIP_POSITION};
 
 #[derive(States, Debug, Copy, Clone, Hash, Eq, PartialEq, Default)]
 pub enum AppState {
@@ -58,8 +58,10 @@ fn transition_game_setup_to_running_system(
     mut spaceship_transform_query: Query<&mut Transform, With<Player>>,
     mut spaceship_linear_velocity_query: Query<&mut LinearVelocity, With<Player>>,
     mut spaceship_visibility_query: Query<&mut Visibility, With<Player>>,
+    mut physics_time: ResMut<Time<Physics>>,
 ) {
     info!("transitioning from GameState::Setup to -> GameState::Landing");
+    physics_time.unpause();
     for entity in resettable_text_query.iter() {
         commands.entity(entity).despawn_recursive();
     }
