@@ -36,6 +36,8 @@ use speedometer::SpeedometerPlugin;
 use state::StatesPlugin;
 
 const MAIN_TITLE: &str = "Rusty Lander";
+const WINDOW_WIDTH: f32 = 1024.0;
+const WINDOW_HEIGHT: f32 = 720.0;
 
 fn main() {
     let mut current_point: Vec2 = Vec2::new(0.0, 0.0);
@@ -78,7 +80,7 @@ fn main() {
             .set(WindowPlugin {
                 primary_window: Some(Window {
                     title: MAIN_TITLE.to_string(),
-                    resolution: WindowResolution::new(1024.0, 720.0),
+                    resolution: WindowResolution::new(WINDOW_WIDTH, WINDOW_HEIGHT),
                     resizable: false,
                     focused: true,
                     ..default()

@@ -7,7 +7,7 @@ Changelog
 
 ##### Version 0.06.000 (WIP)
 
-* keep working
+* fix out of fuel message
 
 ##### Version 0.05.000 (2024-09-29)
 
