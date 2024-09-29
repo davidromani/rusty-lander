@@ -90,7 +90,7 @@ fn catch_spaceship_just_landed_event_system(
             Resettable,
             TextScoringAfterLanding,
             TextBundle::from_section(
-                "press control key to continue",
+                "press enter key to continue",
                 TextStyle {
                     font: assets.font_vt323.clone(),
                     font_size: 30.0,
@@ -329,12 +329,23 @@ fn handle_any_control_key_has_been_pressed_system(
     mut commands: Commands,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    if inputs.just_pressed(KeyCode::ControlLeft) || inputs.just_pressed(KeyCode::ControlRight) {
+    if inputs.just_pressed(KeyCode::ControlLeft)
+        || inputs.just_pressed(KeyCode::ControlRight)
+        || inputs.just_pressed(KeyCode::Enter)
+    {
         for entity in resettable_text_query.iter() {
             commands.entity(entity).despawn_recursive();
         }
         game_state.set(GameState::Setup);
     }
+}
+
+// Sets
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub enum InGameSet {
+    Physics,
+    Collisions,
+    SpeedBar,
 }
 
 // Events
