@@ -9,6 +9,7 @@ Changelog
 
 * increase gravity after each successful landing
 * show out of fuel message
+* fix speedometer mark value after landed or crashed
 
 ##### Version 0.04.000 (2024-09-22)
 
