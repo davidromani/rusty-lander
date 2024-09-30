@@ -9,6 +9,7 @@ Changelog
 
 * fix "Out of fuel" message
 * better despawn "Out of fuel" info panel behaviour
+* spawn explosion sound effect on spaceship crashed
 
 ##### Version 0.05.000 (2024-09-29)
 

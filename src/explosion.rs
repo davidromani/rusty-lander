@@ -1,7 +1,8 @@
+use bevy::audio::PlaybackMode;
 use bevy::prelude::*;
 use std::f32::consts::TAU;
 
-use crate::asset_loader::SceneAssets;
+use crate::asset_loader::{AudioAssets, SceneAssets};
 use crate::game::Scores;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
@@ -25,6 +26,7 @@ impl Plugin for ExplosionPlugin {
 
 fn catch_explosion_event_system(
     scene_assets: Res<SceneAssets>,
+    audio_assets: Res<AudioAssets>,
     mut commands: Commands,
     mut spaceship_visibility_query: Query<&mut Visibility, With<Player>>,
     mut events_reader: EventReader<SpawnExplosionEvent>,
@@ -48,6 +50,14 @@ fn catch_explosion_event_system(
                     ..default()
                 },
                 texture,
+                ..default()
+            },
+            AudioBundle {
+                source: audio_assets.ship_explosion.clone(),
+                settings: PlaybackSettings {
+                    mode: PlaybackMode::Despawn,
+                    ..default()
+                },
                 ..default()
             },
             Explosion {
