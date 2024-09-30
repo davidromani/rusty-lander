@@ -1,11 +1,11 @@
 use avian2d::{math::*, prelude::*};
-use bevy::audio::PlaybackMode;
+use bevy::audio::{PlaybackMode, Volume};
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::asset_loader::AudioAssets;
 use crate::game::{InGameSet, OutOfFuelEvent, Scores};
-use crate::spaceship::{AirScapeSoundEffect, PlayerAction};
+use crate::spaceship::{AirScapeSoundEffect, PlayerAction, ThrusterSoundEffect};
 use crate::state::GameState;
 
 const BIG_THRUST: f32 = 0.75;
@@ -156,6 +156,24 @@ fn movement_system(
                         source: audio_assets.ship_air_scape.clone(),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Despawn,
+                            paused: false,
+                            ..default()
+                        },
+                        ..default()
+                    },
+                ));
+            }
+            if action_state.just_pressed(&PlayerAction::MainThrusterBig)
+                || action_state.just_pressed(&PlayerAction::MainThrusterMedium)
+                || action_state.just_pressed(&PlayerAction::MainThrusterSmall)
+            {
+                commands.spawn((
+                    ThrusterSoundEffect,
+                    AudioBundle {
+                        source: audio_assets.ship_thruster.clone(),
+                        settings: PlaybackSettings {
+                            mode: PlaybackMode::Despawn,
+                            volume: Volume::new(1.0),
                             paused: false,
                             ..default()
                         },
