@@ -39,7 +39,6 @@ pub fn check_assets(
         return;
     }
     // all assets have been loaded
-    info!("transitioning from AppState::Init to -> AppState::Setup");
     state.set(SceneAssetState::Loaded);
     app_state.set(AppState::Setup);
 }

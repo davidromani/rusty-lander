@@ -22,17 +22,10 @@ fn print_hello_world_system() {
     info!("Hello '{}' World!", MAIN_TITLE.to_string());
 }
 
-fn handle_debug_key_pressed_system(
-    query: Query<&LinearVelocity, With<Player>>,
-    scores: Res<Scores>,
-) {
+fn handle_debug_key_pressed_system(scores: Res<Scores>) {
     info!("Debug key 1 has been pressed");
     info!(
         "Current score = {:?} · Hi score = {:?} · Fuel = {:?} · Gravity = {:?}",
         scores.score, scores.hi_score, scores.fuel_quantity, scores.gravity
     );
-    let Ok(linear_velocity) = query.get_single() else {
-        return;
-    };
-    info!("Current LinearVelocity: {:?}", linear_velocity);
 }
