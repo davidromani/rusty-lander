@@ -67,6 +67,8 @@ fn load_ui_assets_system(mut commands: Commands, asset_server: Res<AssetServer>)
 
 fn load_audio_assets_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.insert_resource(AudioAssets {
+        ship_air_scape: asset_server.load("audios/ship_air_scape.mp3"),
+        ship_thruster: asset_server.load("audios/ship_thruster.mp3"),
         ship_explosion: asset_server.load("audios/ship_explosion.ogg"),
     });
 }
@@ -90,6 +92,8 @@ pub struct UiAssets {
 
 #[derive(Debug, Resource)]
 pub struct AudioAssets {
+    pub ship_air_scape: Handle<AudioSource>,
+    pub ship_thruster: Handle<AudioSource>,
     pub ship_explosion: Handle<AudioSource>,
 }
 
