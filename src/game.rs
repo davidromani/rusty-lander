@@ -408,9 +408,6 @@ struct TextScore;
 struct TextHiScore;
 
 #[derive(Component)]
-pub struct TextScoringAfterLanding;
-
-#[derive(Component)]
 pub struct Resettable;
 
 // Resources (global scope allocated data)

@@ -1,8 +1,6 @@
-use avian2d::dynamics::rigid_body::LinearVelocity;
 use bevy::{input::common_conditions::input_just_pressed, prelude::*};
 
 use crate::game::Scores;
-use crate::spaceship::Player;
 use crate::MAIN_TITLE;
 
 pub struct DebugPlugin;
