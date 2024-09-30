@@ -7,7 +7,8 @@ Changelog
 
 ##### Version 0.06.000 (WIP)
 
-* fix out of fuel message
+* fix "Out of fuel" message
+* better despawn "Out of fuel" info panel behaviour
 
 ##### Version 0.05.000 (2024-09-29)
 

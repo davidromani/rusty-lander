@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::asset_loader::UiAssets;
-use crate::game::{Scores, FUEL_QUANTITY};
+use crate::game::{Resettable, Scores, FUEL_QUANTITY};
 use crate::state::{AppState, GameState};
 use crate::MAIN_TITLE;
 
@@ -84,10 +84,14 @@ fn spawn_main_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
 }
 
 fn spawn_game_over_menu(
-    mut commands: Commands,
+    resettable_text_query: Query<Entity, With<Resettable>>,
     assets: ResMut<UiAssets>,
+    mut commands: Commands,
     mut score: ResMut<Scores>,
 ) {
+    for entity in resettable_text_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
     let entity = MenuHandler {
         main_text: "Game Over".into(),
         main_text_color: Color::srgb_u8(0xAA, 0x22, 0x22),
