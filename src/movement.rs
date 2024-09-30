@@ -1,9 +1,11 @@
 use avian2d::{math::*, prelude::*};
+use bevy::audio::PlaybackMode;
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
+use crate::asset_loader::AudioAssets;
 use crate::game::{InGameSet, OutOfFuelEvent, Scores};
-use crate::spaceship::PlayerAction;
+use crate::spaceship::{AirScapeSoundEffect, PlayerAction};
 use crate::state::GameState;
 
 const BIG_THRUST: f32 = 0.75;
@@ -130,6 +132,8 @@ fn update_ready_to_land_system(
 
 fn movement_system(
     time: Res<Time>,
+    audio_assets: Res<AudioAssets>,
+    mut commands: Commands,
     mut out_of_fuel_events: EventWriter<OutOfFuelEvent>,
     mut scores: ResMut<Scores>,
     mut controllers: Query<(
@@ -143,6 +147,22 @@ fn movement_system(
     for (action_state, movement_acceleration, jump_impulse, mut linear_velocity) in &mut controllers
     {
         if scores.fuel_quantity > 0.0 {
+            if action_state.just_pressed(&PlayerAction::LeftThruster)
+                || action_state.just_pressed(&PlayerAction::RightThruster)
+            {
+                commands.spawn((
+                    AirScapeSoundEffect,
+                    AudioBundle {
+                        source: audio_assets.ship_air_scape.clone(),
+                        settings: PlaybackSettings {
+                            mode: PlaybackMode::Despawn,
+                            paused: false,
+                            ..default()
+                        },
+                        ..default()
+                    },
+                ));
+            }
             if action_state.pressed(&PlayerAction::LeftThruster) {
                 linear_velocity.x += movement_acceleration.0 * delta_time;
                 scores.fuel_quantity -= 20.0 * time.delta_seconds();
