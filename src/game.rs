@@ -2,7 +2,7 @@ use avian2d::prelude::{GravityScale, LinearVelocity};
 use bevy::app::AppExit;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
-use bevy::text::{BreakLineOn, Text2dBounds};
+use bevy::text::Text2dBounds;
 use rand::prelude::*;
 use std::f32::consts::TAU;
 
@@ -14,6 +14,9 @@ use crate::state::{AppState, GameState};
 use crate::WINDOW_HEIGHT;
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
+const INFO_PANEL_Y_POSITION: f32 = WINDOW_HEIGHT / 4.0;
+const INFO_PANEL_WIDTH: f32 = 400.0;
+const INFO_PANEL_HEIGHT: f32 = 110.0;
 
 pub struct GamePlugin;
 
@@ -66,46 +69,58 @@ fn catch_spaceship_just_landed_event_system(
         if scores.hi_score < scores.score {
             scores.hi_score = scores.score;
         }
-        commands.spawn((
-            Resettable,
-            TextScoringAfterLanding,
-            TextBundle::from_section(
-                points.to_string()
-                    + " x "
-                    + platform.factor.to_string().as_str()
-                    + " = "
-                    + new_score.to_string().as_str(),
-                TextStyle {
-                    font: assets.font_vt323.clone(),
-                    font_size: 60.0,
+        let box_size = Vec2::new(INFO_PANEL_WIDTH, INFO_PANEL_HEIGHT);
+        let box_position = Vec2::new(0.0, INFO_PANEL_Y_POSITION);
+        commands
+            .spawn((
+                StateScoped(GameState::Landing),
+                Resettable,
+                SpriteBundle {
+                    sprite: Sprite {
+                        color: BLACK_COLOR,
+                        custom_size: Some(Vec2::new(box_size.x, box_size.y)),
+                        ..default()
+                    },
+                    transform: Transform::from_translation(box_position.extend(11.0)),
                     ..default()
                 },
-            )
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                top: Val::Px(30.0),
-                left: Val::Px(88.0),
-                ..default()
-            }),
-        ));
-        commands.spawn((
-            Resettable,
-            TextScoringAfterLanding,
-            TextBundle::from_section(
-                "press enter key to continue",
-                TextStyle {
-                    font: assets.font_vt323.clone(),
-                    font_size: 30.0,
+            ))
+            .with_children(|builder| {
+                builder.spawn(Text2dBundle {
+                    text: Text::from_section(
+                        points.to_string()
+                            + " x "
+                            + platform.factor.to_string().as_str()
+                            + " = "
+                            + new_score.to_string().as_str(),
+                        TextStyle {
+                            font: assets.font_vt323.clone(),
+                            font_size: 60.0,
+                            color: Color::WHITE,
+                            ..default()
+                        },
+                    )
+                    .with_justify(JustifyText::Left),
+                    text_2d_bounds: Text2dBounds { size: box_size },
+                    transform: Transform::from_translation(Vec3::new(0.0, 20.0, 1.0)),
                     ..default()
-                },
-            )
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                top: Val::Px(80.0),
-                left: Val::Px(88.0),
-                ..default()
-            }),
-        ));
+                });
+                builder.spawn(Text2dBundle {
+                    text: Text::from_section(
+                        "press enter key to continue",
+                        TextStyle {
+                            font: assets.font_vt323.clone(),
+                            font_size: 30.0,
+                            color: Color::WHITE,
+                            ..default()
+                        },
+                    )
+                    .with_justify(JustifyText::Left),
+                    text_2d_bounds: Text2dBounds { size: box_size },
+                    transform: Transform::from_translation(Vec3::new(0.0, -20.0, 1.0)),
+                    ..default()
+                });
+            });
         if new_score > scores.get_available_fuel_quantity() as i32 {
             new_score = scores.get_available_fuel_quantity() as i32;
         }
@@ -124,8 +139,8 @@ fn catch_out_of_fuel_event_system(
     mut commands: Commands,
 ) {
     for _event in events_reader.read() {
-        let box_size = Vec2::new(300.0, 50.0);
-        let box_position = Vec2::new(0.0, WINDOW_HEIGHT / 4.0);
+        let box_size = Vec2::new(INFO_PANEL_WIDTH, INFO_PANEL_HEIGHT);
+        let box_position = Vec2::new(0.0, INFO_PANEL_Y_POSITION);
         commands
             .spawn((
                 StateScoped(GameState::Landing),
@@ -146,7 +161,7 @@ fn catch_out_of_fuel_event_system(
                         "Out of fuel",
                         TextStyle {
                             font: assets.font_vt323.clone(),
-                            font_size: 30.0,
+                            font_size: 60.0,
                             color: Color::WHITE,
                             ..default()
                         },
