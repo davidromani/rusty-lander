@@ -10,6 +10,7 @@ Changelog
 * fix "Out of fuel" message
 * better despawn "Out of fuel" info panel behaviour
 * spawn explosion sound effect on spaceship crashed
+* manage air scape and thruster sound effects on spaceship movement
 
 ##### Version 0.05.000 (2024-09-29)
 

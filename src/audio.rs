@@ -19,7 +19,8 @@ impl Plugin for AudioPlugin {
                     play_thruster_sound_effect_system,
                 )
                     .run_if(in_state(GameState::Landing)),
-            );
+            )
+            .add_systems(OnEnter(GameState::Crashed), pause_all_sound_effect_system);
     }
 }
 
@@ -72,6 +73,10 @@ fn play_air_scape_sound_effect_system(
                     sink.pause();
                 }
             }
+        } else {
+            if let Ok(sink) = sound_controller.get_single() {
+                sink.pause();
+            }
         }
     }
 }
@@ -109,6 +114,22 @@ fn play_thruster_sound_effect_system(
                     sink.pause();
                 }
             }
+        } else {
+            if let Ok(sink) = sound_controller.get_single() {
+                sink.pause();
+            }
         }
+    }
+}
+
+fn pause_all_sound_effect_system(
+    air_scape_sound_controller: Query<&AudioSink, With<AirScapeSoundEffect>>,
+    thruster_sound_controller: Query<&AudioSink, With<ThrusterSoundEffect>>,
+) {
+    if let Ok(air_scape_sink) = air_scape_sound_controller.get_single() {
+        air_scape_sink.pause();
+    }
+    if let Ok(thruster_sink) = thruster_sound_controller.get_single() {
+        thruster_sink.pause();
     }
 }
