@@ -96,13 +96,13 @@ fn play_thruster_sound_effect_system(
             }
             if action_state.just_pressed(&PlayerAction::MainThrusterMedium) {
                 if let Ok(sink) = sound_controller.get_single() {
-                    sink.set_volume(0.75);
+                    sink.set_volume(0.66);
                     sink.play();
                 }
             }
             if action_state.just_pressed(&PlayerAction::MainThrusterSmall) {
                 if let Ok(sink) = sound_controller.get_single() {
-                    sink.set_volume(0.5);
+                    sink.set_volume(0.33);
                     sink.play();
                 }
             }
