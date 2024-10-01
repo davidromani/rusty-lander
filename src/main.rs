@@ -1,4 +1,5 @@
 mod asset_loader;
+mod audio;
 mod camera;
 mod collider;
 mod debug;
@@ -22,6 +23,7 @@ use svg::node::element::tag::Path;
 use svg::parser::Event;
 
 use asset_loader::AssetsLoaderPlugin;
+use audio::AudioPlugin;
 use camera::CameraPlugin;
 use collider::ColliderPlugin;
 use debug::DebugPlugin;
@@ -111,6 +113,7 @@ fn main() {
     app.add_plugins(StatesPlugin)
         .add_plugins(MenuPlugin)
         .add_plugins(AssetsLoaderPlugin)
+        .add_plugins(AudioPlugin)
         .add_plugins(CameraPlugin)
         .add_plugins(DebugPlugin)
         .add_plugins(FuelPlugin)

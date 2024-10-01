@@ -5,7 +5,7 @@ use leafwing_input_manager::prelude::*;
 
 use crate::asset_loader::AudioAssets;
 use crate::game::{InGameSet, OutOfFuelEvent, Scores};
-use crate::spaceship::{AirScapeSoundEffect, PlayerAction, ThrusterSoundEffect};
+use crate::spaceship::{PlayerAction, ThrusterSoundEffect};
 use crate::state::GameState;
 
 const BIG_THRUST: f32 = 0.75;
@@ -147,22 +147,6 @@ fn movement_system(
     for (action_state, movement_acceleration, jump_impulse, mut linear_velocity) in &mut controllers
     {
         if scores.fuel_quantity > 0.0 {
-            if action_state.just_pressed(&PlayerAction::LeftThruster)
-                || action_state.just_pressed(&PlayerAction::RightThruster)
-            {
-                commands.spawn((
-                    AirScapeSoundEffect,
-                    AudioBundle {
-                        source: audio_assets.ship_air_scape.clone(),
-                        settings: PlaybackSettings {
-                            mode: PlaybackMode::Despawn,
-                            paused: false,
-                            ..default()
-                        },
-                        ..default()
-                    },
-                ));
-            }
             if action_state.just_pressed(&PlayerAction::MainThrusterBig)
                 || action_state.just_pressed(&PlayerAction::MainThrusterMedium)
                 || action_state.just_pressed(&PlayerAction::MainThrusterSmall)
