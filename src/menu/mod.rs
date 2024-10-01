@@ -239,7 +239,47 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                         },
                     ),
                     TextSection::new(
-                        "(github.com/davidromani)",
+                        "github.com/davidromani",
+                        TextStyle {
+                            font: assets.font_fira.clone(),
+                            font_size: 20.0,
+                            color: GREY_COLOR,
+                        },
+                    ),
+                ]),
+                ..default()
+            },));
+            parent.spawn((TextBundle {
+                style: Style {
+                    margin: UiRect::all(Val::Px(10.0)),
+                    ..default()
+                },
+                text: Text::from_section(
+                    "Pixel Art",
+                    TextStyle {
+                        font: assets.font_kenvector.clone(),
+                        font_size: 50.0,
+                        color: PRIMARY_COLOR,
+                    },
+                ),
+                ..default()
+            },));
+            parent.spawn((TextBundle {
+                style: Style {
+                    margin: UiRect::all(Val::Px(10.0)),
+                    ..default()
+                },
+                text: Text::from_sections([
+                    TextSection::new(
+                        "Adan Príncep ",
+                        TextStyle {
+                            font: assets.font_fira.clone(),
+                            font_size: 35.0,
+                            color: Color::WHITE,
+                        },
+                    ),
+                    TextSection::new(
+                        "www.instagram.com/adan_princep",
                         TextStyle {
                             font: assets.font_fira.clone(),
                             font_size: 20.0,
@@ -279,7 +319,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                         },
                     ),
                     TextSection::new(
-                        "(github.com/BorisBoutillier)",
+                        "github.com/BorisBoutillier",
                         TextStyle {
                             font: assets.font_fira.clone(),
                             font_size: 20.0,
