@@ -10,7 +10,11 @@ impl Plugin for AssetsLoaderPlugin {
             .init_state::<SceneAssetState>()
             .add_systems(
                 OnEnter(AppState::Init),
-                (load_assets_system, load_ui_assets_system),
+                (
+                    load_assets_system,
+                    load_ui_assets_system,
+                    load_audio_assets_system,
+                ),
             )
             .add_systems(
                 Update,
@@ -39,7 +43,6 @@ pub fn check_assets(
         return;
     }
     // all assets have been loaded
-    info!("transitioning from AppState::Init to -> AppState::Setup");
     state.set(SceneAssetState::Loaded);
     app_state.set(AppState::Setup);
 }
@@ -49,19 +52,24 @@ pub fn load_assets_system(mut scene_assets: ResMut<SceneAssets>, asset_server: R
         rusty_planet: asset_server.load("rusty_planet.jpg"),
         background: asset_server.load("background_space.png"),
         landscape: asset_server.load("landscape.png"),
-        //landscape: asset_server.load("terrain.png"),
         lander: asset_server.load("spaceship.png"),
-        // lander: asset_server.load("lander.png"),
         explosion: asset_server.load("explosion.png"),
     }
 }
 
 fn load_ui_assets_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.insert_resource(UiAssets {
-        // font_kenvector: asset_server.load("fonts/kenvector_future.ttf"),
         font_kenvector: asset_server.load("fonts/vt323_regular.ttf"),
         font_fira: asset_server.load("fonts/fira_sans_bold.ttf"),
         font_vt323: asset_server.load("fonts/vt323_regular.ttf"),
+    });
+}
+
+fn load_audio_assets_system(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.insert_resource(AudioAssets {
+        ship_air_scape: asset_server.load("audios/ship_air_scape.ogg"),
+        ship_thruster: asset_server.load("audios/ship_thruster.ogg"),
+        ship_explosion: asset_server.load("audios/ship_explosion.ogg"),
     });
 }
 
@@ -80,6 +88,13 @@ pub struct UiAssets {
     pub font_kenvector: Handle<Font>,
     pub font_fira: Handle<Font>,
     pub font_vt323: Handle<Font>,
+}
+
+#[derive(Debug, Resource)]
+pub struct AudioAssets {
+    pub ship_air_scape: Handle<AudioSource>,
+    pub ship_thruster: Handle<AudioSource>,
+    pub ship_explosion: Handle<AudioSource>,
 }
 
 // States

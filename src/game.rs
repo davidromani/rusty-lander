@@ -2,6 +2,7 @@ use avian2d::prelude::{GravityScale, LinearVelocity};
 use bevy::app::AppExit;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
+use bevy::text::Text2dBounds;
 use rand::prelude::*;
 use std::f32::consts::TAU;
 
@@ -10,8 +11,13 @@ use crate::collider::Platform;
 use crate::menu::BLACK_COLOR;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
+use crate::WINDOW_HEIGHT;
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
+const INFO_PANEL_WIDTH: f32 = 400.0;
+const INFO_PANEL_HEIGHT: f32 = 110.0;
+const INFO_PANEL_SIZE: Vec2 = Vec2::new(INFO_PANEL_WIDTH, INFO_PANEL_HEIGHT);
+const INFO_PANEL_POSITION: Vec2 = Vec2::new(0.0, WINDOW_HEIGHT / 4.0);
 
 pub struct GamePlugin;
 
@@ -64,46 +70,60 @@ fn catch_spaceship_just_landed_event_system(
         if scores.hi_score < scores.score {
             scores.hi_score = scores.score;
         }
-        commands.spawn((
-            Resettable,
-            TextScoringAfterLanding,
-            TextBundle::from_section(
-                points.to_string()
-                    + " x "
-                    + platform.factor.to_string().as_str()
-                    + " = "
-                    + new_score.to_string().as_str(),
-                TextStyle {
-                    font: assets.font_vt323.clone(),
-                    font_size: 60.0,
+        commands
+            .spawn((
+                StateScoped(GameState::Landing),
+                Resettable,
+                SpriteBundle {
+                    sprite: Sprite {
+                        color: BLACK_COLOR,
+                        custom_size: Some(INFO_PANEL_SIZE),
+                        ..default()
+                    },
+                    transform: Transform::from_translation(INFO_PANEL_POSITION.extend(11.0)),
                     ..default()
                 },
-            )
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                top: Val::Px(30.0),
-                left: Val::Px(88.0),
-                ..default()
-            }),
-        ));
-        commands.spawn((
-            Resettable,
-            TextScoringAfterLanding,
-            TextBundle::from_section(
-                "press enter key to continue",
-                TextStyle {
-                    font: assets.font_vt323.clone(),
-                    font_size: 30.0,
+            ))
+            .with_children(|builder| {
+                builder.spawn(Text2dBundle {
+                    text: Text::from_section(
+                        points.to_string()
+                            + " x "
+                            + platform.factor.to_string().as_str()
+                            + " = "
+                            + new_score.to_string().as_str(),
+                        TextStyle {
+                            font: assets.font_vt323.clone(),
+                            font_size: 60.0,
+                            color: Color::WHITE,
+                            ..default()
+                        },
+                    )
+                    .with_justify(JustifyText::Left),
+                    text_2d_bounds: Text2dBounds {
+                        size: INFO_PANEL_SIZE,
+                    },
+                    transform: Transform::from_translation(Vec3::new(0.0, 20.0, 1.0)),
                     ..default()
-                },
-            )
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                top: Val::Px(80.0),
-                left: Val::Px(88.0),
-                ..default()
-            }),
-        ));
+                });
+                builder.spawn(Text2dBundle {
+                    text: Text::from_section(
+                        "press enter key to continue",
+                        TextStyle {
+                            font: assets.font_vt323.clone(),
+                            font_size: 30.0,
+                            color: Color::WHITE,
+                            ..default()
+                        },
+                    )
+                    .with_justify(JustifyText::Left),
+                    text_2d_bounds: Text2dBounds {
+                        size: INFO_PANEL_SIZE,
+                    },
+                    transform: Transform::from_translation(Vec3::new(0.0, -20.0, 1.0)),
+                    ..default()
+                });
+            });
         if new_score > scores.get_available_fuel_quantity() as i32 {
             new_score = scores.get_available_fuel_quantity() as i32;
         }
@@ -122,24 +142,38 @@ fn catch_out_of_fuel_event_system(
     mut commands: Commands,
 ) {
     for _event in events_reader.read() {
-        commands.spawn((
-            StateScoped(GameState::Landing),
-            Resettable,
-            TextBundle::from_section(
-                "Out of fuel",
-                TextStyle {
-                    font: assets.font_vt323.clone(),
-                    font_size: 30.0,
+        commands
+            .spawn((
+                Resettable,
+                SpriteBundle {
+                    sprite: Sprite {
+                        color: BLACK_COLOR,
+                        custom_size: Some(INFO_PANEL_SIZE),
+                        ..default()
+                    },
+                    transform: Transform::from_translation(INFO_PANEL_POSITION.extend(11.0)),
                     ..default()
                 },
-            )
-            .with_style(Style {
-                position_type: PositionType::Absolute,
-                top: Val::Px(80.0),
-                left: Val::Px(488.0),
-                ..default()
-            }),
-        ));
+            ))
+            .with_children(|builder| {
+                builder.spawn(Text2dBundle {
+                    text: Text::from_section(
+                        "Out of fuel",
+                        TextStyle {
+                            font: assets.font_vt323.clone(),
+                            font_size: 60.0,
+                            color: Color::WHITE,
+                            ..default()
+                        },
+                    )
+                    .with_justify(JustifyText::Left),
+                    text_2d_bounds: Text2dBounds {
+                        size: INFO_PANEL_SIZE,
+                    },
+                    transform: Transform::from_translation(Vec3::Z),
+                    ..default()
+                });
+            });
     }
 }
 
@@ -372,9 +406,6 @@ struct TextScore;
 
 #[derive(Component)]
 struct TextHiScore;
-
-#[derive(Component)]
-pub struct TextScoringAfterLanding;
 
 #[derive(Component)]
 pub struct Resettable;

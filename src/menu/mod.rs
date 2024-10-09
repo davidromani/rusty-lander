@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::asset_loader::UiAssets;
-use crate::game::{Scores, FUEL_QUANTITY};
+use crate::game::{Resettable, Scores, FUEL_QUANTITY};
 use crate::state::{AppState, GameState};
 use crate::MAIN_TITLE;
 
@@ -84,10 +84,14 @@ fn spawn_main_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
 }
 
 fn spawn_game_over_menu(
-    mut commands: Commands,
+    resettable_text_query: Query<Entity, With<Resettable>>,
     assets: ResMut<UiAssets>,
+    mut commands: Commands,
     mut score: ResMut<Scores>,
 ) {
+    for entity in resettable_text_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
     let entity = MenuHandler {
         main_text: "Game Over".into(),
         main_text_color: Color::srgb_u8(0xAA, 0x22, 0x22),
@@ -235,7 +239,87 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                         },
                     ),
                     TextSection::new(
-                        "(github.com/davidromani)",
+                        "github.com/davidromani",
+                        TextStyle {
+                            font: assets.font_fira.clone(),
+                            font_size: 20.0,
+                            color: GREY_COLOR,
+                        },
+                    ),
+                ]),
+                ..default()
+            },));
+            parent.spawn((TextBundle {
+                style: Style {
+                    margin: UiRect::all(Val::Px(10.0)),
+                    ..default()
+                },
+                text: Text::from_section(
+                    "Pixel Art",
+                    TextStyle {
+                        font: assets.font_kenvector.clone(),
+                        font_size: 50.0,
+                        color: PRIMARY_COLOR,
+                    },
+                ),
+                ..default()
+            },));
+            parent.spawn((TextBundle {
+                style: Style {
+                    margin: UiRect::all(Val::Px(10.0)),
+                    ..default()
+                },
+                text: Text::from_sections([
+                    TextSection::new(
+                        "Adan Príncep ",
+                        TextStyle {
+                            font: assets.font_fira.clone(),
+                            font_size: 35.0,
+                            color: Color::WHITE,
+                        },
+                    ),
+                    TextSection::new(
+                        "www.instagram.com/adan_princep",
+                        TextStyle {
+                            font: assets.font_fira.clone(),
+                            font_size: 20.0,
+                            color: GREY_COLOR,
+                        },
+                    ),
+                ]),
+                ..default()
+            },));
+            parent.spawn((TextBundle {
+                style: Style {
+                    margin: UiRect::all(Val::Px(10.0)),
+                    ..default()
+                },
+                text: Text::from_section(
+                    "Music & Sound Effects",
+                    TextStyle {
+                        font: assets.font_kenvector.clone(),
+                        font_size: 50.0,
+                        color: PRIMARY_COLOR,
+                    },
+                ),
+                ..default()
+            },));
+            parent.spawn((TextBundle {
+                style: Style {
+                    margin: UiRect::all(Val::Px(10.0)),
+                    ..default()
+                },
+                text: Text::from_sections([
+                    TextSection::new(
+                        "Tomàs Simón ",
+                        TextStyle {
+                            font: assets.font_fira.clone(),
+                            font_size: 35.0,
+                            color: Color::WHITE,
+                        },
+                    ),
+                    TextSection::new(
+                        "ca.tomasimon.com",
                         TextStyle {
                             font: assets.font_fira.clone(),
                             font_size: 20.0,
@@ -275,7 +359,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                         },
                     ),
                     TextSection::new(
-                        "(github.com/BorisBoutillier)",
+                        "github.com/BorisBoutillier",
                         TextStyle {
                             font: assets.font_fira.clone(),
                             font_size: 20.0,

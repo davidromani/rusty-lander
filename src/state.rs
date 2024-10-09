@@ -4,6 +4,7 @@ use bevy::prelude::*;
 use crate::game::Resettable;
 use crate::spaceship::{Player, INITIAL_SPACESHIP_POSITION};
 
+// States
 #[derive(States, Debug, Copy, Clone, Hash, Eq, PartialEq, Default)]
 pub enum AppState {
     #[default]
@@ -47,7 +48,6 @@ impl Plugin for StatesPlugin {
 
 // Systems
 fn transition_app_setup_to_menu_system(mut state: ResMut<NextState<AppState>>) {
-    info!("transitioning from AppState::Setup to -> AppState::Menu");
     state.set(AppState::Menu);
 }
 
@@ -60,7 +60,6 @@ fn transition_game_setup_to_running_system(
     mut spaceship_visibility_query: Query<&mut Visibility, With<Player>>,
     mut physics_time: ResMut<Time<Physics>>,
 ) {
-    info!("transitioning from GameState::Setup to -> GameState::Landing");
     physics_time.unpause();
     for entity in resettable_text_query.iter() {
         commands.entity(entity).despawn_recursive();

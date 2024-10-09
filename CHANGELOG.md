@@ -1,13 +1,19 @@
 Changelog
 =========
 
-##### Version 0.06.001 (WIP)
+##### Version 0.07.000 (WIP)
 
 * keep working
 
-##### Version 0.06.000 (WIP)
+##### Version 0.06.000 (2024-10-09)
 
-* keep working
+* fix "Out of fuel" message
+* better despawn "Out of fuel" info panel behaviour
+* spawn explosion sound effect on spaceship crashed
+* manage air scape and thruster sound effects on spaceship movement
+* add rust to spaceship sprite
+* improve landscape image
+* add pixel art & sound FX credits
 
 ##### Version 0.05.000 (2024-09-29)
 

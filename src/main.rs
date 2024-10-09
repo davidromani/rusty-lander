@@ -1,4 +1,5 @@
 mod asset_loader;
+mod audio;
 mod camera;
 mod collider;
 mod debug;
@@ -22,6 +23,7 @@ use svg::node::element::tag::Path;
 use svg::parser::Event;
 
 use asset_loader::AssetsLoaderPlugin;
+use audio::AudioPlugin;
 use camera::CameraPlugin;
 use collider::ColliderPlugin;
 use debug::DebugPlugin;
@@ -36,8 +38,63 @@ use speedometer::SpeedometerPlugin;
 use state::StatesPlugin;
 
 const MAIN_TITLE: &str = "Rusty Lander";
+const WINDOW_WIDTH: f32 = 1024.0;
+const WINDOW_HEIGHT: f32 = 720.0;
 
 fn main() {
+    let mut app = App::new();
+    // Bevy, Avian2d & Leafwing plugins
+    app.add_plugins((
+        DefaultPlugins
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: MAIN_TITLE.to_string(),
+                    resolution: WindowResolution::new(WINDOW_WIDTH, WINDOW_HEIGHT),
+                    resizable: false,
+                    focused: true,
+                    ..default()
+                }),
+                ..default()
+            })
+            .set(ImagePlugin::default_nearest()),
+        PhysicsPlugins::default().with_length_unit(20.0),
+        InputManagerPlugin::<MenuAction>::default(),
+    ));
+    // Enable Avian2d debug renders when compiled in debug mode
+    #[cfg(debug_assertions)]
+    app.add_plugins(PhysicsDebugPlugin::default());
+    // Resources
+    app.insert_resource(Gravity(Vector::NEG_Y * 58.0))
+        .insert_resource(get_world_bounds_resource_2d());
+    // System ordering
+    app.configure_sets(
+        FixedUpdate,
+        (
+            InGameSet::Collisions,
+            InGameSet::Physics,
+            InGameSet::SpeedBar,
+        )
+            .chain(),
+    );
+    // Custom plugins
+    app.add_plugins(StatesPlugin)
+        .add_plugins(MenuPlugin)
+        .add_plugins(AssetsLoaderPlugin)
+        .add_plugins(AudioPlugin)
+        .add_plugins(CameraPlugin)
+        .add_plugins(DebugPlugin)
+        .add_plugins(FuelPlugin)
+        .add_plugins(ParticlesThrusterPlugin)
+        .add_plugins(SpeedometerPlugin)
+        .add_plugins(ColliderPlugin)
+        .add_plugins(SpaceshipPlugin)
+        .add_plugins(GamePlugin)
+        .add_plugins(CharacterControllerPlugin)
+        .add_plugins(ExplosionPlugin)
+        .run();
+}
+
+fn get_world_bounds_resource_2d() -> WorldBoundsVertices2D {
     let mut current_point: Vec2 = Vec2::new(0.0, 0.0);
     let mut world_bounds_resource_2d = WorldBoundsVertices2D { data: vec![] };
     let path = "assets/svg/landscape.svg";
@@ -71,53 +128,5 @@ fn main() {
             _ => {}
         }
     }
-    let mut app = App::new();
-    // Bevy, Avian2d & Leafwing plugins
-    app.add_plugins((
-        DefaultPlugins
-            .set(WindowPlugin {
-                primary_window: Some(Window {
-                    title: MAIN_TITLE.to_string(),
-                    resolution: WindowResolution::new(1024.0, 720.0),
-                    resizable: false,
-                    focused: true,
-                    ..default()
-                }),
-                ..default()
-            })
-            .set(ImagePlugin::default_nearest()),
-        PhysicsPlugins::default().with_length_unit(20.0),
-        InputManagerPlugin::<MenuAction>::default(),
-    ));
-    // Enable Avian2d debug renders when compiled in debug mode
-    #[cfg(debug_assertions)]
-    app.add_plugins(PhysicsDebugPlugin::default());
-    // Resources
-    app.insert_resource(Gravity(Vector::NEG_Y * 58.0))
-        .insert_resource(world_bounds_resource_2d);
-    // System ordering
-    app.configure_sets(
-        FixedUpdate,
-        (
-            InGameSet::Collisions,
-            InGameSet::Physics,
-            InGameSet::SpeedBar,
-        )
-            .chain(),
-    );
-    // Custom plugins
-    app.add_plugins(StatesPlugin)
-        .add_plugins(MenuPlugin)
-        .add_plugins(AssetsLoaderPlugin)
-        .add_plugins(CameraPlugin)
-        .add_plugins(DebugPlugin)
-        .add_plugins(FuelPlugin)
-        .add_plugins(ParticlesThrusterPlugin)
-        .add_plugins(SpeedometerPlugin)
-        .add_plugins(ColliderPlugin)
-        .add_plugins(SpaceshipPlugin)
-        .add_plugins(GamePlugin)
-        .add_plugins(CharacterControllerPlugin)
-        .add_plugins(ExplosionPlugin)
-        .run();
+    world_bounds_resource_2d
 }

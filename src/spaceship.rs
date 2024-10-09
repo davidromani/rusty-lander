@@ -88,3 +88,9 @@ pub struct LeftHorizontalThrusterEffect;
 
 #[derive(Component)]
 pub struct RightHorizontalThrusterEffect;
+
+#[derive(Component)]
+pub struct ThrusterSoundEffect;
+
+#[derive(Component)]
+pub struct AirScapeSoundEffect;
