@@ -1,4 +1,4 @@
-Rusty Lander v0.6
+Rusty Lander v0.7
 =================
 
 A Jupiter Lander video game remake made with Rust & Bevy ECS game engine.
