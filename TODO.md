@@ -7,3 +7,4 @@ TODO
 * add shake camera effect on spaceship crash
 * add gamepad controller
 * add music
+* add Windows compiled binary
