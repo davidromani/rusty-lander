@@ -4,6 +4,8 @@ Changelog
 ##### Version 0.07.000 (WIP)
 
 * keep working
+* spawn intro music audio bundle on menu
+* improve ship_air_scape sfx loop effect
 
 ##### Version 0.06.000 (2024-10-09)
 
