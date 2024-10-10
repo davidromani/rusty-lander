@@ -16,7 +16,7 @@ A Jupiter Lander video game remake made with Rust & Bevy ECS game engine.
 ```bash
 $ git clone git@github.com:davidromani/rusty-lander.git
 $ cd rusty-lander
-$ cargo run
+$ cargo run --release
 ```
 
 ### Game instructions
