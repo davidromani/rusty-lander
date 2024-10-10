@@ -70,6 +70,7 @@ fn load_audio_assets_system(mut commands: Commands, asset_server: Res<AssetServe
         ship_air_scape: asset_server.load("audios/ship_air_scape.ogg"),
         ship_thruster: asset_server.load("audios/ship_thruster.ogg"),
         ship_explosion: asset_server.load("audios/ship_explosion.ogg"),
+        music_intro: asset_server.load("audios/music_intro.ogg"),
     });
 }
 
@@ -95,6 +96,7 @@ pub struct AudioAssets {
     pub ship_air_scape: Handle<AudioSource>,
     pub ship_thruster: Handle<AudioSource>,
     pub ship_explosion: Handle<AudioSource>,
+    pub music_intro: Handle<AudioSource>,
 }
 
 // States

@@ -1,9 +1,16 @@
 Changelog
 =========
 
-##### Version 0.07.000 (WIP)
+##### Version 0.07.001 (WIP)
 
 * keep working
+
+##### Version 0.07.000 (2024-10-10)
+
+* fix un-paused sfx on ship landing problem
+* spawn intro music audio bundle on menu
+* improve ship_air_scape sfx loop effect
+* add CREDITS.md
 
 ##### Version 0.06.000 (2024-10-09)
 

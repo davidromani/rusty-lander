@@ -1,17 +1,17 @@
+use crate::asset_loader::{AudioAssets, SceneAssets, UiAssets};
+use crate::collider::Platform;
+use crate::menu::BLACK_COLOR;
+use crate::spaceship::{AirScapeSoundEffect, Player, ThrusterSoundEffect};
+use crate::state::{AppState, GameState};
+use crate::WINDOW_HEIGHT;
 use avian2d::prelude::{GravityScale, LinearVelocity};
 use bevy::app::AppExit;
+use bevy::audio::PlaybackMode;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
 use bevy::text::Text2dBounds;
 use rand::prelude::*;
 use std::f32::consts::TAU;
-
-use crate::asset_loader::{SceneAssets, UiAssets};
-use crate::collider::Platform;
-use crate::menu::BLACK_COLOR;
-use crate::spaceship::Player;
-use crate::state::{AppState, GameState};
-use crate::WINDOW_HEIGHT;
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
 const INFO_PANEL_WIDTH: f32 = 400.0;
@@ -33,7 +33,7 @@ impl Plugin for GamePlugin {
         .add_event::<OutOfFuelEvent>()
         .add_systems(
             OnEnter(AppState::Menu),
-            spawn_rusty_planet_menu_background_image_system,
+            spawn_rusty_planet_menu_background_image_and_intro_music_system,
         )
         .add_systems(
             OnEnter(AppState::Game),
@@ -56,11 +56,19 @@ impl Plugin for GamePlugin {
 // Systems
 fn catch_spaceship_just_landed_event_system(
     assets: ResMut<UiAssets>,
+    air_scape_sound_controller: Query<&AudioSink, With<AirScapeSoundEffect>>,
+    thruster_sound_controller: Query<&AudioSink, With<ThrusterSoundEffect>>,
     mut events_reader: EventReader<SpaceshipJustLandedEvent>,
     mut spaceship_gravity_query: Query<&mut GravityScale, With<Player>>,
     mut commands: Commands,
     mut scores: ResMut<Scores>,
 ) {
+    if let Ok(sink) = air_scape_sound_controller.get_single() {
+        sink.pause();
+    }
+    if let Ok(sink) = thruster_sound_controller.get_single() {
+        sink.pause();
+    }
     for event in events_reader.read() {
         let platform = event.platform.clone();
         let linear_velocity = event.linear_velocity.clone();
@@ -306,9 +314,10 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
     ));
 }
 
-fn spawn_rusty_planet_menu_background_image_system(
+fn spawn_rusty_planet_menu_background_image_and_intro_music_system(
     mut commands: Commands,
     scene_assets: Res<SceneAssets>,
+    audio_assets: Res<AudioAssets>,
 ) {
     commands.spawn((
         StateScoped(AppState::Menu),
@@ -316,6 +325,14 @@ fn spawn_rusty_planet_menu_background_image_system(
             texture: scene_assets.rusty_planet.clone(),
             transform: Transform {
                 scale: Vec3::new(0.85, 0.84, 1.0),
+                ..default()
+            },
+            ..default()
+        },
+        AudioBundle {
+            source: audio_assets.music_intro.clone(),
+            settings: PlaybackSettings {
+                mode: PlaybackMode::Loop,
                 ..default()
             },
             ..default()
