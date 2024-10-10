@@ -5,7 +5,7 @@ Changelog
 
 * keep working
 
-##### Version 0.07.000 (WIP)
+##### Version 0.07.000 (2024-10-10)
 
 * fix un-paused sfx on ship landing problem
 * spawn intro music audio bundle on menu
