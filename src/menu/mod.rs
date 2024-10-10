@@ -319,7 +319,7 @@ fn spawn_credits_menu(mut commands: Commands, assets: ResMut<UiAssets>) {
                         },
                     ),
                     TextSection::new(
-                        "ca.tomasimon.com",
+                        "www.tomasimon.com",
                         TextStyle {
                             font: assets.font_fira.clone(),
                             font_size: 20.0,

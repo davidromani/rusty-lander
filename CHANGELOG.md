@@ -6,6 +6,7 @@ Changelog
 * keep working
 * spawn intro music audio bundle on menu
 * improve ship_air_scape sfx loop effect
+* add CREDITS.md
 
 ##### Version 0.06.000 (2024-10-09)
 
