@@ -1,7 +1,7 @@
 use crate::asset_loader::{AudioAssets, SceneAssets, UiAssets};
 use crate::collider::Platform;
 use crate::menu::BLACK_COLOR;
-use crate::spaceship::Player;
+use crate::spaceship::{AirScapeSoundEffect, Player, ThrusterSoundEffect};
 use crate::state::{AppState, GameState};
 use crate::WINDOW_HEIGHT;
 use avian2d::prelude::{GravityScale, LinearVelocity};
@@ -56,11 +56,19 @@ impl Plugin for GamePlugin {
 // Systems
 fn catch_spaceship_just_landed_event_system(
     assets: ResMut<UiAssets>,
+    air_scape_sound_controller: Query<&AudioSink, With<AirScapeSoundEffect>>,
+    thruster_sound_controller: Query<&AudioSink, With<ThrusterSoundEffect>>,
     mut events_reader: EventReader<SpaceshipJustLandedEvent>,
     mut spaceship_gravity_query: Query<&mut GravityScale, With<Player>>,
     mut commands: Commands,
     mut scores: ResMut<Scores>,
 ) {
+    if let Ok(sink) = air_scape_sound_controller.get_single() {
+        sink.pause();
+    }
+    if let Ok(sink) = thruster_sound_controller.get_single() {
+        sink.pause();
+    }
     for event in events_reader.read() {
         let platform = event.platform.clone();
         let linear_velocity = event.linear_velocity.clone();
