@@ -1,6 +1,6 @@
 [package]
 name = "rusty-lander"
-version = "0.8.2"
+version = "0.8.3"
 edition = "2021"
 license = "MIT"
 authors = ["David Romaní <david@flux.cat>"]
@@ -50,9 +50,6 @@ strip = "debuginfo"
 opt-level = 3
 inherits = "release"
 strip = "none"
-
-[target.wasm32-unknown-unknown]
-runner = "wasm-server-runner"
 
 [lints.clippy]
 too_many_arguments = "allow"

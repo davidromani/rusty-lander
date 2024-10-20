@@ -1,4 +1,4 @@
-Rusty Lander v0.8.2
+Rusty Lander v0.8.3
 ===================
 
 A Jupiter Lander video game remake made with Rust & Bevy ECS game engine.

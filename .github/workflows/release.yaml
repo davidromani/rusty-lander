@@ -83,19 +83,19 @@ jobs:
     strategy:
       matrix:
         include:
-          - platform: web
-            targets: wasm32-unknown-unknown
-            profile: release
-            binary_ext: .wasm
-            package_ext: .zip
-            runner: ubuntu-latest
-
-          #          - platform: linux
-          #            targets: x86_64-unknown-linux-gnu
-          #            profile: release-native
-          #            features: bevy/wayland
+          #          - platform: web
+          #            targets: wasm32-unknown-unknown
+          #            profile: release
+          #            binary_ext: .wasm
           #            package_ext: .zip
           #            runner: ubuntu-latest
+
+          - platform: linux
+            targets: x86_64-unknown-linux-gnu
+            profile: release-native
+            features: bevy/wayland
+            package_ext: .zip
+            runner: ubuntu-latest
 
           - platform: windows
             targets: x86_64-pc-windows-msvc
@@ -104,12 +104,13 @@ jobs:
             package_ext: .zip
             runner: windows-latest
 
-    #          - platform: macos
-    #            targets: x86_64-apple-darwin aarch64-apple-darwin
-    #            profile: release-native
-    #            app_suffix: .app/Contents/MacOS
-    #            package_ext: .dmg
-    #            runner: macos-latest
+          - platform: macos
+            targets: x86_64-apple-darwin aarch64-apple-darwin
+            profile: release-native
+            app_suffix: .app/Contents/MacOS
+            package_ext: .dmg
+            runner: macos-latest
+
     runs-on: ${{ matrix.runner }}
     permissions:
       # Required to create a GitHub release: https://docs.github.com/en/rest/releases/releases#create-a-release
