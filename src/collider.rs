@@ -142,7 +142,7 @@ fn player_landed_collisions_system(
     mut spaceship_just_landed_spawn_events: EventWriter<SpaceshipJustLandedEvent>,
     mut physics_time: ResMut<Time<Physics>>,
 ) {
-    for (colliding_entities, linear_velocity, transform, is_ready_to_land) in &query {
+    for (colliding_entities, &linear_velocity, transform, is_ready_to_land) in &query {
         if !colliding_entities.is_empty() {
             physics_time.pause();
             if !is_ready_to_land {
@@ -161,7 +161,7 @@ fn player_landed_collisions_system(
                         );
                         spaceship_just_landed_spawn_events.send(SpaceshipJustLandedEvent {
                             platform: platform.clone(),
-                            linear_velocity: linear_velocity.clone(),
+                            linear_velocity,
                         });
                         game_state.set(GameState::Landed);
                     } else {
