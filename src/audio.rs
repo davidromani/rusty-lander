@@ -35,7 +35,6 @@ fn spawn_audio_entities_system(audio_assets: Res<AudioAssets>, mut commands: Com
                 paused: true,
                 ..default()
             },
-            ..default()
         },
     ));
     commands.spawn((
@@ -47,7 +46,6 @@ fn spawn_audio_entities_system(audio_assets: Res<AudioAssets>, mut commands: Com
                 paused: true,
                 ..default()
             },
-            ..default()
         },
     ));
 }

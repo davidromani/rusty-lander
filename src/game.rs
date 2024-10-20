@@ -71,7 +71,7 @@ fn catch_spaceship_just_landed_event_system(
     }
     for event in events_reader.read() {
         let platform = event.platform.clone();
-        let linear_velocity = event.linear_velocity.clone();
+        let linear_velocity = event.linear_velocity;
         let points = (14.57 * linear_velocity.y) as i32 + 720;
         let mut new_score = platform.factor * points;
         scores.score += new_score;
@@ -104,7 +104,6 @@ fn catch_spaceship_just_landed_event_system(
                             font: assets.font_vt323.clone(),
                             font_size: 60.0,
                             color: Color::WHITE,
-                            ..default()
                         },
                     )
                     .with_justify(JustifyText::Left),
@@ -121,7 +120,6 @@ fn catch_spaceship_just_landed_event_system(
                             font: assets.font_vt323.clone(),
                             font_size: 30.0,
                             color: Color::WHITE,
-                            ..default()
                         },
                     )
                     .with_justify(JustifyText::Left),
@@ -171,7 +169,6 @@ fn catch_out_of_fuel_event_system(
                             font: assets.font_vt323.clone(),
                             font_size: 60.0,
                             color: Color::WHITE,
-                            ..default()
                         },
                     )
                     .with_justify(JustifyText::Left),
@@ -335,7 +332,6 @@ fn spawn_rusty_planet_menu_background_image_and_intro_music_system(
                 mode: PlaybackMode::Loop,
                 ..default()
             },
-            ..default()
         },
     ));
 }

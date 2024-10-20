@@ -58,7 +58,6 @@ fn catch_explosion_event_system(
                     mode: PlaybackMode::Despawn,
                     ..default()
                 },
-                ..default()
             },
             Explosion {
                 timer: Timer::from_seconds(duration, TimerMode::Once),
