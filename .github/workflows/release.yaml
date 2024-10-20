@@ -17,7 +17,7 @@ on:
 # Configure the release workflow by editing these values.
 env:
   # The base filename of the binary produced by `cargo build`.
-  cargo_build_binary_name: soul_bomb_monster_hunt
+  cargo_build_binary_name: rusty-lander
 
   # The path to the assets directory.
   assets_path: assets
@@ -27,7 +27,7 @@ env:
 
   # The itch.io project to upload to in the format `user-name/project-name`.
   # There will be no upload to itch.io if this is commented out.
-  upload_to_itch: rabbival/soul-bomb-monster-hunt-bevy-spooky-jam-entry
+  upload_to_itch: davidromani/rusty-lander
 
   ############
   # ADVANCED #
@@ -36,27 +36,27 @@ env:
   # The ID of the app produced by this workflow.
   # Applies to macOS releases.
   # Must contain only A-Z, a-z, 0-9, hyphen, and period: https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundleidentifier
-  app_id: rabbival.soul-bomb-monster-hunt
+  app_id: davidromani.rusty-lander
 
   # The base filename of the binary in the package produced by this workflow.
   # Applies to Windows, macOS, and Linux releases.
   # Defaults to `cargo_build_binary_name` if commented out.
-  app_binary_name: soul_bomb_monster_hunt
+  app_binary_name: rusty-lander
 
   # The name of the `.zip` or `.dmg` file produced by this workflow.
   # Defaults to `app_binary_name` if commented out.
-  app_package_name: soul-bomb-monster-hunt
+  app_package_name: rusty-lander
 
   # The display name of the app produced by this workflow.
   # Applies to macOS releases.
   # Defaults to `app_package_name` if commented out.
-  app_display_name: Soul Bomb Monster Hunt
+  app_display_name: Rusty Lander
 
   # The short display name of the app produced by this workflow.
   # Applies to macOS releases.
   # Must be 15 or fewer characters: https://developer.apple.com/documentation/bundleresources/information_property_list/cfbundlename
   # Defaults to `app_display_name` if commented out.
-  app_short_name: Soul Bomb
+  app_short_name: Rusty Lander
 
   # Before enabling LFS, please take a look at GitHub's documentation for costs and quota limits:
   # https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-storage-and-bandwidth-usage
@@ -90,12 +90,12 @@ jobs:
             package_ext: .zip
             runner: ubuntu-latest
 
-#          - platform: linux
-#            targets: x86_64-unknown-linux-gnu
-#            profile: release-native
-#            features: bevy/wayland
-#            package_ext: .zip
-#            runner: ubuntu-latest
+          #          - platform: linux
+          #            targets: x86_64-unknown-linux-gnu
+          #            profile: release-native
+          #            features: bevy/wayland
+          #            package_ext: .zip
+          #            runner: ubuntu-latest
 
           - platform: windows
             targets: x86_64-pc-windows-msvc
@@ -104,12 +104,12 @@ jobs:
             package_ext: .zip
             runner: windows-latest
 
-#          - platform: macos
-#            targets: x86_64-apple-darwin aarch64-apple-darwin
-#            profile: release-native
-#            app_suffix: .app/Contents/MacOS
-#            package_ext: .dmg
-#            runner: macos-latest
+    #          - platform: macos
+    #            targets: x86_64-apple-darwin aarch64-apple-darwin
+    #            profile: release-native
+    #            app_suffix: .app/Contents/MacOS
+    #            package_ext: .dmg
+    #            runner: macos-latest
     runs-on: ${{ matrix.runner }}
     permissions:
       # Required to create a GitHub release: https://docs.github.com/en/rest/releases/releases#create-a-release
