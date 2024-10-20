@@ -1,4 +1,9 @@
-#![allow(clippy::too_many_arguments, clippy::type_complexity)]
+#![allow(
+    clippy::too_many_arguments,
+    clippy::type_complexity,
+    clippy::single_match,
+    clippy::collapsible_else_if
+)]
 
 mod asset_loader;
 mod audio;

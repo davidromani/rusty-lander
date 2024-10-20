@@ -161,7 +161,7 @@ fn player_landed_collisions_system(
                         );
                         spaceship_just_landed_spawn_events.send(SpaceshipJustLandedEvent {
                             platform: platform.clone(),
-                            linear_velocity: linear_velocity,
+                            linear_velocity,
                         });
                         game_state.set(GameState::Landed);
                     } else {
