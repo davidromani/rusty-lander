@@ -3915,7 +3915,7 @@ dependencies = [
 
 [[package]]
 name = "rusty-lander"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "avian2d",
  "bevy",
