@@ -2,7 +2,8 @@
     clippy::too_many_arguments,
     clippy::type_complexity,
     clippy::single_match,
-    clippy::collapsible_else_if
+    clippy::collapsible_else_if,
+    non_upper_case_globals
 )]
 
 mod asset_loader;
