@@ -3923,8 +3923,10 @@ dependencies = [
  "bevy_hanabi",
  "iyes_perf_ui",
  "leafwing-input-manager",
+ "log",
  "rand",
  "svg",
+ "tracing",
 ]
 
 [[package]]

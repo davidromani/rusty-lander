@@ -15,14 +15,42 @@ bevy_collider_gen = { version = "0.2", default-features = false, features = ["av
 bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] }
 iyes_perf_ui = "0.3"
 leafwing-input-manager = "0.15"
+log = { version = "0.4", features = [
+    "max_level_debug",
+    "release_max_level_warn",
+] }
 rand = "0.8"
 svg = "0.18"
+tracing = { version = "0.1", features = [
+    "max_level_debug",
+    "release_max_level_warn",
+] }
 
 [workspace]
 resolver = "2" # Important! wgpu/Bevy needs this!
 
 [profile.dev]
 opt-level = 1
+debug = 1
 
 [profile.dev.package."*"]
+opt-level = 2
+debug = false
+
+[profile.dev.package.wgpu-types]
+debug-assertions = false
+
+[profile.release]
+codegen-units = 1
+lto = "thin"
+opt-level = "s"
+strip = "debuginfo"
+
+[profile.release-native]
 opt-level = 3
+inherits = "release"
+strip = "none"
+
+[lints.clippy]
+too_many_arguments = "allow"
+type_complexity = "allow"
