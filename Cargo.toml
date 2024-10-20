@@ -51,9 +51,6 @@ opt-level = 3
 inherits = "release"
 strip = "none"
 
-[target.wasm32-unknown-unknown]
-runner = "wasm-server-runner"
-
 [lints.clippy]
 too_many_arguments = "allow"
 type_complexity = "allow"
