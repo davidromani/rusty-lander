@@ -35,7 +35,7 @@ gravity increases.
 * press <kbd>W</kbd> or arrow <kbd>UP</kbd> to enable a medium thrust up
 * press <kbd>S</kbd> or arrow <kbd>DOWN</kbd> to enable a small thrust up
 
-### References
+### Digital legacy reference
 
 Read about the original Jupiter Lander video game article in
 the [Wikipedia](https://en.wikipedia.org/wiki/Jupiter_Lander).
