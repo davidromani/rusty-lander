@@ -1,8 +1,10 @@
-use avian2d::prelude::{LinearVelocity, Physics, PhysicsTime};
-use bevy::prelude::*;
-
+use crate::asset_loader::MusicAssets;
+use crate::audio::MusicPlayingSoundEffect;
 use crate::game::Resettable;
 use crate::spaceship::{Player, INITIAL_SPACESHIP_POSITION};
+use avian2d::prelude::{LinearVelocity, Physics, PhysicsTime};
+use bevy::audio::PlaybackMode;
+use bevy::prelude::*;
 
 // States
 #[derive(States, Debug, Copy, Clone, Hash, Eq, PartialEq, Default)]
@@ -28,6 +30,11 @@ pub enum GameState {
     GameOver,
 }
 
+// Resources
+
+#[derive(Resource)]
+pub struct TenSecondsTimer(pub Timer);
+
 pub struct StatesPlugin;
 
 impl Plugin for StatesPlugin {
@@ -41,6 +48,7 @@ impl Plugin for StatesPlugin {
                 (
                     transition_app_setup_to_menu_system.run_if(in_state(AppState::Setup)),
                     transition_game_setup_to_running_system.run_if(in_state(GameState::Setup)),
+                    check_ten_seconds_timer.run_if(in_state(GameState::Landing)),
                 ),
             );
     }
@@ -77,4 +85,25 @@ fn transition_game_setup_to_running_system(
     let mut spaceship_visibility = spaceship_visibility_query.single_mut();
     *spaceship_visibility = Visibility::Visible;
     state.set(GameState::Landing);
+}
+
+fn check_ten_seconds_timer(
+    time: Res<Time>,
+    music_assets: Res<MusicAssets>,
+    mut timer: ResMut<TenSecondsTimer>,
+    mut commands: Commands,
+) {
+    if timer.0.tick(time.delta()).just_finished() {
+        commands.spawn((
+            Resettable,
+            MusicPlayingSoundEffect,
+            AudioBundle {
+                source: music_assets.music_playing.clone(),
+                settings: PlaybackSettings {
+                    mode: PlaybackMode::Once,
+                    ..default()
+                },
+            },
+        ));
+    }
 }

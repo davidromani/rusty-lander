@@ -14,6 +14,7 @@ impl Plugin for AssetsLoaderPlugin {
                     load_assets_system,
                     load_ui_assets_system,
                     load_audio_assets_system,
+                    load_music_assets_system,
                 ),
             )
             .add_systems(
@@ -70,7 +71,15 @@ fn load_audio_assets_system(mut commands: Commands, asset_server: Res<AssetServe
         ship_air_scape: asset_server.load("audios/ship_air_scape.ogg"),
         ship_thruster: asset_server.load("audios/ship_thruster.ogg"),
         ship_explosion: asset_server.load("audios/ship_explosion.ogg"),
+    });
+}
+
+fn load_music_assets_system(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.insert_resource(MusicAssets {
         music_intro: asset_server.load("audios/music_intro.ogg"),
+        music_playing: asset_server.load("audios/music_playing.ogg"),
+        music_begin: asset_server.load("audios/music_begin.ogg"),
+        music_end: asset_server.load("audios/music_end.ogg"),
     });
 }
 
@@ -96,7 +105,14 @@ pub struct AudioAssets {
     pub ship_air_scape: Handle<AudioSource>,
     pub ship_thruster: Handle<AudioSource>,
     pub ship_explosion: Handle<AudioSource>,
+}
+
+#[derive(Debug, Resource)]
+pub struct MusicAssets {
     pub music_intro: Handle<AudioSource>,
+    pub music_playing: Handle<AudioSource>,
+    pub music_begin: Handle<AudioSource>,
+    pub music_end: Handle<AudioSource>,
 }
 
 // States

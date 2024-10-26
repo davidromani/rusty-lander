@@ -1,10 +1,12 @@
+use crate::asset_loader::MusicAssets;
+use crate::audio::MusicBeginSoundEffect;
+use crate::game::{InGameSet, OutOfFuelEvent, Resettable, Scores};
+use crate::spaceship::PlayerAction;
+use crate::state::{GameState, TenSecondsTimer};
 use avian2d::{math::*, prelude::*};
+use bevy::audio::PlaybackMode;
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
-
-use crate::game::{InGameSet, OutOfFuelEvent, Scores};
-use crate::spaceship::PlayerAction;
-use crate::state::GameState;
 
 const BIG_THRUST: f32 = 0.75;
 const MEDIUM_THRUST: f32 = 0.55;
@@ -16,8 +18,23 @@ impl Plugin for CharacterControllerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             OnEnter(GameState::Landing),
-            |mut physics_time: ResMut<Time<Physics>>| {
+            |mut physics_time: ResMut<Time<Physics>>,
+             mut commands: Commands,
+             music_assets: Res<MusicAssets>| {
                 physics_time.unpause();
+                commands.spawn((
+                    Resettable,
+                    MusicBeginSoundEffect,
+                    AudioBundle {
+                        source: music_assets.music_begin.clone(),
+                        settings: PlaybackSettings {
+                            mode: PlaybackMode::Once,
+                            ..default()
+                        },
+                    },
+                ));
+                commands
+                    .insert_resource(TenSecondsTimer(Timer::from_seconds(10.0, TimerMode::Once)));
             },
         )
         .add_systems(

@@ -1,9 +1,30 @@
 Changelog
 =========
 
-##### Version 0.07.001 (WIP)
+##### Version 0.08.005 (WIP)
 
 * keep working
+
+##### Version 0.08.004 (2024-10-26)
+
+* add music
+
+##### Version 0.08.003 (2024-10-20)
+
+* enable Linux & Mac builds
+
+##### Version 0.08.002 (2024-10-20)
+
+* add missing Trunk.toml config
+
+##### Version 0.08.001 (2024-10-20)
+
+* add missing web resources for Trunk
+
+##### Version 0.08.000 (2024-10-20)
+
+* replace rusty_planet menu background image
+* add CI/CD workflow
 
 ##### Version 0.07.000 (2024-10-10)
 

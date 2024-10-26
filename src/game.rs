@@ -1,4 +1,5 @@
-use crate::asset_loader::{AudioAssets, SceneAssets, UiAssets};
+use crate::asset_loader::{MusicAssets, SceneAssets, UiAssets};
+use crate::audio::MusicBeginSoundEffect;
 use crate::collider::Platform;
 use crate::menu::BLACK_COLOR;
 use crate::spaceship::{AirScapeSoundEffect, Player, ThrusterSoundEffect};
@@ -56,8 +57,10 @@ impl Plugin for GamePlugin {
 // Systems
 fn catch_spaceship_just_landed_event_system(
     assets: ResMut<UiAssets>,
+    music_assets: Res<MusicAssets>,
     air_scape_sound_controller: Query<&AudioSink, With<AirScapeSoundEffect>>,
     thruster_sound_controller: Query<&AudioSink, With<ThrusterSoundEffect>>,
+    music_begin_controller: Query<&AudioSink, With<MusicBeginSoundEffect>>,
     mut events_reader: EventReader<SpaceshipJustLandedEvent>,
     mut spaceship_gravity_query: Query<&mut GravityScale, With<Player>>,
     mut commands: Commands,
@@ -67,6 +70,9 @@ fn catch_spaceship_just_landed_event_system(
         sink.pause();
     }
     if let Ok(sink) = thruster_sound_controller.get_single() {
+        sink.pause();
+    }
+    if let Ok(sink) = music_begin_controller.get_single() {
         sink.pause();
     }
     for event in events_reader.read() {
@@ -90,6 +96,13 @@ fn catch_spaceship_just_landed_event_system(
                     },
                     transform: Transform::from_translation(INFO_PANEL_POSITION.extend(11.0)),
                     ..default()
+                },
+                AudioBundle {
+                    source: music_assets.music_end.clone(),
+                    settings: PlaybackSettings {
+                        mode: PlaybackMode::Once,
+                        ..default()
+                    },
                 },
             ))
             .with_children(|builder| {
@@ -314,7 +327,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
 fn spawn_rusty_planet_menu_background_image_and_intro_music_system(
     mut commands: Commands,
     scene_assets: Res<SceneAssets>,
-    audio_assets: Res<AudioAssets>,
+    music_assets: Res<MusicAssets>,
 ) {
     commands.spawn((
         StateScoped(AppState::Menu),
@@ -327,7 +340,7 @@ fn spawn_rusty_planet_menu_background_image_and_intro_music_system(
             ..default()
         },
         AudioBundle {
-            source: audio_assets.music_intro.clone(),
+            source: music_assets.music_intro.clone(),
             settings: PlaybackSettings {
                 mode: PlaybackMode::Loop,
                 ..default()
