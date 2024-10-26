@@ -1,7 +1,7 @@
 use crate::asset_loader::MusicAssets;
 use crate::game::{InGameSet, OutOfFuelEvent, Resettable, Scores};
 use crate::spaceship::PlayerAction;
-use crate::state::GameState;
+use crate::state::{GameState, TenSecondsTimer};
 use avian2d::{math::*, prelude::*};
 use bevy::audio::PlaybackMode;
 use bevy::prelude::*;
@@ -31,6 +31,8 @@ impl Plugin for CharacterControllerPlugin {
                         },
                     },
                 ));
+                commands
+                    .insert_resource(TenSecondsTimer(Timer::from_seconds(11.0, TimerMode::Once)));
             },
         )
         .add_systems(

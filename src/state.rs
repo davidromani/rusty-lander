@@ -28,6 +28,13 @@ pub enum GameState {
     GameOver,
 }
 
+// Events
+#[derive(Event)]
+pub struct TenSecondsEvent;
+
+#[derive(Resource)]
+pub struct TenSecondsTimer(pub Timer);
+
 pub struct StatesPlugin;
 
 impl Plugin for StatesPlugin {
@@ -36,11 +43,13 @@ impl Plugin for StatesPlugin {
             .enable_state_scoped_entities::<AppState>()
             .add_sub_state::<GameState>()
             .enable_state_scoped_entities::<GameState>()
+            .add_event::<TenSecondsEvent>()
             .add_systems(
                 Update,
                 (
                     transition_app_setup_to_menu_system.run_if(in_state(AppState::Setup)),
                     transition_game_setup_to_running_system.run_if(in_state(GameState::Setup)),
+                    check_ten_seconds_timer.run_if(in_state(GameState::Landing)),
                 ),
             );
     }
@@ -77,4 +86,17 @@ fn transition_game_setup_to_running_system(
     let mut spaceship_visibility = spaceship_visibility_query.single_mut();
     *spaceship_visibility = Visibility::Visible;
     state.set(GameState::Landing);
+}
+
+fn check_ten_seconds_timer(
+    time: Res<Time>,
+    mut timer: ResMut<TenSecondsTimer>,
+    mut events: EventWriter<TenSecondsEvent>,
+) {
+    // Update the timer
+    if timer.0.tick(time.delta()).just_finished() {
+        // Send the event once the timer completes
+        events.send(TenSecondsEvent);
+        info!("10 seconds timer ended");
+    }
 }
