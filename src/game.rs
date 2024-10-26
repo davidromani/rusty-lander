@@ -1,4 +1,4 @@
-use crate::asset_loader::{AudioAssets, SceneAssets, UiAssets};
+use crate::asset_loader::{AudioAssets, MusicAssets, SceneAssets, UiAssets};
 use crate::collider::Platform;
 use crate::menu::BLACK_COLOR;
 use crate::spaceship::{AirScapeSoundEffect, Player, ThrusterSoundEffect};
@@ -314,7 +314,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
 fn spawn_rusty_planet_menu_background_image_and_intro_music_system(
     mut commands: Commands,
     scene_assets: Res<SceneAssets>,
-    audio_assets: Res<AudioAssets>,
+    music_assets: Res<MusicAssets>,
 ) {
     commands.spawn((
         StateScoped(AppState::Menu),
@@ -327,7 +327,7 @@ fn spawn_rusty_planet_menu_background_image_and_intro_music_system(
             ..default()
         },
         AudioBundle {
-            source: audio_assets.music_intro.clone(),
+            source: music_assets.music_intro.clone(),
             settings: PlaybackSettings {
                 mode: PlaybackMode::Loop,
                 ..default()
