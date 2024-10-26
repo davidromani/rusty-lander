@@ -1,4 +1,4 @@
-use crate::asset_loader::{AudioAssets, MusicAssets, SceneAssets, UiAssets};
+use crate::asset_loader::{MusicAssets, SceneAssets, UiAssets};
 use crate::collider::Platform;
 use crate::menu::BLACK_COLOR;
 use crate::spaceship::{AirScapeSoundEffect, Player, ThrusterSoundEffect};
