@@ -131,3 +131,10 @@ fn pause_all_sound_effect_system(
         thruster_sink.pause();
     }
 }
+
+// Components
+#[derive(Component)]
+pub struct MusicPlayingSoundEffect;
+
+#[derive(Component)]
+pub struct MusicBeginSoundEffect;

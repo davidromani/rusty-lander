@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use std::f32::consts::TAU;
 
 use crate::asset_loader::{AudioAssets, SceneAssets};
+use crate::audio::{MusicBeginSoundEffect, MusicPlayingSoundEffect};
 use crate::game::Scores;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
@@ -27,11 +28,19 @@ impl Plugin for ExplosionPlugin {
 fn catch_explosion_event_system(
     scene_assets: Res<SceneAssets>,
     audio_assets: Res<AudioAssets>,
+    music_playing_controller: Query<&AudioSink, With<MusicPlayingSoundEffect>>,
+    music_begin_controller: Query<&AudioSink, With<MusicBeginSoundEffect>>,
     mut commands: Commands,
     mut spaceship_visibility_query: Query<&mut Visibility, With<Player>>,
     mut events_reader: EventReader<SpawnExplosionEvent>,
 ) {
     for event in events_reader.read() {
+        if let Ok(sink) = music_playing_controller.get_single() {
+            sink.pause();
+        }
+        if let Ok(sink) = music_begin_controller.get_single() {
+            sink.pause();
+        }
         let (texture, start_size, end_scale, duration) = (
             scene_assets.explosion.clone(),
             Vec2::new(211.0, 195.0),

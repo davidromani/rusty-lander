@@ -1,4 +1,5 @@
 use crate::asset_loader::MusicAssets;
+use crate::audio::MusicBeginSoundEffect;
 use crate::game::{InGameSet, OutOfFuelEvent, Resettable, Scores};
 use crate::spaceship::PlayerAction;
 use crate::state::{GameState, TenSecondsTimer};
@@ -23,6 +24,7 @@ impl Plugin for CharacterControllerPlugin {
                 physics_time.unpause();
                 commands.spawn((
                     Resettable,
+                    MusicBeginSoundEffect,
                     AudioBundle {
                         source: music_assets.music_begin.clone(),
                         settings: PlaybackSettings {
@@ -32,7 +34,7 @@ impl Plugin for CharacterControllerPlugin {
                     },
                 ));
                 commands
-                    .insert_resource(TenSecondsTimer(Timer::from_seconds(11.0, TimerMode::Once)));
+                    .insert_resource(TenSecondsTimer(Timer::from_seconds(10.0, TimerMode::Once)));
             },
         )
         .add_systems(

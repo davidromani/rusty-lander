@@ -1,8 +1,10 @@
-use avian2d::prelude::{LinearVelocity, Physics, PhysicsTime};
-use bevy::prelude::*;
-
+use crate::asset_loader::MusicAssets;
+use crate::audio::MusicPlayingSoundEffect;
 use crate::game::Resettable;
 use crate::spaceship::{Player, INITIAL_SPACESHIP_POSITION};
+use avian2d::prelude::{LinearVelocity, Physics, PhysicsTime};
+use bevy::audio::PlaybackMode;
+use bevy::prelude::*;
 
 // States
 #[derive(States, Debug, Copy, Clone, Hash, Eq, PartialEq, Default)]
@@ -28,9 +30,7 @@ pub enum GameState {
     GameOver,
 }
 
-// Events
-#[derive(Event)]
-pub struct TenSecondsEvent;
+// Resources
 
 #[derive(Resource)]
 pub struct TenSecondsTimer(pub Timer);
@@ -43,7 +43,6 @@ impl Plugin for StatesPlugin {
             .enable_state_scoped_entities::<AppState>()
             .add_sub_state::<GameState>()
             .enable_state_scoped_entities::<GameState>()
-            .add_event::<TenSecondsEvent>()
             .add_systems(
                 Update,
                 (
@@ -90,13 +89,21 @@ fn transition_game_setup_to_running_system(
 
 fn check_ten_seconds_timer(
     time: Res<Time>,
+    music_assets: Res<MusicAssets>,
     mut timer: ResMut<TenSecondsTimer>,
-    mut events: EventWriter<TenSecondsEvent>,
+    mut commands: Commands,
 ) {
-    // Update the timer
     if timer.0.tick(time.delta()).just_finished() {
-        // Send the event once the timer completes
-        events.send(TenSecondsEvent);
-        info!("10 seconds timer ended");
+        commands.spawn((
+            Resettable,
+            MusicPlayingSoundEffect,
+            AudioBundle {
+                source: music_assets.music_playing.clone(),
+                settings: PlaybackSettings {
+                    mode: PlaybackMode::Once,
+                    ..default()
+                },
+            },
+        ));
     }
 }
