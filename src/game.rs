@@ -56,6 +56,7 @@ impl Plugin for GamePlugin {
 // Systems
 fn catch_spaceship_just_landed_event_system(
     assets: ResMut<UiAssets>,
+    music_assets: Res<MusicAssets>,
     air_scape_sound_controller: Query<&AudioSink, With<AirScapeSoundEffect>>,
     thruster_sound_controller: Query<&AudioSink, With<ThrusterSoundEffect>>,
     mut events_reader: EventReader<SpaceshipJustLandedEvent>,
@@ -90,6 +91,13 @@ fn catch_spaceship_just_landed_event_system(
                     },
                     transform: Transform::from_translation(INFO_PANEL_POSITION.extend(11.0)),
                     ..default()
+                },
+                AudioBundle {
+                    source: music_assets.music_end.clone(),
+                    settings: PlaybackSettings {
+                        mode: PlaybackMode::Once,
+                        ..default()
+                    },
                 },
             ))
             .with_children(|builder| {
