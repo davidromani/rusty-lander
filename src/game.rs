@@ -1,4 +1,5 @@
 use crate::asset_loader::{MusicAssets, SceneAssets, UiAssets};
+use crate::audio::MusicBeginSoundEffect;
 use crate::collider::Platform;
 use crate::menu::BLACK_COLOR;
 use crate::spaceship::{AirScapeSoundEffect, Player, ThrusterSoundEffect};
@@ -59,6 +60,7 @@ fn catch_spaceship_just_landed_event_system(
     music_assets: Res<MusicAssets>,
     air_scape_sound_controller: Query<&AudioSink, With<AirScapeSoundEffect>>,
     thruster_sound_controller: Query<&AudioSink, With<ThrusterSoundEffect>>,
+    music_begin_controller: Query<&AudioSink, With<MusicBeginSoundEffect>>,
     mut events_reader: EventReader<SpaceshipJustLandedEvent>,
     mut spaceship_gravity_query: Query<&mut GravityScale, With<Player>>,
     mut commands: Commands,
@@ -68,6 +70,9 @@ fn catch_spaceship_just_landed_event_system(
         sink.pause();
     }
     if let Ok(sink) = thruster_sound_controller.get_single() {
+        sink.pause();
+    }
+    if let Ok(sink) = music_begin_controller.get_single() {
         sink.pause();
     }
     for event in events_reader.read() {
