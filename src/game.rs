@@ -101,8 +101,10 @@ fn catch_spaceship_just_landed_event_system(
         let points = (14.57 * linear_velocity.y) as i32 + 720;
         let mut new_score = platform.factor * points;
         scores.score += new_score;
-        if scores.hi_score < scores.score {
+        if best_score_so_far.hi_score < scores.score {
             scores.hi_score = scores.score;
+        } else {
+            scores.hi_score = best_score_so_far.hi_score;
         }
         commands
             .spawn((
