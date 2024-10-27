@@ -11,7 +11,9 @@ use bevy::audio::PlaybackMode;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
 use bevy::text::Text2dBounds;
+use bevy_persistent::{Persistent, StorageFormat};
 use rand::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
@@ -32,6 +34,7 @@ impl Plugin for GamePlugin {
         })
         .add_event::<SpaceshipJustLandedEvent>()
         .add_event::<OutOfFuelEvent>()
+        .add_systems(Startup, persist_hi_score)
         .add_systems(
             OnEnter(AppState::Menu),
             spawn_rusty_planet_menu_background_image_and_intro_music_system,
@@ -55,6 +58,22 @@ impl Plugin for GamePlugin {
 }
 
 // Systems
+fn persist_hi_score(mut commands: Commands) {
+    let config_dir = dirs::config_dir().unwrap().join("RustyLander");
+    commands.insert_resource(
+        Persistent::<BestScoreSoFar>::builder()
+            .name("scores")
+            .format(StorageFormat::Json)
+            .path(config_dir.join("scores.json"))
+            .default(BestScoreSoFar {
+                hi_score: 0,
+                gravity: 1.0,
+            })
+            .build()
+            .expect("failed to initialize initial scores"),
+    )
+}
+
 fn catch_spaceship_just_landed_event_system(
     assets: ResMut<UiAssets>,
     music_assets: Res<MusicAssets>,
@@ -440,6 +459,12 @@ pub struct Resettable;
 #[derive(Resource)]
 pub struct WorldBoundsVertices2D {
     pub data: Vec<Vec2>,
+}
+
+#[derive(Resource, Serialize, Deserialize, Debug)]
+pub struct BestScoreSoFar {
+    pub hi_score: i32,
+    pub gravity: f32,
 }
 
 #[derive(Resource, Debug)]
