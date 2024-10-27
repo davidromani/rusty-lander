@@ -83,6 +83,7 @@ fn catch_spaceship_just_landed_event_system(
     mut events_reader: EventReader<SpaceshipJustLandedEvent>,
     mut spaceship_gravity_query: Query<&mut GravityScale, With<Player>>,
     mut commands: Commands,
+    mut best_score_so_far: ResMut<Persistent<BestScoreSoFar>>,
     mut scores: ResMut<Scores>,
 ) {
     if let Ok(sink) = air_scape_sound_controller.get_single() {
@@ -171,6 +172,20 @@ fn catch_spaceship_just_landed_event_system(
         };
         scores.gravity += 0.1;
         spaceship_gravity.0 = scores.gravity;
+        if scores.score > best_score_so_far.hi_score {
+            best_score_so_far
+                .update(|best_score_so_far| {
+                    best_score_so_far.hi_score = scores.score;
+                })
+                .expect("failed to update best_score_so_far gravity");
+        }
+        if scores.gravity > best_score_so_far.gravity {
+            best_score_so_far
+                .update(|best_score_so_far| {
+                    best_score_so_far.gravity = scores.gravity;
+                })
+                .expect("failed to update best_score_so_far gravity");
+        }
     }
 }
 
