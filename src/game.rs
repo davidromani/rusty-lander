@@ -11,7 +11,9 @@ use bevy::audio::PlaybackMode;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
 use bevy::text::Text2dBounds;
+use bevy_persistent::{Persistent, StorageFormat};
 use rand::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
 
 pub const FUEL_QUANTITY: f32 = 1000.0;
@@ -32,6 +34,7 @@ impl Plugin for GamePlugin {
         })
         .add_event::<SpaceshipJustLandedEvent>()
         .add_event::<OutOfFuelEvent>()
+        .add_systems(Startup, persist_hi_score)
         .add_systems(
             OnEnter(AppState::Menu),
             spawn_rusty_planet_menu_background_image_and_intro_music_system,
@@ -55,6 +58,22 @@ impl Plugin for GamePlugin {
 }
 
 // Systems
+fn persist_hi_score(mut commands: Commands) {
+    let config_dir = dirs::config_dir().unwrap().join("RustyLander");
+    commands.insert_resource(
+        Persistent::<BestScoreSoFar>::builder()
+            .name("scores")
+            .format(StorageFormat::Json)
+            .path(config_dir.join("scores.json"))
+            .default(BestScoreSoFar {
+                hi_score: 0,
+                gravity: 1.0,
+            })
+            .build()
+            .expect("failed to initialize initial scores"),
+    )
+}
+
 fn catch_spaceship_just_landed_event_system(
     assets: ResMut<UiAssets>,
     music_assets: Res<MusicAssets>,
@@ -64,6 +83,7 @@ fn catch_spaceship_just_landed_event_system(
     mut events_reader: EventReader<SpaceshipJustLandedEvent>,
     mut spaceship_gravity_query: Query<&mut GravityScale, With<Player>>,
     mut commands: Commands,
+    mut best_score_so_far: ResMut<Persistent<BestScoreSoFar>>,
     mut scores: ResMut<Scores>,
 ) {
     if let Ok(sink) = air_scape_sound_controller.get_single() {
@@ -81,8 +101,10 @@ fn catch_spaceship_just_landed_event_system(
         let points = (14.57 * linear_velocity.y) as i32 + 720;
         let mut new_score = platform.factor * points;
         scores.score += new_score;
-        if scores.hi_score < scores.score {
+        if best_score_so_far.hi_score < scores.score {
             scores.hi_score = scores.score;
+        } else {
+            scores.hi_score = best_score_so_far.hi_score;
         }
         commands
             .spawn((
@@ -152,6 +174,20 @@ fn catch_spaceship_just_landed_event_system(
         };
         scores.gravity += 0.1;
         spaceship_gravity.0 = scores.gravity;
+        if scores.score > best_score_so_far.hi_score {
+            best_score_so_far
+                .update(|best_score_so_far| {
+                    best_score_so_far.hi_score = scores.score;
+                })
+                .expect("failed to update best_score_so_far gravity");
+        }
+        if scores.gravity > best_score_so_far.gravity {
+            best_score_so_far
+                .update(|best_score_so_far| {
+                    best_score_so_far.gravity = scores.gravity;
+                })
+                .expect("failed to update best_score_so_far gravity");
+        }
     }
 }
 
@@ -210,7 +246,12 @@ fn update_scoring_text_system(
     hi_score_text.sections[0].value = scores.hi_score.to_string();
 }
 
-fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
+fn spawn_scores_text_system(
+    mut commands: Commands,
+    assets: ResMut<UiAssets>,
+    scores: Res<Scores>,
+    best_score_so_far: Res<Persistent<BestScoreSoFar>>,
+) {
     // black background UI horizontal
     commands.spawn((
         StateScoped(AppState::Game),
@@ -309,7 +350,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         StateScoped(AppState::Game),
         TextHiScore,
         TextBundle::from_section(
-            scores.hi_score.to_string(),
+            best_score_so_far.hi_score.to_string(),
             TextStyle {
                 font: assets.font_vt323.clone(),
                 ..default()
@@ -442,6 +483,12 @@ pub struct WorldBoundsVertices2D {
     pub data: Vec<Vec2>,
 }
 
+#[derive(Resource, Serialize, Deserialize, Debug)]
+pub struct BestScoreSoFar {
+    pub hi_score: i32,
+    pub gravity: f32,
+}
+
 #[derive(Resource, Debug)]
 pub struct Scores {
     pub score: i32,
@@ -454,4 +501,10 @@ impl Scores {
     pub fn get_available_fuel_quantity(&self) -> f32 {
         FUEL_QUANTITY - self.fuel_quantity
     }
+}
+
+#[test]
+fn dummy_test() {
+    let test = 1;
+    assert_eq!(test, 1);
 }

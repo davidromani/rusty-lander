@@ -1,6 +1,6 @@
 [package]
 name = "rusty-lander"
-version = "0.8.4"
+version = "0.8.5"
 edition = "2021"
 license = "MIT"
 authors = ["David Romaní <david@flux.cat>"]
@@ -11,6 +11,7 @@ readme = "README.md"
 [dependencies]
 avian2d = "0.1"
 bevy = "0.14"
+bevy-persistent = { version = "0.6.0", features = ["json"] }
 bevy_collider_gen = { version = "0.2", default-features = false, features = ["avian2d"] }
 bevy_hanabi = { version = "0.12", default-features = false, features = ["2d"] }
 iyes_perf_ui = "0.3"
@@ -25,6 +26,8 @@ tracing = { version = "0.1", features = [
     "max_level_debug",
     "release_max_level_warn",
 ] }
+serde = { version = "1.0.213", features = ["derive"] }
+dirs = "5.0.1"
 
 [workspace]
 resolver = "2" # Important! wgpu/Bevy needs this!
