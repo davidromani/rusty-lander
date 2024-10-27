@@ -502,3 +502,9 @@ impl Scores {
         FUEL_QUANTITY - self.fuel_quantity
     }
 }
+
+#[test]
+fn dummy_test() {
+    let test = 1;
+    assert_eq!(test, 1);
+}
