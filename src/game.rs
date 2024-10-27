@@ -229,7 +229,12 @@ fn update_scoring_text_system(
     hi_score_text.sections[0].value = scores.hi_score.to_string();
 }
 
-fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, scores: Res<Scores>) {
+fn spawn_scores_text_system(
+    mut commands: Commands,
+    assets: ResMut<UiAssets>,
+    scores: Res<Scores>,
+    best_score_so_far: Res<Persistent<BestScoreSoFar>>,
+) {
     // black background UI horizontal
     commands.spawn((
         StateScoped(AppState::Game),
@@ -328,7 +333,7 @@ fn spawn_scores_text_system(mut commands: Commands, assets: ResMut<UiAssets>, sc
         StateScoped(AppState::Game),
         TextHiScore,
         TextBundle::from_section(
-            scores.hi_score.to_string(),
+            best_score_so_far.hi_score.to_string(),
             TextStyle {
                 font: assets.font_vt323.clone(),
                 ..default()

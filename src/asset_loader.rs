@@ -1,6 +1,5 @@
-use bevy::{asset::LoadState, prelude::*};
-
 use crate::state::AppState;
+use bevy::{asset::LoadState, prelude::*};
 
 pub struct AssetsLoaderPlugin;
 
