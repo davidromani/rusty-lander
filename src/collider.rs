@@ -152,6 +152,7 @@ fn player_landed_collisions_system(
                     y: transform.translation.y,
                 });
                 game_state.set(GameState::Crashed);
+                break;
             } else {
                 for &colliding_entity in colliding_entities.iter() {
                     if let Ok(platform) = platforms_query.get(colliding_entity) {
@@ -164,6 +165,7 @@ fn player_landed_collisions_system(
                             linear_velocity,
                         });
                         game_state.set(GameState::Landed);
+                        break;
                     } else {
                         info!("Landed outside a platform");
                         explosion_spawn_events.send(SpawnExplosionEvent {
@@ -171,6 +173,7 @@ fn player_landed_collisions_system(
                             y: transform.translation.y,
                         });
                         game_state.set(GameState::Crashed);
+                        break;
                     }
                 }
             }
