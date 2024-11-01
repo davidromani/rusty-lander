@@ -4,6 +4,9 @@ Changelog
 ##### Version 0.08.005 (WIP)
 
 * keep working
+* fix playing music overlap on spaceship just landed bug
+* persist best score value so far
+* cargo dependencies update
 
 ##### Version 0.08.004 (2024-10-26)
 
