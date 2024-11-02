@@ -17,7 +17,10 @@ impl Plugin for CameraPlugin {
             .add_systems(Startup, (spawn_camera_system, spawn_debug_ui_system))
             .add_systems(
                 Update,
-                add_or_remove_player_camera_components_depending_on_nearest_platform_system
+                (
+                    add_or_remove_player_camera_components_depending_on_nearest_platform_system,
+                    move_camera_position_to_nearest_platform_system,
+                )
                     .run_if(in_state(GameState::Landing))
                     .in_set(InGameSet::Physics),
             );
@@ -56,6 +59,31 @@ fn add_or_remove_player_camera_components_depending_on_nearest_platform_system(
         commands
             .entity(entity)
             .remove::<GameCameraCloseTo10xPlatform>();
+    }
+}
+
+fn move_camera_position_to_nearest_platform_system(
+    spaceship_close_to_2x_platform_query: Query<Entity, Added<GameCameraCloseTo2xPlatform>>,
+    spaceship_close_to_5x_platform_query: Query<Entity, Added<GameCameraCloseTo5xPlatform>>,
+    spaceship_close_to_10x_platform_query: Query<Entity, Added<GameCameraCloseTo10xPlatform>>,
+) {
+    for entity in spaceship_close_to_2x_platform_query.iter() {
+        eprintln!(
+            "Entity {:?} has GameCameraCloseTo2xPlatform added component to player",
+            entity
+        );
+    }
+    for entity in spaceship_close_to_5x_platform_query.iter() {
+        eprintln!(
+            "Entity {:?} has GameCameraCloseTo5xPlatform added component to player",
+            entity
+        );
+    }
+    for entity in spaceship_close_to_10x_platform_query.iter() {
+        eprintln!(
+            "Entity {:?} has GameCameraCloseTo10xPlatform added component to player",
+            entity
+        );
     }
 }
 
