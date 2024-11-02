@@ -11,6 +11,10 @@ use crate::movement::ReadyToLand;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
 
+pub const PLATFORM_2X_CENTER: Vec2 = Vec2::new(114.0, 164.0);
+pub const PLATFORM_5X_CENTER: Vec2 = Vec2::new(-287.0, -222.0);
+pub const PLATFORM_10X_CENTER: Vec2 = Vec2::new(230.0, -104.0);
+
 pub struct ColliderPlugin;
 
 impl Plugin for ColliderPlugin {

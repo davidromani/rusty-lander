@@ -14,6 +14,7 @@ mod debug;
 mod explosion;
 mod fuel;
 mod game;
+mod gizmos;
 mod menu;
 mod movement;
 mod particles_thruster;
@@ -38,6 +39,7 @@ use debug::DebugPlugin;
 use explosion::ExplosionPlugin;
 use fuel::FuelPlugin;
 use game::{GamePlugin, InGameSet, WorldBoundsVertices2D};
+use gizmos::GizmosPlugin;
 use menu::{MenuAction, MenuPlugin};
 use movement::CharacterControllerPlugin;
 use particles_thruster::ParticlesThrusterPlugin;
@@ -92,6 +94,7 @@ fn main() {
         .add_plugins(CameraPlugin)
         .add_plugins(DebugPlugin)
         .add_plugins(FuelPlugin)
+        .add_plugins(GizmosPlugin)
         .add_plugins(ParticlesThrusterPlugin)
         .add_plugins(SpeedometerPlugin)
         .add_plugins(ColliderPlugin)
