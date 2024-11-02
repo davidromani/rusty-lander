@@ -23,6 +23,12 @@ impl Plugin for CameraPlugin {
                 )
                     .run_if(in_state(GameState::Landing))
                     .in_set(InGameSet::Physics),
+            )
+            .add_systems(
+                Update,
+                detect_game_camera_close_to_platforms_removals_system
+                    .run_if(in_state(GameState::Landing))
+                    .in_set(InGameSet::SpeedBar),
             );
     }
 }
@@ -82,6 +88,35 @@ fn move_camera_position_to_nearest_platform_system(
     for entity in spaceship_close_to_10x_platform_query.iter() {
         eprintln!(
             "Entity {:?} has GameCameraCloseTo10xPlatform added component to player",
+            entity
+        );
+    }
+}
+
+fn detect_game_camera_close_to_platforms_removals_system(
+    mut game_camera_close_to_2x_platform_removals: RemovedComponents<GameCameraCloseTo2xPlatform>,
+    mut game_camera_close_to_5x_platform_removals: RemovedComponents<GameCameraCloseTo5xPlatform>,
+    mut game_camera_close_to_10x_platform_removals: RemovedComponents<GameCameraCloseTo10xPlatform>,
+    // ... (maybe Commands or a Query ?) ...
+) {
+    for entity in game_camera_close_to_2x_platform_removals.read() {
+        // do something with the entity
+        eprintln!(
+            "Entity {:?} had the component GameCameraCloseTo2xPlatform removed.",
+            entity
+        );
+    }
+    for entity in game_camera_close_to_5x_platform_removals.read() {
+        // do something with the entity
+        eprintln!(
+            "Entity {:?} had the component GameCameraCloseTo5xPlatform removed.",
+            entity
+        );
+    }
+    for entity in game_camera_close_to_10x_platform_removals.read() {
+        // do something with the entity
+        eprintln!(
+            "Entity {:?} had the component GameCameraCloseTo10xPlatform removed.",
             entity
         );
     }
