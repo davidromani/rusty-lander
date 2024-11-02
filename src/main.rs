@@ -94,7 +94,10 @@ fn main() {
         .add_plugins(CameraPlugin)
         .add_plugins(DebugPlugin)
         .add_plugins(FuelPlugin)
-        .add_plugins(GizmosPlugin)
+        .add_plugins(
+            #[cfg(debug_assertions)]
+            GizmosPlugin,
+        )
         .add_plugins(ParticlesThrusterPlugin)
         .add_plugins(SpeedometerPlugin)
         .add_plugins(ColliderPlugin)

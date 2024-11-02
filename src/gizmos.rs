@@ -5,7 +5,7 @@ use crate::state::GameState;
 use bevy::color::palettes::css::YELLOW_GREEN;
 use bevy::prelude::*;
 
-const PROXIMITY_RADIUS: f32 = 180.0;
+const PROXIMITY_RADIUS: f32 = 170.0;
 
 pub struct GizmosPlugin;
 
@@ -25,19 +25,20 @@ fn draw_platform_gizmos_system(
     mut gizmos: Gizmos,
     spaceship_query: Query<(&Transform), With<Player>>,
 ) {
-    for (transform) in &spaceship_query {
+    for transform in &spaceship_query {
+        if transform.translation.distance(PLATFORM_2X_CENTER) < PROXIMITY_RADIUS {}
         gizmos.circle_2d(
-            PLATFORM_2X_CENTER,
+            PLATFORM_2X_CENTER.xy(),
             PROXIMITY_RADIUS,
             Color::from(YELLOW_GREEN),
         );
         gizmos.circle_2d(
-            PLATFORM_5X_CENTER,
+            PLATFORM_5X_CENTER.xy(),
             PROXIMITY_RADIUS,
             Color::from(YELLOW_GREEN),
         );
         gizmos.circle_2d(
-            PLATFORM_10X_CENTER,
+            PLATFORM_10X_CENTER.xy(),
             PROXIMITY_RADIUS,
             Color::from(YELLOW_GREEN),
         );
