@@ -5,7 +5,7 @@ use crate::state::GameState;
 use bevy::color::palettes::css::{LIGHT_SALMON, YELLOW_GREEN};
 use bevy::prelude::*;
 
-const PROXIMITY_RADIUS: f32 = 170.0;
+pub const PROXIMITY_RADIUS: f32 = 170.0;
 
 pub struct GizmosPlugin;
 
@@ -15,7 +15,7 @@ impl Plugin for GizmosPlugin {
             FixedUpdate,
             draw_platform_gizmos_system
                 .run_if(in_state(GameState::Landing))
-                .in_set(InGameSet::Collisions),
+                .in_set(InGameSet::Physics),
         );
     }
 }
