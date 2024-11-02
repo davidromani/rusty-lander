@@ -69,23 +69,28 @@ fn add_or_remove_player_camera_components_depending_on_nearest_platform_system(
 }
 
 fn move_camera_position_to_nearest_platform_system(
+    mut query_camera: Query<&mut OrthographicProjection, With<GameCamera>>,
     spaceship_close_to_2x_platform_query: Query<Entity, Added<GameCameraCloseTo2xPlatform>>,
     spaceship_close_to_5x_platform_query: Query<Entity, Added<GameCameraCloseTo5xPlatform>>,
     spaceship_close_to_10x_platform_query: Query<Entity, Added<GameCameraCloseTo10xPlatform>>,
 ) {
+    let mut projection = query_camera.single_mut();
     for entity in spaceship_close_to_2x_platform_query.iter() {
+        projection.scale /= 1.25;
         eprintln!(
             "Entity {:?} has GameCameraCloseTo2xPlatform added component to player",
             entity
         );
     }
     for entity in spaceship_close_to_5x_platform_query.iter() {
+        projection.scale /= 1.25;
         eprintln!(
             "Entity {:?} has GameCameraCloseTo5xPlatform added component to player",
             entity
         );
     }
     for entity in spaceship_close_to_10x_platform_query.iter() {
+        projection.scale /= 1.25;
         eprintln!(
             "Entity {:?} has GameCameraCloseTo10xPlatform added component to player",
             entity
@@ -94,27 +99,28 @@ fn move_camera_position_to_nearest_platform_system(
 }
 
 fn detect_game_camera_close_to_platforms_removals_system(
+    mut query_camera: Query<&mut OrthographicProjection, With<GameCamera>>,
     mut game_camera_close_to_2x_platform_removals: RemovedComponents<GameCameraCloseTo2xPlatform>,
     mut game_camera_close_to_5x_platform_removals: RemovedComponents<GameCameraCloseTo5xPlatform>,
     mut game_camera_close_to_10x_platform_removals: RemovedComponents<GameCameraCloseTo10xPlatform>,
-    // ... (maybe Commands or a Query ?) ...
 ) {
+    let mut projection = query_camera.single_mut();
     for entity in game_camera_close_to_2x_platform_removals.read() {
-        // do something with the entity
+        projection.scale *= 1.25;
         eprintln!(
             "Entity {:?} had the component GameCameraCloseTo2xPlatform removed.",
             entity
         );
     }
     for entity in game_camera_close_to_5x_platform_removals.read() {
-        // do something with the entity
+        projection.scale *= 1.25;
         eprintln!(
             "Entity {:?} had the component GameCameraCloseTo5xPlatform removed.",
             entity
         );
     }
     for entity in game_camera_close_to_10x_platform_removals.read() {
-        // do something with the entity
+        projection.scale *= 1.25;
         eprintln!(
             "Entity {:?} had the component GameCameraCloseTo10xPlatform removed.",
             entity
