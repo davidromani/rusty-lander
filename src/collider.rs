@@ -11,6 +11,10 @@ use crate::movement::ReadyToLand;
 use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
 
+pub const PLATFORM_2X_CENTER: Vec3 = Vec3::new(114.0, 164.0, 1.0);
+pub const PLATFORM_5X_CENTER: Vec3 = Vec3::new(-287.0, -222.0, 1.0);
+pub const PLATFORM_10X_CENTER: Vec3 = Vec3::new(230.0, -104.0, 1.0);
+
 pub struct ColliderPlugin;
 
 impl Plugin for ColliderPlugin {
@@ -57,7 +61,7 @@ fn initialize_landscape_system(
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(185.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
-            transform: Transform::from_xyz(114.0, 164.0, 1.0),
+            transform: Transform::from_translation(PLATFORM_2X_CENTER),
             ..default()
         },
         Platform { factor: 2 },
@@ -72,7 +76,7 @@ fn initialize_landscape_system(
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(200.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
-            transform: Transform::from_xyz(-287.0, -222.0, 1.0),
+            transform: Transform::from_translation(PLATFORM_5X_CENTER),
             ..default()
         },
         Platform { factor: 5 },
@@ -87,7 +91,7 @@ fn initialize_landscape_system(
         MaterialMesh2dBundle {
             mesh: meshes.add(Rectangle::new(120.0, 8.0)).into(),
             material: materials.add(Color::srgba(0.3, 0.3, 0.3, 0.0)),
-            transform: Transform::from_xyz(230.0, -104.0, 1.0),
+            transform: Transform::from_translation(PLATFORM_10X_CENTER),
             ..default()
         },
         Platform { factor: 10 },
@@ -152,8 +156,9 @@ fn player_landed_collisions_system(
                     y: transform.translation.y,
                 });
                 game_state.set(GameState::Crashed);
+                break;
             } else {
-                for &colliding_entity in colliding_entities.iter() {
+                if let Some(&colliding_entity) = colliding_entities.iter().next() {
                     if let Ok(platform) = platforms_query.get(colliding_entity) {
                         info!(
                             "Landed in platform factor {:?} with linear velocity {:?}",

@@ -4,6 +4,7 @@ use crate::spaceship::Player;
 use crate::state::{AppState, GameState};
 use avian2d::dynamics::rigid_body::LinearVelocity;
 use bevy::prelude::*;
+use bevy::render::view::RenderLayers;
 use bevy::sprite::*;
 
 pub struct SpeedometerPlugin;
@@ -38,6 +39,7 @@ fn spawn_speed_bar_system(
             },
             ..default()
         },
+        RenderLayers::layer(2),
     ));
     // yellow range
     commands.spawn((
@@ -51,6 +53,7 @@ fn spawn_speed_bar_system(
             },
             ..default()
         },
+        RenderLayers::layer(2),
     ));
     // black indicator
     commands.spawn((
@@ -62,6 +65,7 @@ fn spawn_speed_bar_system(
             ..default()
         },
         SpeedBarBlackIndicator,
+        RenderLayers::layer(2),
     ));
 }
 

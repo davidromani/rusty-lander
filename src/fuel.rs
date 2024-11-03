@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::render::view::RenderLayers;
 use bevy::sprite::*;
 
 use crate::asset_loader::UiAssets;
@@ -35,6 +36,7 @@ fn spawn_fuel_bar_system(mut commands: Commands) {
             ..default()
         },
         FuelBar,
+        RenderLayers::layer(2),
     ));
 }
 
