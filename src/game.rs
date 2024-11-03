@@ -104,7 +104,7 @@ fn catch_spaceship_just_landed_event_system(
         let platform = event.platform.clone();
         let linear_velocity = event.linear_velocity;
         let points = (14.57 * linear_velocity.y) as i32 + 720;
-        let mut new_score = platform.factor * points;
+        let new_score = platform.factor * points;
         scores.score += new_score;
         if best_score_so_far.hi_score < scores.score {
             scores.hi_score = scores.score;
@@ -177,10 +177,11 @@ fn catch_spaceship_just_landed_event_system(
                     RenderLayers::layer(2),
                 ));
             });
-        if new_score > scores.get_available_fuel_quantity() as i32 {
-            new_score = scores.get_available_fuel_quantity() as i32;
+        let mut new_fuel_quantity = (new_score as f32) / 20.0;
+        if new_fuel_quantity > scores.get_available_fuel_quantity() {
+            new_fuel_quantity = scores.get_available_fuel_quantity();
         }
-        scores.fuel_quantity += (new_score as f32) / 5.0;
+        scores.fuel_quantity += new_fuel_quantity;
         let Ok(mut spaceship_gravity) = spaceship_gravity_query.get_single_mut() else {
             return;
         };
@@ -200,6 +201,7 @@ fn catch_spaceship_just_landed_event_system(
                 })
                 .expect("failed to update best_score_so_far gravity");
         }
+        break;
     }
 }
 
