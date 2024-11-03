@@ -77,7 +77,7 @@ pub enum PlayerAction {
 }
 
 // Components
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Player;
 
 #[derive(Component)]

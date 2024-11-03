@@ -87,6 +87,8 @@ fn main() {
             .chain(),
     );
     // Custom plugins
+    #[cfg(debug_assertions)]
+    app.add_plugins(GizmosPlugin);
     app.add_plugins(StatesPlugin)
         .add_plugins(MenuPlugin)
         .add_plugins(AssetsLoaderPlugin)
@@ -94,10 +96,6 @@ fn main() {
         .add_plugins(CameraPlugin)
         .add_plugins(DebugPlugin)
         .add_plugins(FuelPlugin)
-        .add_plugins(
-            #[cfg(debug_assertions)]
-            GizmosPlugin,
-        )
         .add_plugins(ParticlesThrusterPlugin)
         .add_plugins(SpeedometerPlugin)
         .add_plugins(ColliderPlugin)

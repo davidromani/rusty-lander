@@ -10,6 +10,7 @@ use bevy::app::AppExit;
 use bevy::audio::PlaybackMode;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
+use bevy::render::view::RenderLayers;
 use bevy::text::Text2dBounds;
 use bevy_persistent::{Persistent, StorageFormat};
 use rand::prelude::*;
@@ -103,7 +104,7 @@ fn catch_spaceship_just_landed_event_system(
         let platform = event.platform.clone();
         let linear_velocity = event.linear_velocity;
         let points = (14.57 * linear_velocity.y) as i32 + 720;
-        let mut new_score = platform.factor * points;
+        let new_score = platform.factor * points;
         scores.score += new_score;
         if best_score_so_far.hi_score < scores.score {
             scores.hi_score = scores.score;
@@ -130,49 +131,57 @@ fn catch_spaceship_just_landed_event_system(
                         ..default()
                     },
                 },
+                RenderLayers::layer(2),
             ))
             .with_children(|builder| {
-                builder.spawn(Text2dBundle {
-                    text: Text::from_section(
-                        points.to_string()
-                            + " x "
-                            + platform.factor.to_string().as_str()
-                            + " = "
-                            + new_score.to_string().as_str(),
-                        TextStyle {
-                            font: assets.font_vt323.clone(),
-                            font_size: 60.0,
-                            color: Color::WHITE,
+                builder.spawn((
+                    Text2dBundle {
+                        text: Text::from_section(
+                            points.to_string()
+                                + " x "
+                                + platform.factor.to_string().as_str()
+                                + " = "
+                                + new_score.to_string().as_str(),
+                            TextStyle {
+                                font: assets.font_vt323.clone(),
+                                font_size: 60.0,
+                                color: Color::WHITE,
+                            },
+                        )
+                        .with_justify(JustifyText::Left),
+                        text_2d_bounds: Text2dBounds {
+                            size: INFO_PANEL_SIZE,
                         },
-                    )
-                    .with_justify(JustifyText::Left),
-                    text_2d_bounds: Text2dBounds {
-                        size: INFO_PANEL_SIZE,
+                        transform: Transform::from_translation(Vec3::new(0.0, 20.0, 1.0)),
+                        ..default()
                     },
-                    transform: Transform::from_translation(Vec3::new(0.0, 20.0, 1.0)),
-                    ..default()
-                });
-                builder.spawn(Text2dBundle {
-                    text: Text::from_section(
-                        "press enter key to continue",
-                        TextStyle {
-                            font: assets.font_vt323.clone(),
-                            font_size: 30.0,
-                            color: Color::WHITE,
+                    RenderLayers::layer(2),
+                ));
+                builder.spawn((
+                    Text2dBundle {
+                        text: Text::from_section(
+                            "press enter key to continue",
+                            TextStyle {
+                                font: assets.font_vt323.clone(),
+                                font_size: 30.0,
+                                color: Color::WHITE,
+                            },
+                        )
+                        .with_justify(JustifyText::Left),
+                        text_2d_bounds: Text2dBounds {
+                            size: INFO_PANEL_SIZE,
                         },
-                    )
-                    .with_justify(JustifyText::Left),
-                    text_2d_bounds: Text2dBounds {
-                        size: INFO_PANEL_SIZE,
+                        transform: Transform::from_translation(Vec3::new(0.0, -20.0, 1.0)),
+                        ..default()
                     },
-                    transform: Transform::from_translation(Vec3::new(0.0, -20.0, 1.0)),
-                    ..default()
-                });
+                    RenderLayers::layer(2),
+                ));
             });
-        if new_score > scores.get_available_fuel_quantity() as i32 {
-            new_score = scores.get_available_fuel_quantity() as i32;
+        let mut new_fuel_quantity = (new_score as f32) / 20.0;
+        if new_fuel_quantity > scores.get_available_fuel_quantity() {
+            new_fuel_quantity = scores.get_available_fuel_quantity();
         }
-        scores.fuel_quantity += (new_score as f32) / 5.0;
+        scores.fuel_quantity += new_fuel_quantity;
         let Ok(mut spaceship_gravity) = spaceship_gravity_query.get_single_mut() else {
             return;
         };
@@ -192,6 +201,7 @@ fn catch_spaceship_just_landed_event_system(
                 })
                 .expect("failed to update best_score_so_far gravity");
         }
+        break;
     }
 }
 
@@ -213,24 +223,28 @@ fn catch_out_of_fuel_event_system(
                     transform: Transform::from_translation(INFO_PANEL_POSITION.extend(11.0)),
                     ..default()
                 },
+                RenderLayers::layer(2),
             ))
             .with_children(|builder| {
-                builder.spawn(Text2dBundle {
-                    text: Text::from_section(
-                        "Out of fuel",
-                        TextStyle {
-                            font: assets.font_vt323.clone(),
-                            font_size: 60.0,
-                            color: Color::WHITE,
+                builder.spawn((
+                    Text2dBundle {
+                        text: Text::from_section(
+                            "Out of fuel",
+                            TextStyle {
+                                font: assets.font_vt323.clone(),
+                                font_size: 60.0,
+                                color: Color::WHITE,
+                            },
+                        )
+                        .with_justify(JustifyText::Left),
+                        text_2d_bounds: Text2dBounds {
+                            size: INFO_PANEL_SIZE,
                         },
-                    )
-                    .with_justify(JustifyText::Left),
-                    text_2d_bounds: Text2dBounds {
-                        size: INFO_PANEL_SIZE,
+                        transform: Transform::from_translation(Vec3::Z),
+                        ..default()
                     },
-                    transform: Transform::from_translation(Vec3::Z),
-                    ..default()
-                });
+                    RenderLayers::layer(2),
+                ));
             });
     }
 }
@@ -268,6 +282,7 @@ fn spawn_scores_text_system(
             },
             ..default()
         },
+        RenderLayers::layer(2),
     ));
     // black background UI vertical
     commands.spawn((
@@ -276,11 +291,12 @@ fn spawn_scores_text_system(
             transform: Transform::from_translation(Vec3::new(485.0, 0.0, 2.0)),
             sprite: Sprite {
                 color: BLACK_COLOR,
-                custom_size: Some(Vec2::new(50.0, 720.0)),
+                custom_size: Some(Vec2::new(54.0, 720.0)),
                 ..default()
             },
             ..default()
         },
+        RenderLayers::layer(2),
     ));
     // speedometer UI texts
     commands.spawn((
