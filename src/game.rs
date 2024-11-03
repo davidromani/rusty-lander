@@ -131,44 +131,51 @@ fn catch_spaceship_just_landed_event_system(
                         ..default()
                     },
                 },
+                RenderLayers::layer(2),
             ))
             .with_children(|builder| {
-                builder.spawn(Text2dBundle {
-                    text: Text::from_section(
-                        points.to_string()
-                            + " x "
-                            + platform.factor.to_string().as_str()
-                            + " = "
-                            + new_score.to_string().as_str(),
-                        TextStyle {
-                            font: assets.font_vt323.clone(),
-                            font_size: 60.0,
-                            color: Color::WHITE,
+                builder.spawn((
+                    Text2dBundle {
+                        text: Text::from_section(
+                            points.to_string()
+                                + " x "
+                                + platform.factor.to_string().as_str()
+                                + " = "
+                                + new_score.to_string().as_str(),
+                            TextStyle {
+                                font: assets.font_vt323.clone(),
+                                font_size: 60.0,
+                                color: Color::WHITE,
+                            },
+                        )
+                        .with_justify(JustifyText::Left),
+                        text_2d_bounds: Text2dBounds {
+                            size: INFO_PANEL_SIZE,
                         },
-                    )
-                    .with_justify(JustifyText::Left),
-                    text_2d_bounds: Text2dBounds {
-                        size: INFO_PANEL_SIZE,
+                        transform: Transform::from_translation(Vec3::new(0.0, 20.0, 1.0)),
+                        ..default()
                     },
-                    transform: Transform::from_translation(Vec3::new(0.0, 20.0, 1.0)),
-                    ..default()
-                });
-                builder.spawn(Text2dBundle {
-                    text: Text::from_section(
-                        "press enter key to continue",
-                        TextStyle {
-                            font: assets.font_vt323.clone(),
-                            font_size: 30.0,
-                            color: Color::WHITE,
+                    RenderLayers::layer(2),
+                ));
+                builder.spawn((
+                    Text2dBundle {
+                        text: Text::from_section(
+                            "press enter key to continue",
+                            TextStyle {
+                                font: assets.font_vt323.clone(),
+                                font_size: 30.0,
+                                color: Color::WHITE,
+                            },
+                        )
+                        .with_justify(JustifyText::Left),
+                        text_2d_bounds: Text2dBounds {
+                            size: INFO_PANEL_SIZE,
                         },
-                    )
-                    .with_justify(JustifyText::Left),
-                    text_2d_bounds: Text2dBounds {
-                        size: INFO_PANEL_SIZE,
+                        transform: Transform::from_translation(Vec3::new(0.0, -20.0, 1.0)),
+                        ..default()
                     },
-                    transform: Transform::from_translation(Vec3::new(0.0, -20.0, 1.0)),
-                    ..default()
-                });
+                    RenderLayers::layer(2),
+                ));
             });
         if new_score > scores.get_available_fuel_quantity() as i32 {
             new_score = scores.get_available_fuel_quantity() as i32;
