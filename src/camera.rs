@@ -4,6 +4,7 @@ use crate::gizmos::PROXIMITY_RADIUS;
 use crate::spaceship::Player;
 use crate::state::GameState;
 use bevy::prelude::*;
+use bevy::render::view::RenderLayers;
 use iyes_perf_ui::prelude::*;
 
 pub struct CameraPlugin;
@@ -35,7 +36,12 @@ impl Plugin for CameraPlugin {
 
 // Systems
 fn spawn_camera_system(mut commands: Commands) {
-    commands.spawn((GameCamera, Camera2dBundle::default()));
+    commands.spawn((
+        GameCamera,
+        Camera2dBundle::default(),
+        RenderLayers::from_layers(&[0]),
+    ));
+    commands.spawn((Camera2dBundle::default(), RenderLayers::from_layers(&[1])));
 }
 
 fn add_or_remove_player_camera_components_depending_on_nearest_platform_system(
