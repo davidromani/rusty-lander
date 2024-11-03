@@ -22,13 +22,13 @@ impl Plugin for CameraPlugin {
                     add_or_remove_player_camera_components_depending_on_nearest_platform_system,
                     move_camera_position_to_nearest_platform_system,
                 )
-                    .run_if(in_state(GameState::Landing))
+                    // .run_if(in_state(GameState::Landing))
                     .in_set(InGameSet::Physics),
             )
             .add_systems(
                 Update,
                 detect_game_camera_close_to_platforms_removals_system
-                    .run_if(in_state(GameState::Landing))
+                    // .run_if(in_state(GameState::Landing))
                     .in_set(InGameSet::SpeedBar),
             );
     }
@@ -155,7 +155,7 @@ fn spawn_debug_ui_system(mut commands: Commands) {
 
 // Components
 #[derive(Component)]
-struct GameCamera;
+pub struct GameCamera;
 
 #[derive(Component)]
 struct ControllersCamera;

@@ -158,7 +158,7 @@ fn player_landed_collisions_system(
                 game_state.set(GameState::Crashed);
                 break;
             } else {
-                if let Some(&colliding_entity) = colliding_entities.iter().next() {
+                for &colliding_entity in colliding_entities.iter() {
                     if let Ok(platform) = platforms_query.get(colliding_entity) {
                         info!(
                             "Landed in platform factor {:?} with linear velocity {:?}",
@@ -177,6 +177,7 @@ fn player_landed_collisions_system(
                         });
                         game_state.set(GameState::Crashed);
                     }
+                    break;
                 }
             }
             info!("Linear velocity Y: {:?}", linear_velocity.y);

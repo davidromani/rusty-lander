@@ -221,24 +221,28 @@ fn catch_out_of_fuel_event_system(
                     transform: Transform::from_translation(INFO_PANEL_POSITION.extend(11.0)),
                     ..default()
                 },
+                RenderLayers::layer(2),
             ))
             .with_children(|builder| {
-                builder.spawn(Text2dBundle {
-                    text: Text::from_section(
-                        "Out of fuel",
-                        TextStyle {
-                            font: assets.font_vt323.clone(),
-                            font_size: 60.0,
-                            color: Color::WHITE,
+                builder.spawn((
+                    Text2dBundle {
+                        text: Text::from_section(
+                            "Out of fuel",
+                            TextStyle {
+                                font: assets.font_vt323.clone(),
+                                font_size: 60.0,
+                                color: Color::WHITE,
+                            },
+                        )
+                        .with_justify(JustifyText::Left),
+                        text_2d_bounds: Text2dBounds {
+                            size: INFO_PANEL_SIZE,
                         },
-                    )
-                    .with_justify(JustifyText::Left),
-                    text_2d_bounds: Text2dBounds {
-                        size: INFO_PANEL_SIZE,
+                        transform: Transform::from_translation(Vec3::Z),
+                        ..default()
                     },
-                    transform: Transform::from_translation(Vec3::Z),
-                    ..default()
-                });
+                    RenderLayers::layer(2),
+                ));
             });
     }
 }
