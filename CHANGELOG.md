@@ -6,6 +6,7 @@ Changelog
 * keep working
 * fix playing music overlap on spaceship just landed bug
 * persist best score value so far
+* pan camera when the spaceship is close to the platform
 * cargo dependencies update
 
 ##### Version 0.08.004 (2024-10-26)
