@@ -7,7 +7,7 @@ use crate::state::{AppState, GameState};
 use crate::WINDOW_HEIGHT;
 use avian2d::prelude::{GravityScale, LinearVelocity};
 use bevy::app::AppExit;
-use bevy::audio::PlaybackMode;
+use bevy::audio::{PlaybackMode, Volume};
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
 use bevy::render::view::RenderLayers;
@@ -128,6 +128,7 @@ fn catch_spaceship_just_landed_event_system(
                     source: music_assets.music_end.clone(),
                     settings: PlaybackSettings {
                         mode: PlaybackMode::Once,
+                        volume: Volume::new(0.5),
                         ..default()
                     },
                 },
@@ -404,6 +405,7 @@ fn spawn_rusty_planet_menu_background_image_and_intro_music_system(
             source: music_assets.music_intro.clone(),
             settings: PlaybackSettings {
                 mode: PlaybackMode::Loop,
+                volume: Volume::new(0.5),
                 ..default()
             },
         },

@@ -3,7 +3,7 @@ use crate::audio::MusicPlayingSoundEffect;
 use crate::game::Resettable;
 use crate::spaceship::{Player, INITIAL_SPACESHIP_POSITION};
 use avian2d::prelude::{LinearVelocity, Physics, PhysicsTime};
-use bevy::audio::PlaybackMode;
+use bevy::audio::{PlaybackMode, Volume};
 use bevy::prelude::*;
 
 // States
@@ -101,6 +101,7 @@ fn check_ten_seconds_timer(
                 source: music_assets.music_playing.clone(),
                 settings: PlaybackSettings {
                     mode: PlaybackMode::Once,
+                    volume: Volume::new(0.5),
                     ..default()
                 },
             },

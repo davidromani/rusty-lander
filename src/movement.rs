@@ -4,7 +4,7 @@ use crate::game::{InGameSet, OutOfFuelEvent, Resettable, Scores};
 use crate::spaceship::PlayerAction;
 use crate::state::{GameState, TenSecondsTimer};
 use avian2d::{math::*, prelude::*};
-use bevy::audio::PlaybackMode;
+use bevy::audio::{PlaybackMode, Volume};
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
@@ -29,6 +29,7 @@ impl Plugin for CharacterControllerPlugin {
                         source: music_assets.music_begin.clone(),
                         settings: PlaybackSettings {
                             mode: PlaybackMode::Once,
+                            volume: Volume::new(0.5),
                             ..default()
                         },
                     },
