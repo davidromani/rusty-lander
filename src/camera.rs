@@ -2,10 +2,10 @@ use crate::collider::{PLATFORM_10X_CENTER, PLATFORM_2X_CENTER, PLATFORM_5X_CENTE
 use crate::game::InGameSet;
 use crate::gizmos::PROXIMITY_RADIUS;
 use crate::spaceship::Player;
-use crate::state::GameState;
 use bevy::prelude::*;
 use bevy::render::view::RenderLayers;
 use iyes_perf_ui::prelude::*;
+use std::ops::Add;
 
 pub struct CameraPlugin;
 
@@ -22,14 +22,11 @@ impl Plugin for CameraPlugin {
                     add_or_remove_player_camera_components_depending_on_nearest_platform_system,
                     move_camera_position_to_nearest_platform_system,
                 )
-                    // .run_if(in_state(GameState::Landing))
                     .in_set(InGameSet::Physics),
             )
             .add_systems(
                 Update,
-                detect_game_camera_close_to_platforms_removals_system
-                    // .run_if(in_state(GameState::Landing))
-                    .in_set(InGameSet::SpeedBar),
+                detect_game_camera_close_to_platforms_removals_system.in_set(InGameSet::SpeedBar),
             );
     }
 }
@@ -98,16 +95,16 @@ fn move_camera_position_to_nearest_platform_system(
 ) {
     let (mut transform, mut projection) = camera_query.single_mut();
     for _entity in spaceship_close_to_2x_platform_query.iter() {
-        projection.scale /= 1.25;
+        projection.scale = 0.8;
         transform.translation = PLATFORM_2X_CENTER;
     }
     for _entity in spaceship_close_to_5x_platform_query.iter() {
-        projection.scale /= 1.25;
-        transform.translation = PLATFORM_5X_CENTER;
+        projection.scale = 0.7;
+        transform.translation = PLATFORM_5X_CENTER.add(Vec3::new(0.0, 90.0, 0.0));
     }
     for _entity in spaceship_close_to_10x_platform_query.iter() {
-        projection.scale /= 1.25;
-        transform.translation = PLATFORM_10X_CENTER;
+        projection.scale = 0.6;
+        transform.translation = PLATFORM_10X_CENTER.add(Vec3::new(0.0, 90.0, 0.0));
     }
 }
 
@@ -119,15 +116,15 @@ fn detect_game_camera_close_to_platforms_removals_system(
 ) {
     let (mut transform, mut projection) = camera_query.single_mut();
     for _entity in game_camera_close_to_2x_platform_removals.read() {
-        projection.scale *= 1.25;
+        projection.scale = 1.0;
         transform.translation = Vec3::ZERO;
     }
     for _entity in game_camera_close_to_5x_platform_removals.read() {
-        projection.scale *= 1.25;
+        projection.scale = 1.0;
         transform.translation = Vec3::ZERO;
     }
     for _entity in game_camera_close_to_10x_platform_removals.read() {
-        projection.scale *= 1.25;
+        projection.scale = 1.0;
         transform.translation = Vec3::ZERO;
     }
 }
