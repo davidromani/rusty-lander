@@ -289,7 +289,7 @@ fn spawn_scores_text_system(
             transform: Transform::from_translation(Vec3::new(485.0, 0.0, 2.0)),
             sprite: Sprite {
                 color: BLACK_COLOR,
-                custom_size: Some(Vec2::new(50.0, 720.0)),
+                custom_size: Some(Vec2::new(54.0, 720.0)),
                 ..default()
             },
             ..default()
