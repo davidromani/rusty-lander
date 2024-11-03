@@ -10,6 +10,7 @@ use bevy::app::AppExit;
 use bevy::audio::PlaybackMode;
 use bevy::input::common_conditions::*;
 use bevy::prelude::*;
+use bevy::render::view::RenderLayers;
 use bevy::text::Text2dBounds;
 use bevy_persistent::{Persistent, StorageFormat};
 use rand::prelude::*;
@@ -268,6 +269,7 @@ fn spawn_scores_text_system(
             },
             ..default()
         },
+        RenderLayers::layer(2),
     ));
     // black background UI vertical
     commands.spawn((
@@ -281,6 +283,7 @@ fn spawn_scores_text_system(
             },
             ..default()
         },
+        RenderLayers::layer(2),
     ));
     // speedometer UI texts
     commands.spawn((

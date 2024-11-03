@@ -36,7 +36,7 @@ fn spawn_fuel_bar_system(mut commands: Commands) {
             ..default()
         },
         FuelBar,
-        RenderLayers::layer(1),
+        RenderLayers::layer(2),
     ));
 }
 

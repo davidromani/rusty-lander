@@ -39,7 +39,7 @@ fn spawn_speed_bar_system(
             },
             ..default()
         },
-        RenderLayers::layer(1),
+        RenderLayers::layer(2),
     ));
     // yellow range
     commands.spawn((
@@ -53,7 +53,7 @@ fn spawn_speed_bar_system(
             },
             ..default()
         },
-        RenderLayers::layer(1),
+        RenderLayers::layer(2),
     ));
     // black indicator
     commands.spawn((
@@ -65,7 +65,7 @@ fn spawn_speed_bar_system(
             ..default()
         },
         SpeedBarBlackIndicator,
-        RenderLayers::layer(1),
+        RenderLayers::layer(2),
     ));
 }
 

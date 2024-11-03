@@ -38,10 +38,26 @@ impl Plugin for CameraPlugin {
 fn spawn_camera_system(mut commands: Commands) {
     commands.spawn((
         GameCamera,
-        Camera2dBundle::default(),
-        RenderLayers::from_layers(&[0]),
+        Camera2dBundle {
+            camera: Camera {
+                order: 1,
+                ..default()
+            },
+            ..default()
+        },
+        RenderLayers::from_layers(&[0, 1]),
     ));
-    commands.spawn((Camera2dBundle::default(), RenderLayers::from_layers(&[1])));
+    commands.spawn((
+        ControllersCamera,
+        Camera2dBundle {
+            camera: Camera {
+                order: 2,
+                ..default()
+            },
+            ..default()
+        },
+        RenderLayers::from_layers(&[1, 2]),
+    ));
 }
 
 fn add_or_remove_player_camera_components_depending_on_nearest_platform_system(
@@ -158,6 +174,9 @@ fn spawn_debug_ui_system(mut commands: Commands) {
 // Components
 #[derive(Component)]
 struct GameCamera;
+
+#[derive(Component)]
+struct ControllersCamera;
 
 #[derive(Component)]
 #[component(storage = "SparseSet")]
