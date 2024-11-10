@@ -30,6 +30,15 @@ pub enum GameState {
     GameOver,
 }
 
+#[derive(SubStates, Debug, Copy, Clone, Hash, Eq, PartialEq, Default)]
+#[source(AppState=GameState::Landed)]
+pub enum LandedState {
+    #[default]
+    RefuelAnimation,
+    WaitForPlayerContinue,
+    Finished,
+}
+
 // Resources
 
 #[derive(Resource)]
