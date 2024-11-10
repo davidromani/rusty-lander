@@ -21,7 +21,7 @@ impl Plugin for ColliderPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(AppState::Game), initialize_landscape_system)
             .add_systems(
-                FixedUpdate,
+                Update,
                 player_landed_collisions_system
                     .run_if(in_state(GameState::Landing))
                     .in_set(InGameSet::Collisions),

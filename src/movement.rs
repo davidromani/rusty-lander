@@ -45,7 +45,7 @@ impl Plugin for CharacterControllerPlugin {
             },
         )
         .add_systems(
-            FixedUpdate,
+            Update,
             (
                 update_ready_to_land_system,
                 movement_system,

@@ -78,7 +78,7 @@ fn main() {
         .insert_resource(get_world_bounds_resource_2d());
     // System ordering
     app.configure_sets(
-        FixedUpdate,
+        Update,
         (
             InGameSet::Collisions,
             InGameSet::Physics,

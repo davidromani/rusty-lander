@@ -12,7 +12,7 @@ pub struct GizmosPlugin;
 impl Plugin for GizmosPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
-            FixedUpdate,
+            Update,
             draw_platform_gizmos_system
                 .run_if(in_state(GameState::Landing))
                 .in_set(InGameSet::Physics),
